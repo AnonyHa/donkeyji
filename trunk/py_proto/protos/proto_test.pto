@@ -1,0 +1,6 @@
+{
+	'uid' : ('int',),
+	'name' : ('str',),
+	'info' : ('test_info',),
+	'array' : ('int', 0),# a array
+}

@@ -1,0 +1,3 @@
+[2010-4-3 15:45:12]  [DEBUG]  event_add: event: 0xbfa043d0, EV_READ  call 0x80498ec
+[2010-4-3 15:45:12]  [DEBUG]  eop: 4
+[2010-4-3 15:45:12]  [DEBUG]  to dispatch

@@ -1,0 +1,2 @@
+struct huge_conf
+{};
