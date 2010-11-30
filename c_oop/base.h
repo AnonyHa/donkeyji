@@ -3,11 +3,12 @@
 
 #define HEAD	\
 	int type;	\
-	int (*f)(struct base* p)	\
+	char* buffer;	\
+	void (*free)(struct data_base* p)
+//注意最后一行没有:
 
-struct base
-{
+typedef struct data_base{
 	HEAD;
-};//相当于基类，f相当于基类的纯虚函数
+}data_base;//相当于基类，f相当于基类的纯虚函数
 
 #endif
