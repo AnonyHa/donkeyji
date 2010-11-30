@@ -3,7 +3,7 @@
 
 #include "extend.h"
 
-//纯虚函数在子类中的实现
+//纯虚函数在子类中的实现，static类型，不直接向外暴露
 static int data_integer_free(struct data_base* p)
 {
 	struct data_integer* pe = (struct data_integer*)p;
