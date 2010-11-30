@@ -1,0 +1,53 @@
+server端：
+
+1、连接描述
+class Client
+{
+	int _hid;// 位置
+	int _fd;// socket描述符
+	int _state; // 
+	Mbuf* _rbuf;// 从Mbuf池中获取
+	Mbuf* _wbuf;// 从Mbuf池中获取
+};
+
+2、用于每个client的读写缓冲区
+// 分配指定大小的buf  初始为8K大小
+// 一开始分配了充裕的Mbuf，Mbuf中的buf的内存直接从系统申请，不必再为buf做一层缓冲池
+class Mbuf
+{
+	char buf[1];// 从系统中分配，考虑再做一层系统池，从系统池中分配
+	char* head;
+	char* tail;
+	size_t total;
+};
+
+2、client池
+MemPool(client): 用来分配/回收client对象
+std::map<hid, client*> ClientMgr: 用来管理正在使用的client对象
+
+3、Mbuf池
+MemPool(Mbuf)
+用于读/写的Mbuf池的数量与client池的数量相等
+
+4、hid生成器
+用来产生不重复的hid值，来标示client
+
+5、event
+为了将所有client产生的event集中管理
+class Event
+{
+	int _hid;
+	int _event;
+	char data[1]// 需要将数据从_rbuf中拷贝到Event中。单个协议包的最大长度。data的内存直接在系统堆上开辟，初始化为1k
+};
+
+6、event池
+MemPool(Event)
+每次从pool中获取event的指针，用完后归还。这个初始数量应该不需要特别大。
+
+7、统一的内存清理
+MemPool(client)
+MemPool(mbuf)
+MemPool(event)
+释放掉所有的系统堆
+进程中其它地方不再另外用malloc/new申请系统堆内存

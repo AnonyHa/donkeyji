@@ -1,0 +1,12 @@
+FLAGS = -g
+CC = gcc
+INC = -I "D:\Program Files\Lua\5.1\include"
+LIB = -L "D:\Program Files\Lua\5.1\lib"
+
+all: hujilib.dll
+
+hujilib.dll: mod.o
+	$(CC) -shared -o hujilib.dll mod.o -L -lkernel32 -Wl,--out-implib,libhujilib.a $(LIB) -llua51
+
+mod.o: mod.c
+	$(CC) -c -DBUILD_DLL mod.c $(INC)

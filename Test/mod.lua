@@ -1,0 +1,1 @@
+hujilib.test(123)

@@ -1,0 +1,66 @@
+dep.o: dep.c \
+  d:/program\ files/MinGW2007/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stdio.h \
+  d:/program\ files/MinGW2007/bin/../lib/gcc/mingw32/3.4.5/../../../../include/_mingw.h \
+  d:/program\ files/MinGW2007/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stddef.h \
+  d:/program\ files/MinGW2007/bin/../lib/gcc/mingw32/3.4.5/include/stddef.h \
+  d:/program\ files/MinGW2007/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stdarg.h \
+  d:/program\ files/MinGW2007/bin/../lib/gcc/mingw32/3.4.5/include/stdarg.h \
+  d:/program\ files/MinGW2007/bin/../lib/gcc/mingw32/3.4.5/../../../../include/sys/types.h \
+  dep.h
+fr.o: fr.c \
+  d:/program\ files/MinGW2007/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stdio.h \
+  d:/program\ files/MinGW2007/bin/../lib/gcc/mingw32/3.4.5/../../../../include/_mingw.h \
+  d:/program\ files/MinGW2007/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stddef.h \
+  d:/program\ files/MinGW2007/bin/../lib/gcc/mingw32/3.4.5/include/stddef.h \
+  d:/program\ files/MinGW2007/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stdarg.h \
+  d:/program\ files/MinGW2007/bin/../lib/gcc/mingw32/3.4.5/include/stdarg.h \
+  d:/program\ files/MinGW2007/bin/../lib/gcc/mingw32/3.4.5/../../../../include/sys/types.h \
+  mod.h
+list.o: list.c \
+  d:/program\ files/MinGW2007/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stdio.h \
+  d:/program\ files/MinGW2007/bin/../lib/gcc/mingw32/3.4.5/../../../../include/_mingw.h \
+  d:/program\ files/MinGW2007/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stddef.h \
+  d:/program\ files/MinGW2007/bin/../lib/gcc/mingw32/3.4.5/include/stddef.h \
+  d:/program\ files/MinGW2007/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stdarg.h \
+  d:/program\ files/MinGW2007/bin/../lib/gcc/mingw32/3.4.5/include/stdarg.h \
+  d:/program\ files/MinGW2007/bin/../lib/gcc/mingw32/3.4.5/../../../../include/sys/types.h \
+  d:/program\ files/MinGW2007/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stdlib.h \
+  list.h
+main.o: main.c \
+  d:/program\ files/MinGW2007/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stdio.h \
+  d:/program\ files/MinGW2007/bin/../lib/gcc/mingw32/3.4.5/../../../../include/_mingw.h \
+  d:/program\ files/MinGW2007/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stddef.h \
+  d:/program\ files/MinGW2007/bin/../lib/gcc/mingw32/3.4.5/include/stddef.h \
+  d:/program\ files/MinGW2007/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stdarg.h \
+  d:/program\ files/MinGW2007/bin/../lib/gcc/mingw32/3.4.5/include/stdarg.h \
+  d:/program\ files/MinGW2007/bin/../lib/gcc/mingw32/3.4.5/../../../../include/sys/types.h \
+  d:/program\ files/MinGW2007/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stdlib.h \
+  fr.h dep.h
+mod_a.o: mod_a.c \
+  d:/program\ files/MinGW2007/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stdio.h \
+  d:/program\ files/MinGW2007/bin/../lib/gcc/mingw32/3.4.5/../../../../include/_mingw.h \
+  d:/program\ files/MinGW2007/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stddef.h \
+  d:/program\ files/MinGW2007/bin/../lib/gcc/mingw32/3.4.5/include/stddef.h \
+  d:/program\ files/MinGW2007/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stdarg.h \
+  d:/program\ files/MinGW2007/bin/../lib/gcc/mingw32/3.4.5/include/stdarg.h \
+  d:/program\ files/MinGW2007/bin/../lib/gcc/mingw32/3.4.5/../../../../include/sys/types.h \
+  d:/program\ files/MinGW2007/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stdlib.h \
+  mod.h list.h
+mod_b.o: mod_b.c \
+  d:/program\ files/MinGW2007/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stdio.h \
+  d:/program\ files/MinGW2007/bin/../lib/gcc/mingw32/3.4.5/../../../../include/_mingw.h \
+  d:/program\ files/MinGW2007/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stddef.h \
+  d:/program\ files/MinGW2007/bin/../lib/gcc/mingw32/3.4.5/include/stddef.h \
+  d:/program\ files/MinGW2007/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stdarg.h \
+  d:/program\ files/MinGW2007/bin/../lib/gcc/mingw32/3.4.5/include/stdarg.h \
+  d:/program\ files/MinGW2007/bin/../lib/gcc/mingw32/3.4.5/../../../../include/sys/types.h \
+  mod.h
+mod_mgr.o: mod_mgr.c \
+  d:/program\ files/MinGW2007/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stdio.h \
+  d:/program\ files/MinGW2007/bin/../lib/gcc/mingw32/3.4.5/../../../../include/_mingw.h \
+  d:/program\ files/MinGW2007/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stddef.h \
+  d:/program\ files/MinGW2007/bin/../lib/gcc/mingw32/3.4.5/include/stddef.h \
+  d:/program\ files/MinGW2007/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stdarg.h \
+  d:/program\ files/MinGW2007/bin/../lib/gcc/mingw32/3.4.5/include/stdarg.h \
+  d:/program\ files/MinGW2007/bin/../lib/gcc/mingw32/3.4.5/../../../../include/sys/types.h \
+  mod.h

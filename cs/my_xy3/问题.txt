@@ -1,0 +1,12 @@
+1、连接池，client加入、清除出pool的时候，client中的缓冲区的清理
+2、连接的sock的关闭问题
+
+clientpool的清理
+client的内容清理
+databuf的内容清理
+
+但是不会delete，只是改标志
+
+
+将每个client中用到的databuf集中管理bufpool
+到将每个client集中管理到clientpool
