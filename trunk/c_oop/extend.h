@@ -3,13 +3,12 @@
 
 #include "base.h"
 
-struct extend
-{
+struct data_integer {
 	HEAD;
-	int ext;
-};//相当于struct base的子类
+	int value;
+};//相当于struct data_base的子类
 
 
 //interface
-struct extend* extend_new();
+struct data_integer* data_integer_new();
 #endif
