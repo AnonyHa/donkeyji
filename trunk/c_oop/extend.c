@@ -4,7 +4,7 @@
 #include "extend.h"
 
 //纯虚函数在子类中的实现
-static int extend_f(struct base_head* p)
+static int extend_f(struct base* p)
 {
 	struct extend* pe = (struct extend*)p;
 	printf("%d\n", pe->ext);
