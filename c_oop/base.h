@@ -3,9 +3,9 @@
 
 #define HEAD	\
 	int type;	\
-	int (*f)(struct base_head* p)	\
+	int (*f)(struct base* p)	\
 
-struct base_head
+struct base
 {
 	HEAD;
 };//相当于基类，f相当于基类的纯虚函数

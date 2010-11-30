@@ -7,7 +7,7 @@ struct extend
 {
 	HEAD;
 	int ext;
-};//相当于struct base_head的子类
+};//相当于struct base的子类
 
 
 //interface
