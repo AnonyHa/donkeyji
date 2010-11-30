@@ -3,7 +3,7 @@
 
 int main()
 {
-	struct extend* e = extend_new();
-	e->f(e);
+	data_integer* e = data_integer_new();
+	e->free(e);
 	return 0;
 }
