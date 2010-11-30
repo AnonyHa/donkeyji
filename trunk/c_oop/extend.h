@@ -3,10 +3,10 @@
 
 #include "base.h"
 
-struct data_integer {
+typedef struct data_integer {
 	HEAD;
 	int value;
-};//相当于struct data_base的子类
+}data_integer;//相当于struct data_base的子类
 
 
 //interface
