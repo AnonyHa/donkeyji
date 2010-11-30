@@ -9,6 +9,6 @@ typedef struct data_integer {
 }data_integer;//相当于struct data_base的子类
 
 
-//interface
+//只向外暴露这个构造函数，而纯虚函数的实现并不暴露
 struct data_integer* data_integer_new();
 #endif
