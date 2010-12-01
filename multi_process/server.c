@@ -7,12 +7,14 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include <event.h>
 
 #include "conf.h"
 #include "server.h"
 #include "conn.h"
+#include "log.h"
 
 
 static void _server_handle_listen(int fd, short ev, void* arg);
@@ -33,26 +35,33 @@ int server_init()
 
 	srv->conns = conn_mgr_new();
 
+	log_msg(__FILE__, __LINE__, "server obj created");
+
 	return 0;
 }
 
 //init libevent, and add listen socket
 int server_network_startup()
 {
+	log_msg(__FILE__, __LINE__, "begin to init libevent");
 	event_init();//libevent init
 	event_set(srv->listen_ev, srv->listen_sock, EV_READ|EV_PERSIST, _server_handle_listen, srv->listen_ev);
 	event_add(srv->listen_ev, NULL);
+	log_msg(__FILE__, __LINE__, "listen_ev add to libevent");
 	return 0;
 }
 
 static void _server_handle_listen(int fd, short ev, void* arg)
 {
+	log_msg(__FILE__, __LINE__, "a connection comes, pid=%d", getpid());
 	if (srv->conns->used > srv->max_fds)
 		return;
 	struct sockaddr_in addr;
 	int len = sizeof(addr);
 	int sock = accept(fd, (struct sockaddr*)&addr, (socklen_t*)&len);
 	if (sock < 0) {
+		perror("accept");
+		log_msg(__FILE__, __LINE__, "accept failed");
 		return;
 	}
 
@@ -64,9 +73,11 @@ static void _server_handle_listen(int fd, short ev, void* arg)
 
 	int ret = _server_add_conn(c);
 	if (ret < 0) {
+		log_msg(__FILE__, __LINE__, "add connection to server failed");
 		conn_free(c);
 		return;
 	}
+	log_msg(__FILE__, __LINE__, "add connection succeed");
 }
 
 static int _server_add_conn(conn* c)
