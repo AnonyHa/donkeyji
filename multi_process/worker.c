@@ -8,6 +8,7 @@ extern int fuck;
 
 int worker_init()
 {
+	//init libevent, and add listen socket event
 	server_network_startup();
 }
 

@@ -8,12 +8,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <event.h>
+
 #include "conf.h"
 #include "server.h"
 #include "conn.h"
 
 
-static void _server_handle_listen();
+static void _server_handle_listen(int fd, short ev, void* arg);
 static int _server_add_conn(conn* c);
 static int _server_create_listen_sock(int port);
 //----------------------------------------
@@ -25,6 +27,7 @@ int server_init()
 	srv->port = cfg->port;
 	srv->max_fds = cfg->max_fds;
 	srv->listen_sock = _server_create_listen_sock(srv->port);
+	srv->listen_ev = (struct event*)calloc(1, sizeof(struct event));
 	if (srv->listen_sock < 0)
 		return -1;
 
@@ -37,20 +40,20 @@ int server_init()
 int server_network_startup()
 {
 	event_init();//libevent init
-	event_set(&srv->listen_ev, EV_READ|EV_PERSIST, _server_handle_listen, &srv->listen_ev);
-	event_add(&srv->listen_ev, NULL);
+	event_set(srv->listen_ev, srv->listen_sock, EV_READ|EV_PERSIST, _server_handle_listen, srv->listen_ev);
+	event_add(srv->listen_ev, NULL);
 	return 0;
 }
 
-static void _server_handle_listen(int fd, int ev, void* arg)
+static void _server_handle_listen(int fd, short ev, void* arg)
 {
-	if (svr->conns->used > srv->max_fds)
+	if (srv->conns->used > srv->max_fds)
 		return;
 	struct sockaddr_in addr;
 	int len = sizeof(addr);
 	int sock = accept(fd, (struct sockaddr*)&addr, (socklen_t*)&len);
 	if (sock < 0) {
-		return 0;
+		return;
 	}
 
 	int flag = fcntl(sock, F_GETFL, 0);
@@ -68,7 +71,7 @@ static void _server_handle_listen(int fd, int ev, void* arg)
 
 static int _server_add_conn(conn* c)
 {
-	return conn_mgr_add(srv->cm, c);
+	return conn_mgr_add(srv->conns, c);
 }
 
 static int _server_create_listen_sock(int port)
@@ -97,7 +100,7 @@ static int _server_create_listen_sock(int port)
 	addr.sin_addr.s_addr = htonl(INADDR_ANY);
 	addr.sin_port = htons(port);
 	int optval = 1;
-	if (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &op, sizeof(optval)) == -1) {
+	if (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)) == -1) {
 		return -1;
 	} 
 	if (bind(sock, (struct sockaddr* )&addr, sizeof(addr))<0) {

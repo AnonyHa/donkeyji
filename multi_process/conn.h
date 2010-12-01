@@ -1,6 +1,8 @@
 #ifndef _CONN_H
 #define _CONN_H
 
+#include <sys/types.h>
+
 struct buffer;
 typedef struct _conn
 {
@@ -23,6 +25,6 @@ typedef struct _conn_mgr
 
 conn_mgr* conn_mgr_new();
 int conn_mgr_free(conn_mgr* cm);
-int conn_mgr_add(conn* c);
-int conn_mgr_del(conn* c);
+int conn_mgr_add(conn_mgr* cm,  conn* c);
+int conn_mgr_del(conn_mgr* cm, conn* c);
 #endif

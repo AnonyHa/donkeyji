@@ -1,3 +1,5 @@
+#include <signal.h>
+
 #include "sig.h"
 
 static volatile sig_atomic_t sig_child = 0;
