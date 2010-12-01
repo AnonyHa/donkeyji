@@ -1,9 +1,14 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#include <event.h>
+
 #include "conn.h"
 
 static void _conn_handle_read(struct bufferevent* bev, void* arg)
 {}
 
-static void _conn_handle_err(struct bufferevent* bev, void* arg)
+static void _conn_handle_err(struct bufferevent* bev, int what, void* arg)
 {}
 
 
@@ -11,8 +16,8 @@ conn* conn_new(int sock)
 {
 	conn* c = (conn*)calloc(1, sizeof(conn));
 	c->fd = sock;
-	c->bev = bufferevent_new(sock, _conn_handle_read, NULL, _conn_handle_err, void);
-	bufferevent_enable(c->bev, EV_READ|EV_WRTE);
+	c->bev = bufferevent_new(sock, _conn_handle_read, NULL, _conn_handle_err, NULL);
+	bufferevent_enable(c->bev, EV_READ|EV_WRITE);
 	return c;
 }
 
@@ -35,8 +40,8 @@ conn_mgr* conn_mgr_new()
 	return cm;
 }
 
-int conn_mgr_add(conn* c)
+int conn_mgr_add(conn_mgr* cm, conn* c)
 {}
 
-int conn_mgr_del(conn* c)
+int conn_mgr_del(conn_mgr* cm, conn* c)
 {}
