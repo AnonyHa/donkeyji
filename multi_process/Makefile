@@ -1,7 +1,7 @@
-CC = g++
+CC = gcc
 FLAG = -g
-INC = ./
-LIBS = -llua5.1 -lmysqlclient -levent 
+INC = -I ./
+LIBS = -llua5.1
 
 TARGET = main
 
