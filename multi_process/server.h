@@ -12,5 +12,6 @@ typedef struct _server
 }server;
 
 server* server_init();
+int server_network_init();
 
 #endif

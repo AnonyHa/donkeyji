@@ -8,7 +8,7 @@ extern int fuck;
 
 int worker_init()
 {
-	server_init_network();
+	server_network_startup();
 }
 
 int worker_cycle()

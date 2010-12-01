@@ -5,17 +5,13 @@
 
 #include "master.h"
 #include "worker.h"
+#include "sig.h"
 
 //统一的信号处理函数
-int SIG = 0;
-void sig_handler(int sig)
-{
-	SIG++;
-}
 
 int master_init()
 {
-	signal(SIGCHLD, sig_handler);
+	sig_register();
 }
 
 int master_cycle()
@@ -28,13 +24,10 @@ int master_cycle()
 
 	//master loop
 	while (1) {//main loop of master
-		while (SIG > 0) {
-			master_spawn_worker();
-			SIG--;
-		}
+		sig_process();
 		sleep(1);
-		printf("after sleep in master\n");
 	}
+	return 0;
 }
 
 int master_start_worker()
