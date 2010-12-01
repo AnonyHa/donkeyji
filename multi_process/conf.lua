@@ -4,7 +4,7 @@ server = {
 		['max_fds'] = 4096,
 	},
 	['log'] = {
-		['leve'] = 1,
+		['log_level'] = 1,
 		['log_file'] = 'log.txt',
 		['log_dir'] = 'logs',
 	},
