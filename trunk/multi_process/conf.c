@@ -10,7 +10,7 @@
 
 
 //global config
-config* cfg;
+config* cfg = NULL;
 
 int conf_init() 
 {
