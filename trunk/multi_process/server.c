@@ -12,6 +12,11 @@
 #include "server.h"
 #include "conn.h"
 
+
+static void _server_handle_listen();
+static int _server_add_conn(conn* c);
+static int _server_create_listen_sock(int port);
+//----------------------------------------
 server* srv = NULL;
 
 int server_init()
@@ -29,15 +34,15 @@ int server_init()
 }
 
 //init libevent, and add listen socket
-int server_init_network()
+int server_network_startup()
 {
 	event_init();//libevent init
-	event_set(&srv->listen_ev, EV_READ|EV_PERSIST, server_handle_listen, &srv->listen_ev);
+	event_set(&srv->listen_ev, EV_READ|EV_PERSIST, _server_handle_listen, &srv->listen_ev);
 	event_add(&srv->listen_ev, NULL);
 	return 0;
 }
 
-void server_handle_listen(int fd, int ev, void* arg)
+static void _server_handle_listen(int fd, int ev, void* arg)
 {
 	if (svr->conns->used > srv->max_fds)
 		return;
