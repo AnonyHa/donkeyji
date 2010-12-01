@@ -22,7 +22,7 @@ int conf_init()
 	//use lua as config file
 	lua_State* L = luaL_newstate();	
 	luaL_openlibs(L);
-	int error = luaL_loadfile(L, "conf.lua") || lua_pcall(L, 0, LUA_MULTRET, 0);
+	int error = luaL_loadfile(L, "mp.conf") || lua_pcall(L, 0, LUA_MULTRET, 0);
 	if (error != 0) {
 		printf("load conf file failed\n");
 		fprintf(stderr, "%s\n", lua_tostring(L, -1));//取栈顶的错误信息
