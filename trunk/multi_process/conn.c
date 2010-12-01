@@ -18,6 +18,7 @@ conn* conn_new(int sock)
 	c->fd = sock;
 	c->bev = bufferevent_new(sock, _conn_handle_read, NULL, _conn_handle_err, NULL);
 	bufferevent_enable(c->bev, EV_READ|EV_WRITE);
+	log_msg(__FILE__, __LINE__, "register connection to libevent");
 	return c;
 }
 

@@ -12,7 +12,7 @@ typedef enum {
 int log_init();
 
 int log_warn();
-int log_msg();
+int log_msg(const char* filename, unsigned int line, const char* fmt, ...);
 int log_debug();
 int log_err();
 
