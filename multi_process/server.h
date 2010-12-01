@@ -6,6 +6,7 @@ typedef struct _server
 	int port;
 	int srv_sock;
 	int max_fds;
+	int used_fds;
 	struct event listen_ev;
 	conn_mgr* conns;
 }server;

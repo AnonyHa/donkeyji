@@ -2,20 +2,20 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#include "server.h"
+
 extern int fuck;
 
 int worker_init()
-{}
+{
+	server_init_network();
+}
 
 int worker_cycle()
 {
 	worker_init();
 
-	for (;;) {
-		printf("my pid = %d\n", getpid());
-		printf("global = %d\n", fuck);
-		sleep(1);
-	}
+	event_dispatch();
 
 	return 0;
 }
