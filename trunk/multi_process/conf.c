@@ -3,6 +3,7 @@
 #include <lauxlib.h>
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "conf.h"
@@ -72,20 +73,44 @@ int conf_init()
 	memcpy((void*)cfg->log_file, (const void*)tmp, len);
 	lua_pop(L, 1);//pop "log_file"
 
-	lua_getfiled(L, -1, "log_dir");
-	const char* tmp = lua_tostring(L, -1);
-	int len = strlen(tmp);
+	lua_getfield(L, -1, "log_dir");
+	tmp = lua_tostring(L, -1);
+	len = strlen(tmp);
 	memcpy((void*)cfg->log_dir, (const void*)tmp, len);
 	lua_pop(L, 1);//pop "log_dir"
 	lua_pop(L, 1);//pop "log"
 
 	lua_getfield(L, -1, "doc_root");
-	const char* tmp = lua_tostring(L, -1);
-	int len = strlen(tmp);
+	tmp = lua_tostring(L, -1);
+	len = strlen(tmp);
 	memcpy((void*)cfg->doc_root, (const void*)tmp, len);
 	lua_pop(L, 1);//pop "log_dir"
 
 	lua_close(L);
 
+	return 0;
+}
+
+void conf_print()
+{
+	printf("port : %d\n", cfg->port);
+	printf("max_fds : %d\n", cfg->max_fds);
+	printf("log_level : %d\n", cfg->log_level);
+	printf("log_fle : %s\n", cfg->log_file);
+	printf("log_dir : %s\n", cfg->log_dir);
+	printf("doc_root : %s\n", cfg->doc_root);
+}
+
+int conf_free()
+{
+	if (cfg == NULL)
+		return 0;
+	if (cfg->log_file != NULL)
+		free(cfg->log_file);
+	if (cfg->log_dir != NULL)
+		free(cfg->log_dir);
+	if (cfg->doc_root != NULL)
+		free(cfg->doc_root);
+	free(cfg);
 	return 0;
 }

@@ -16,5 +16,7 @@ typedef struct _config
 extern config* cfg; 
 
 int conf_init();
+void conf_print();
+int conf_free();
 
 #endif
