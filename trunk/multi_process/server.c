@@ -28,7 +28,7 @@ int server_init()
 	srv = (server*)calloc(1, sizeof(server));
 	srv->port = cfg->port;
 	srv->max_fds = cfg->max_fds;
-	srv->listen_sock = _server_create_listen_sock(srv->port);
+	srv->listen_sock = -1;//初始化为一个无效的fd
 	srv->listen_ev = (struct event*)calloc(1, sizeof(struct event));
 	if (srv->listen_sock < 0)
 		return -1;
@@ -40,16 +40,26 @@ int server_init()
 	return 0;
 }
 
-//init libevent, and add listen socket
-int server_network_startup()
+int server_destroy()
+{}
+
+int server_network_init() 
+{
+	srv->listen_sock = _server_create_listen_sock(srv->port);
+	//libevent init
+	event_init();
+}
+
+int server_network_register() 
 {
 	log_msg(__FILE__, __LINE__, "begin to init libevent");
-	event_init();//libevent init
+	//event_init();//libevent init
 	event_set(srv->listen_ev, srv->listen_sock, EV_READ|EV_PERSIST, _server_handle_listen, srv->listen_ev);
 	event_add(srv->listen_ev, NULL);
 	log_msg(__FILE__, __LINE__, "listen_ev add to libevent");
 	return 0;
 }
+
 
 static void _server_handle_listen(int fd, short ev, void* arg)
 {

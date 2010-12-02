@@ -36,6 +36,9 @@ int log_init()
 	return 0;
 }
 
+int log_destroy()
+{}
+
 static int evutil_vsnprintf(char* buf, size_t buflen, const char* fmt, va_list ap)
 {
 	int r = vsnprintf(buf, buflen, fmt, ap);
