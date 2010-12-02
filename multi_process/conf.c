@@ -91,6 +91,9 @@ int conf_init()
 	return 0;
 }
 
+int conf_destroy()
+{}
+
 void conf_print()
 {
 	printf("port : %d\n", cfg->port);
