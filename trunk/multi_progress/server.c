@@ -28,11 +28,13 @@ server* srv = NULL;
 void server_init()
 {
 	log_msg(__FILE__, __LINE__, "server init");
+
 	srv = (server*)calloc(1, sizeof(server));
 	assert(srv);
 
 	srv->port = cfg->port;
 	srv->max_fds = cfg->max_fds;
+
 	srv->listen_sock = _server_create_listen_sock(srv->port);
 
 	srv->listen_ev = (struct event*)calloc(1, sizeof(struct event));

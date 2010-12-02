@@ -8,6 +8,7 @@
 #include <stdarg.h>
 #include <errno.h>
 #include <time.h>
+#include <assert.h>
 
 #include "conf.h"
 #include "log.h"
@@ -27,9 +28,14 @@ void log_init()
 	//printf("cfg->log_file = %s\n", cfg->log_file);
 	//printf("cfg->log_dir = %s\n", cfg->log_dir);
 	log_file = (char*)malloc(20);
+	assert(log_file);
+
 	log_dir = (char*)malloc(20);
+	assert(log_dir);
+
 	strcpy(log_file, cfg->log_file);
 	strcpy(log_dir, cfg->log_dir);
+
 	log_fd = open(log_file, O_APPEND|O_WRONLY|O_CREAT, 0644);
 	if (log_fd == -1) {
 		perror("open log fd");
