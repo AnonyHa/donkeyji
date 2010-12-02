@@ -28,12 +28,14 @@ int server_init()
 	srv = (server*)calloc(1, sizeof(server));
 	srv->port = cfg->port;
 	srv->max_fds = cfg->max_fds;
-	srv->listen_sock = -1;//初始化为一个无效的fd
+	srv->listen_sock = _server_create_listen_sock(srv->port);
 	srv->listen_ev = (struct event*)calloc(1, sizeof(struct event));
 	if (srv->listen_sock < 0)
 		return -1;
 
 	srv->conns = conn_mgr_new();
+
+	event_init();
 
 	log_msg(__FILE__, __LINE__, "server obj created");
 
@@ -42,13 +44,6 @@ int server_init()
 
 int server_destroy()
 {}
-
-int server_network_init() 
-{
-	srv->listen_sock = _server_create_listen_sock(srv->port);
-	//libevent init
-	event_init();
-}
 
 int server_network_register() 
 {

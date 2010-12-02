@@ -4,6 +4,9 @@
 #include <signal.h>
 #include <errno.h>
 #include <signal.h>
+#include <assert.h>
+
+#include <event.h>
 
 #include "server.h"
 #include "process.h"
@@ -11,35 +14,42 @@
 #include "sig.h"
 #include "log.h"
 
+//¾²Ì¬º¯Êıdeclaration
+static int sig_register();
+static void sig_callback(int sig, short event, void* arg);
+static void _sig_callback_master(int sig, short event, void* arg);
+static void _sig_callback_worker(int sig, short event, void* arg);
+
+static int master_init();
+static int master_start_worker();
+static int master_kill_worker();
+static int master_spawn_worker();
+static int master_destroy();
+
+static int worker_init();
+static int worker_cycle();
 
 //to identify child / parent
 int is_child = 0;
 
 //-------------------------------------------------------
-//forkå‡ºå­è¿›ç¨‹ä¹‹å‰æ³¨å†Œä¿¡å·
+//fork³ö×Ó½ø³ÌÖ®Ç°×¢²áĞÅºÅ
 static int sig_register()
 {
+	int i;
 	struct event* se;
-
-	se = (struct event*)malloc(sizeof(struct event));
-	signal_set(se, SIGINT, sig_callback, se);
-	signal_add(se, NULL);
-
-	se = (struct event*)malloc(sizeof(struct event));
-	signal_set(se, SIGTERM, sig_callback, se);
-	signal_add(se, NULL);
-
-	se = (struct event*)malloc(sizeof(struct event));
-	signal_set(se, SIGCHLD, sig_callback, se);
-	signal_add(se, NULL);
-
-	se = (struct event*)malloc(sizeof(struct event));
-	signal_set(se, SIGHUP, sig_callback, se);
-	signal_add(se, NULL);
+	int SIG[] = {SIGINT, SIGTERM, SIGCHLD, SIGHUP};
+	for (i=0; i<sizeof(SIG)/sizeof(int); i++) {
+		se = (struct event*)calloc(1, sizeof(struct event));
+		log_msg(__FILE__, __LINE__, "se = %x, size = %d, i=%d", se, sizeof(struct event), i);
+		assert(se);
+		signal_set(se, SIGINT, sig_callback, se);
+		signal_add(se, NULL);
+	}
 }
 
-//çˆ¶å­è¿›ç¨‹å¤„ç†ä¿¡å·é€»è¾‘ä¸ä¸€æ ·
-void sig_callback(int sig, short event, void* arg)
+//¸¸×Ó½ø³Ì´¦ÀíĞÅºÅÂß¼­²»Ò»Ñù
+static void sig_callback(int sig, short event, void* arg)
 {
 	if (is_child == 1) {
 		_sig_callback_worker(sig, event, arg);
@@ -48,7 +58,7 @@ void sig_callback(int sig, short event, void* arg)
 	}
 }
 
-void _sig_callback_master(int sig, short event, void* arg)
+static void _sig_callback_master(int sig, short event, void* arg)
 {
 	int stat;
 	int ret;
@@ -72,8 +82,9 @@ void _sig_callback_master(int sig, short event, void* arg)
 	}
 }
 
-void _sig_callback_worker(int sig, short event, void* arg)
+static void _sig_callback_worker(int sig, short event, void* arg)
 {
+	log_msg(__FILE__, __LINE__, "worker %d callback", getpid());
 	switch (sig) {
 	case SIGCHLD:
 		log_msg(__FILE__, __LINE__, "SIGCHLD caught");
@@ -112,13 +123,14 @@ int master_cycle()
 	return 0;
 }
 
-int master_kill_worker()
+static int master_kill_worker()
 {
+	log_msg(__FILE__, __LINE__, "master kill worker");
 	//kill all process
-	kill(0, SIGTERM);//self and childs
+	kill(0, SIGINT);//self and childs
 }
 
-int master_destroy()
+static int master_destroy()
 {
 	server_destroy();
 	log_destroy();
@@ -143,17 +155,17 @@ static int master_spawn_worker()
 	case -1:
 		return -1;
 	case 0:
-		is_child = 1;//æ ‡ç¤ºä¸ºchildè¿›ç¨‹
+		is_child = 1;//±êÊ¾Îªchild½ø³Ì
 		log_msg(__FILE__, __LINE__, "come into the worker process pid = %d", getpid());
 		worker_cycle();// a loop never break
-		break;//ä¸ä¼šæ‰§è¡Œåˆ°è¿™é‡Œ
+		break;//²»»áÖ´ĞĞµ½ÕâÀï
 	default:
 		break;
 	}	
 }
 
 
-//----------------------------------------------------------------
+//----------------------------------------------------------
 
 static int worker_init()
 {
@@ -162,7 +174,7 @@ static int worker_init()
 	log_msg(__FILE__, __LINE__, "worker init succeed");
 }
 
-int worker_cycle()
+static int worker_cycle()
 {
 	worker_init();
 
