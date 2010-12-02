@@ -24,8 +24,8 @@ int log_fd = -1;
 void log_init()
 {
 	log_level = cfg->log_level;
-	printf("cfg->log_file = %s\n", cfg->log_file);
-	printf("cfg->log_dir = %s\n", cfg->log_dir);
+	//printf("cfg->log_file = %s\n", cfg->log_file);
+	//printf("cfg->log_dir = %s\n", cfg->log_dir);
 	log_file = (char*)malloc(20);
 	log_dir = (char*)malloc(20);
 	strcpy(log_file, cfg->log_file);

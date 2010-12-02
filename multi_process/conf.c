@@ -87,6 +87,8 @@ void conf_init()
 	lua_pop(L, 1);//pop "log_dir"
 
 	lua_close(L);
+
+	conf_print();
 }
 
 int conf_destroy()

@@ -62,8 +62,11 @@ int server_network_register()
 static void _server_handle_listen(int fd, short ev, void* arg)
 {
 	log_msg(__FILE__, __LINE__, "a connection comes, pid=%d", getpid());
-	if (srv->conns->used > srv->max_fds)
+	log_msg(__FILE__, __LINE__, "used = %d, max = %d, pid=%d", srv->conns->used, srv->max_fds, getpid());
+	if (srv->conns->used > srv->max_fds) {
 		return;
+	}
+
 	struct sockaddr_in addr;
 	int len = sizeof(addr);
 	int sock = accept(fd, (struct sockaddr*)&addr, (socklen_t*)&len);
@@ -77,6 +80,7 @@ static void _server_handle_listen(int fd, short ev, void* arg)
 	flag |= O_NONBLOCK;
 	fcntl(sock, F_SETFL, flag);
 
+	//需要改进，修改为内存池方式，做一个connection的池
 	conn* c = conn_new(sock);
 
 	int ret = _server_add_conn(c);
