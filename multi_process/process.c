@@ -10,8 +10,8 @@
 
 #include "server.h"
 #include "process.h"
+#include "conf.h"
 
-#include "sig.h"
 #include "log.h"
 
 //静态函数declaration
@@ -22,12 +22,12 @@ static void _sig_callback_worker(int sig, short event, void* arg);
 
 static int master_init();
 static int master_start_worker();
-static int master_kill_worker();
+static int master_exit();
 static int master_spawn_worker();
-static int master_destroy();
 
 static int worker_init();
 static int worker_cycle();
+static int worker_exit();
 
 //to identify child / parent
 int is_child = 0;
@@ -73,10 +73,10 @@ static void _sig_callback_master(int sig, short event, void* arg)
 	case SIGINT:
 	case SIGTERM:
 		log_msg(__FILE__, __LINE__, "SIGINT/SIGTERM caught");
-		master_kill_worker();//kill child
-		exit(1);//quit it self
+		master_exit();
 		break;
 	case SIGHUP:
+		//conf_init();
 		log_msg(__FILE__, __LINE__, "SIGHUP caught");
 		break;
 	}
@@ -92,7 +92,7 @@ static void _sig_callback_worker(int sig, short event, void* arg)
 	case SIGINT:
 	case SIGTERM:
 		log_msg(__FILE__, __LINE__, "SIGINT/SIGTERM caught");
-		exit(1);
+		worker_exit();
 		break;
 	case SIGHUP:
 		log_msg(__FILE__, __LINE__, "SIGHUP caught");
@@ -104,13 +104,12 @@ static void _sig_callback_worker(int sig, short event, void* arg)
 
 static int master_init()
 {
-	sig_register();
 	log_msg(__FILE__, __LINE__, "master init succeed");
+	sig_register();
 }
 
 int master_cycle()
 {
-	int stat;
 	//master init
 	master_init();
 
@@ -123,18 +122,17 @@ int master_cycle()
 	return 0;
 }
 
-static int master_kill_worker()
+static int master_exit()
 {
+	//清理资源的代码需要修改
 	log_msg(__FILE__, __LINE__, "master kill worker");
-	//kill all process
-	kill(0, SIGINT);//self and childs
-}
-
-static int master_destroy()
-{
 	server_destroy();
 	log_destroy();
 	conf_destroy();
+
+	//kill all process
+	kill(0, SIGINT);//self and childs
+	exit(0);
 	return 0;
 }
 
@@ -182,4 +180,14 @@ static int worker_cycle()
 	event_dispatch();
 
 	return 0;
+}
+
+static int worker_exit()
+{
+	//这里要修改
+	server_destroy();
+	log_destroy();
+	conf_destroy();
+
+	exit(0);
 }
