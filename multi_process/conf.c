@@ -12,7 +12,7 @@
 //global config
 config* cfg = NULL;
 
-int conf_init() 
+void conf_init() 
 {
 	cfg = (config*)calloc(1, sizeof(config));
 	cfg->log_file = (char*)calloc(1, 20);
@@ -27,24 +27,24 @@ int conf_init()
 		printf("load conf file failed\n");
 		fprintf(stderr, "%s\n", lua_tostring(L, -1));//取栈顶的错误信息
 		lua_pop(L, 1);
-		return -1;
+		exit(1);
 	}
 	
 	lua_getglobal(L, "server");
 	if (!lua_istable(L, -1)) {
 		printf("server should be a table\n");
-		return -1;
+		exit(1);
 	}
 	lua_getfield(L, -1, "network");
 
 	if (!lua_istable(L, -1)) {
 		printf("network should be a table\n");
-		return -1;
+		exit(1);
 	}
 	lua_getfield(L, -1, "port");
 	if (!lua_isnumber(L, -1)) {
 		printf("port should be a table\n");
-		return -1;
+		exit(1);
 	}
 	cfg->port = lua_tointeger(L, -1);
 	lua_pop(L, 1);//pop "port"
@@ -52,7 +52,7 @@ int conf_init()
 	lua_getfield(L, -1, "max_fds");
 	if (!lua_isnumber(L, -1)) {
 		printf("port should be a table\n");
-		return -1;
+		exit(1);
 	}
 	cfg->max_fds = lua_tointeger(L, -1);
 	lua_pop(L, 1);//pop "max_fds"
@@ -61,7 +61,7 @@ int conf_init()
 	lua_getfield(L, -1, "log");
 	if (!lua_istable(L, -1)) {
 		printf("log should be a table\n");
-		return -1;
+		exit(1);
 	}
 	lua_getfield(L, -1, "log_level");
 	cfg->log_level = lua_tointeger(L, -1);
@@ -87,8 +87,6 @@ int conf_init()
 	lua_pop(L, 1);//pop "log_dir"
 
 	lua_close(L);
-
-	return 0;
 }
 
 int conf_destroy()
@@ -104,10 +102,10 @@ void conf_print()
 	printf("doc_root : %s\n", cfg->doc_root);
 }
 
-int conf_free()
+void conf_free()
 {
 	if (cfg == NULL)
-		return 0;
+		return;
 	if (cfg->log_file != NULL)
 		free(cfg->log_file);
 	if (cfg->log_dir != NULL)
@@ -115,5 +113,4 @@ int conf_free()
 	if (cfg->doc_root != NULL)
 		free(cfg->doc_root);
 	free(cfg);
-	return 0;
 }

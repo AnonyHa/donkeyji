@@ -9,11 +9,12 @@ typedef enum {
 }LOG_LEVEL;
 ;
 
-int log_init();
+void log_init();
+void log_destroy();
 
-int log_warn();
-int log_msg(const char* filename, unsigned int line, const char* fmt, ...);
-int log_debug();
-int log_err();
+void log_warn();
+void log_msg(const char* filename, unsigned int line, const char* fmt, ...);
+void log_debug();
+void log_err();
 
 #endif

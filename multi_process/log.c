@@ -21,7 +21,7 @@ char* log_file = NULL;
 char* log_dir = NULL;
 int log_fd = -1;
 
-int log_init()
+void log_init()
 {
 	log_level = cfg->log_level;
 	printf("cfg->log_file = %s\n", cfg->log_file);
@@ -31,12 +31,13 @@ int log_init()
 	strcpy(log_file, cfg->log_file);
 	strcpy(log_dir, cfg->log_dir);
 	log_fd = open(log_file, O_APPEND|O_WRONLY|O_CREAT, 0644);
-	if (log_fd == -1)
-		return -1;
-	return 0;
+	if (log_fd == -1) {
+		perror("open log fd");
+		exit(1);
+	}
 }
 
-int log_destroy()
+void log_destroy()
 {}
 
 static int evutil_vsnprintf(char* buf, size_t buflen, const char* fmt, va_list ap)
@@ -129,21 +130,20 @@ static void _log_output(int log_level, const char* msg)
 
 
 
-int log_msg(const char* filename, unsigned int line, const char* fmt, ...)
+void log_msg(const char* filename, unsigned int line, const char* fmt, ...)
 {
 	va_list ap;
 	va_start(ap, fmt);
 	_log_warn_helper(LOG_MSG, errno, filename, line, fmt, ap);
 	va_end(ap);
-	return 0;
 }
 
-int log_warn()
+void log_warn()
 {}
 
-int log_debug()
+void log_debug()
 {}
 
-int log_err()
+void log_err()
 {}
 

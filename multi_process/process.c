@@ -15,15 +15,15 @@
 #include "log.h"
 
 //静态函数declaration
-static int sig_register();
+static void sig_register();
 static void sig_callback(int sig, short event, void* arg);
 static void _sig_callback_master(int sig, short event, void* arg);
 static void _sig_callback_worker(int sig, short event, void* arg);
 
-static int master_init();
-static int master_start_worker();
+static void master_init();
+static void master_start_worker();
 static int master_exit();
-static int master_spawn_worker();
+static pid_t master_spawn_worker();
 
 static int worker_init();
 static int worker_cycle();
@@ -34,16 +34,16 @@ int is_child = 0;
 
 //-------------------------------------------------------
 //fork出子进程之前注册信号
-static int sig_register()
+static void sig_register()
 {
 	int i;
 	struct event* se;
-	int SIG[] = {SIGINT, SIGTERM, SIGCHLD, SIGHUP};
+	int SIG[] = {SIGINT};//, SIGTERM, SIGCHLD, SIGHUP};
 	for (i=0; i<sizeof(SIG)/sizeof(int); i++) {
 		se = (struct event*)calloc(1, sizeof(struct event));
-		log_msg(__FILE__, __LINE__, "se = %x, size = %d, i=%d", se, sizeof(struct event), i);
 		assert(se);
-		signal_set(se, SIGINT, sig_callback, se);
+		log_msg(__FILE__, __LINE__, "se = %x, size = %d, i=%d", se, sizeof(struct event), i);
+		signal_set(se, SIG[i], sig_callback, se);
 		signal_add(se, NULL);
 	}
 }
@@ -102,13 +102,13 @@ static void _sig_callback_worker(int sig, short event, void* arg)
 
 //-----------------------------------------------------------
 
-static int master_init()
+static void master_init()
 {
 	log_msg(__FILE__, __LINE__, "master init succeed");
 	sig_register();
 }
 
-int master_cycle()
+void master_cycle()
 {
 	//master init
 	master_init();
@@ -118,8 +118,6 @@ int master_cycle()
 
 	//libevent
 	event_dispatch();
-
-	return 0;
 }
 
 static int master_exit()
@@ -136,7 +134,7 @@ static int master_exit()
 	return 0;
 }
 
-static int master_start_worker()
+static void master_start_worker()
 {
 	int i = 0;
 	for (i=0; i<3; i++) {
@@ -146,9 +144,9 @@ static int master_start_worker()
 	log_msg(__FILE__, __LINE__, "master start worker succeed");
 }
 
-static int master_spawn_worker()
+static pid_t master_spawn_worker()
 {
-	int ret = fork();
+	pid_t ret = fork();
 	switch (ret) {
 	case -1:
 		return -1;

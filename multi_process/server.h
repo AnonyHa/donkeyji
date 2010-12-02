@@ -15,7 +15,7 @@ typedef struct _server
 	conn_mgr* conns;
 }server;
 
-int server_init();
-int server_network_init();
+void server_init();
+void server_destroy();
 
 #endif
