@@ -42,7 +42,7 @@ int log_destroy()
 static int evutil_vsnprintf(char* buf, size_t buflen, const char* fmt, va_list ap)
 {
 	int r = vsnprintf(buf, buflen, fmt, ap);
-	buf[buflen-1] = '\0';//å­—ç¬¦ä¸²ç»“å°¾
+	buf[buflen-1] = '\0';//×Ö·û´®½áÎ²
 	return r;
 }
 
@@ -60,7 +60,7 @@ static int evutil_snprintf(char* buf, size_t buflen, const char* fmt, ...)
 static void _log_warn_helper(int log_level, int log_errno, const char* filename, unsigned int line, const char* fmt, va_list ap)
 {
 	char buf[1024];
-	memset(buf, 0, 1024);
+	//memset(buf, 0, 1024);
 	size_t len;
 	int ret;
 	int i;
@@ -84,7 +84,7 @@ static void _log_warn_helper(int log_level, int log_errno, const char* filename,
 
 	_log_output(log_level, buf);
 }
-//æ‰“å°å‡ºlogä¿¡æ¯
+//´òÓ¡³ölogĞÅÏ¢
 static void _log_output(int log_level, const char* msg)
 {
 	char time_buf[21];
@@ -119,8 +119,8 @@ static void _log_output(int log_level, const char* msg)
 		p->tm_mday, p->tm_hour,
 		p->tm_min, p->tm_sec
 	);
-	//time_buf[20] = '\0';//sprintfä¼šè‡ªåŠ¨åŠ ä¸Š'\0'
-	//fprintf(stderr, "[%s]  [%s]  %s\n", time_buf, level_str, msg);//å®é™…çš„æ‰“å°è¾“å‡ºè¯­å¥
+	//time_buf[20] = '\0';//sprintf»á×Ô¶¯¼ÓÉÏ'\0'
+	//fprintf(stderr, "[%s]  [%s]  %s\n", time_buf, level_str, msg);//Êµ¼ÊµÄ´òÓ¡Êä³öÓï¾ä
 	evutil_snprintf(buf, 1024, "[%s]  [%s]  %s\n", time_buf, level_str, msg);
 	int len = strlen(buf);
 	write(log_fd, buf, len);
@@ -135,6 +135,7 @@ int log_msg(const char* filename, unsigned int line, const char* fmt, ...)
 	va_start(ap, fmt);
 	_log_warn_helper(LOG_MSG, errno, filename, line, fmt, ap);
 	va_end(ap);
+	return 0;
 }
 
 int log_warn()

@@ -25,7 +25,7 @@ int conf_init()
 	int error = luaL_loadfile(L, "mp.conf") || lua_pcall(L, 0, LUA_MULTRET, 0);
 	if (error != 0) {
 		printf("load conf file failed\n");
-		fprintf(stderr, "%s\n", lua_tostring(L, -1));//鍙栨爤椤剁殑閿欒淇℃伅
+		fprintf(stderr, "%s\n", lua_tostring(L, -1));//取栈顶的错误信息
 		lua_pop(L, 1);
 		return -1;
 	}
