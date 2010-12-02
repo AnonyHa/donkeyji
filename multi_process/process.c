@@ -22,12 +22,12 @@ static void _sig_callback_worker(int sig, short event, void* arg);
 
 static void master_init();
 static void master_start_worker();
-static int master_exit();
+static void master_exit();
 static pid_t master_spawn_worker();
 
-static int worker_init();
-static int worker_cycle();
-static int worker_exit();
+static void worker_init();
+static void worker_cycle();
+static void worker_exit();
 
 //to identify child / parent
 int is_child = 0;
@@ -120,7 +120,7 @@ void master_cycle()
 	event_dispatch();
 }
 
-static int master_exit()
+static void master_exit()
 {
 	//清理资源的代码需要修改
 	log_msg(__FILE__, __LINE__, "master kill worker");
@@ -131,7 +131,6 @@ static int master_exit()
 	//kill all process
 	kill(0, SIGINT);//self and childs
 	exit(0);
-	return 0;
 }
 
 static void master_start_worker()
@@ -163,24 +162,22 @@ static pid_t master_spawn_worker()
 
 //----------------------------------------------------------
 
-static int worker_init()
+static void worker_init()
 {
 	//init libevent, and add listen socket event
 	server_network_register();
 	log_msg(__FILE__, __LINE__, "worker init succeed");
 }
 
-static int worker_cycle()
+static void worker_cycle()
 {
 	worker_init();
 
 	log_msg(__FILE__, __LINE__, "begin to event_dispath");
 	event_dispatch();
-
-	return 0;
 }
 
-static int worker_exit()
+static void worker_exit()
 {
 	//这里要修改
 	server_destroy();
