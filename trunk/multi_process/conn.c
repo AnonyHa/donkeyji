@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <assert.h>
 
 #include <event.h>
 
@@ -8,7 +9,7 @@
 static void _conn_handle_read(struct bufferevent* bev, void* arg)
 {}
 
-static void _conn_handle_err(struct bufferevent* bev, int what, void* arg)
+static void _conn_handle_err(struct bufferevent* bev, short what, void* arg)
 {}
 
 
@@ -35,9 +36,11 @@ int conn_free(conn* c)
 conn_mgr* conn_mgr_new()
 {
 	conn_mgr* cm = (conn_mgr*)calloc(1, sizeof(conn_mgr));
-	cm->ptr = NULL;
-	cm->size = 0;
+	assert(cm);
+	cm->size = 128;
 	cm->used = 0;
+	cm->ptr = (conn**)calloc(cm->size, sizeof(conn*));
+	assert(cm->ptr);
 	return cm;
 }
 
