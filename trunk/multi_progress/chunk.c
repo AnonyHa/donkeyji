@@ -1,5 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include <mp.h>
 
 #include "chunk.h"
 #include "buffer.h"

@@ -1,4 +1,4 @@
-#include <stdlib.h>
+#include <mp.h>
 #include "buffer.h"
 
 buffer* buffer_new()

@@ -1,6 +1,6 @@
 #ifndef _BUFFER_H
 #define _BUFFER_H
-#include <sys/types.h>
+#include <mp.h>
 
 typedef struct _buffer
 {

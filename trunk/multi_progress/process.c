@@ -1,12 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <signal.h>
-#include <errno.h>
-#include <signal.h>
-#include <assert.h>
-
-#include <event.h>
+#include <mp.h>
 
 #include "server.h"
 #include "process.h"

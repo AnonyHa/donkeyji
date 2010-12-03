@@ -11,10 +11,10 @@ typedef struct _chunk
 
 typedef struct _chunkqueue
 {
-	//ç»´æŠ¤çš„åœ¨ä½¿ç”¨çš„é“¾è¡¨
+	//Î¬»¤µÄÔÚÊ¹ÓÃµÄÁ´±í
 	chunk* head;
 	chunk* tail;
-	//ç»´æŠ¤çš„unusedé“¾è¡¨
+	//Î¬»¤µÄunusedÁ´±í
 	chunk* unused;
 	size_t unused_chunks;
 }chunkqueue;
@@ -24,7 +24,7 @@ void chunk_free(chunk* c);
 
 chunkqueue* chunkqueue_new();
 void chunkqueue_free(chunkqueue* cq);
-chunk* chunkqueue_get_append_chunk(chunkqueue* cq);//æ–°å¢/ç”¨å·²æœ‰çš„chunk
+chunk* chunkqueue_get_append_chunk(chunkqueue* cq);//ĞÂÔö/ÓÃÒÑÓĞµÄchunk
 void chunkqueue_remove_finished_chunks(chunkqueue* cq);
 
 #endif
