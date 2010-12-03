@@ -21,7 +21,8 @@ static void _conn_handle_read(struct bufferevent* bev, void* arg)
 	}
 	*/
 
-	size_t len = 1024;//must be enough to receive
+	//×ã¹»´óµÄ»º³å
+	size_t len = 1024;
 	char buf[len];
 	bzero(buf, len);
 
