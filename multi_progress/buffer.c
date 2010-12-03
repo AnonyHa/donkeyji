@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include "buffer.h"
 
 buffer* buffer_new()
@@ -19,19 +20,19 @@ void buffer_free(buffer* b)
 	free(b);	
 }
 
-//æ¸…ç©ºæ•°æ®ï¼Œä½†æ˜¯ä¸é‡Šæ”¾å†…å­˜ptr
+//Çå¿ÕÊý¾Ý£¬µ«ÊÇ²»ÊÍ·ÅÄÚ´æptr
 void buffer_reset(buffer* b)
 {
 	if (b == NULL)
 		return;
-	//ä¸æ˜¯æ”¾ptrçš„å†…å­˜ç©ºé—´
+	//²»ÊÇ·ÅptrµÄÄÚ´æ¿Õ¼ä
 	if (b->size > 0) {
-		b->ptr[0] = '\0';//å­—ç¬¦ä¸²ç»“å°¾
+		b->ptr[0] = '\0';//×Ö·û´®½áÎ²
 	}
 	b->used = 0;
 }
 
-//appendæ•°æ®åˆ°bufferæœ«å°¾
+//appendÊý¾Ýµ½bufferÄ©Î²
 int buffer_append(buffer* b, char* buf, size_t size)
 {
 	if (b == NULL)
@@ -44,10 +45,10 @@ int buffer_append(buffer* b, char* buf, size_t size)
 	} else if (b->size - b->used < size) {
 		int less = size - (b->size - b->used);
 		b->size += less + (128 - less % 128);
-		b->ptr = (char*)realloc(b->size);
+		b->ptr = (char*)realloc(b->ptr, b->size);
 		if (b->ptr == NULL)
 			return -1;
 	}
-	memcpy(b->ptr + b->used, buf, len);
+	memcpy((void*)(b->ptr + b->used), (void*)buf, size);
 	return 0;
 }
