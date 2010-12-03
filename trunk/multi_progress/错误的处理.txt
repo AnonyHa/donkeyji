@@ -9,4 +9,32 @@ PS: assert是调试模式下起作用，当定义了NDEBUG宏时assert()就不起作用了。
 
 5、在main()中，return的地方，我觉得无需去清理进程资源，让OS去做这个吧。nginx中，main()中return的地方就没有做资源清理，顶多打一个log；而lighttpd中，有的地方也是直接return，有的则又进行资源的清理。
 
-6、不能忍受的是，为何lighttpd的main那么长。。。1000多行
+6、内存管理：所有的struct都用指针管理，如
+struct a{};
+struct a* a_init()
+{}
+
+
+void a_free(struct a* pa)
+{
+	free(pa);
+}
+
+struct b{
+	struct a* pa;
+};
+struct b* b_init()
+{
+	pb = malloc();
+	pb->pa = a_init();//初始化都为空
+	return pb;
+}
+
+void b_free(struct b* pb)
+{
+	a_free(pb->pa);
+	free(pb);	
+}
+在*_init()中的错误如何处理呢?
+如pb->pa = a_init();这里如何保证不为NULL呢?
+
