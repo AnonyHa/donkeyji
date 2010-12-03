@@ -43,15 +43,30 @@ chunkqueue* chunkqueue_new()
 }
 
 void chunkqueue_free(chunkqueue* cq)
-{}
+{
+	chunk* c;
+	chunk* tmp;
+	if (cq == NULL)
+		return;
+	for (c=cq->head; c!=NULL; ) {
+		tmp = c->next;
+		chunk_free(c);
+		c = tmp;
+	}
+
+	for (c=cq->unused; c!=NULL; c=c->next) {
+		tmp = c->next;
+		chunk_free(c);
+		c = tmp;
+	}
+}
 
 //对外接口
 chunk* chunkqueue_get_append_chunk(chunkqueue* cq)
 {
-	chunk* c = chunkqueue_get_unused_chunk(cq);
-	if (c == NULL) {
+	chunk* c = chunkqueue_get_unused_chunk(cq);//从unused链表中找到一个chunk
+	if (c == NULL)
 		return NULL;
-	}
 	chunkqueue_append_chunk(cq, c);//append 到queue中
 	return c; 
 }
@@ -60,11 +75,11 @@ static chunk* chunkqueue_get_unused_chunk(chunkqueue* cq)
 {
 	chunk* c;
 	if (cq->unused == NULL) {
-		c = chunk_new();
+		c = chunk_new();//不放入unused链表，因为该chunk是要使用的
 	} else {
-		c = cq->unused;
+		c = cq->unused;//取下unused链表的表头使用
 		cq->unused = c->next;
-		c->next = NULL;//??为何要赋NULL
+		c->next = NULL;//该chunk与unused链表脱离关系
 		cq->unused_chunks--;
 	}
 	return c;
@@ -83,3 +98,6 @@ static void chunkqueue_append_chunk(chunkqueue* cq, chunk* c)
 	if (c->head == NULL)
 		c->head = c;
 }
+
+void chunkqueue_remove_finished_chunks(chunkqueue* cq)
+{}
