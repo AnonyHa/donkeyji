@@ -4,7 +4,7 @@
 typedef struct _config
 {
 	int port;
-	int max_fds;
+	int max_conns;
 
 	int log_level;
 	char* log_file;

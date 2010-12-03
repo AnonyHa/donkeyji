@@ -33,7 +33,7 @@ void server_init()
 	assert(srv);
 
 	srv->port = cfg->port;
-	srv->max_fds = cfg->max_fds;
+	srv->max_conns = cfg->max_conns;
 
 	srv->listen_sock = _server_create_listen_sock(srv->port);
 
@@ -64,8 +64,9 @@ int server_network_register()
 static void _server_handle_listen(int fd, short ev, void* arg)
 {
 	log_msg(__FILE__, __LINE__, "a connection comes, pid=%d", getpid());
-	log_msg(__FILE__, __LINE__, "used = %d, max = %d, pid=%d", srv->conns->used, srv->max_fds, getpid());
-	if (srv->conns->used > srv->max_fds) {
+	log_msg(__FILE__, __LINE__, "used = %d, max = %d, pid=%d", srv->conns->used, srv->max_conns, getpid());
+	//如何保证??
+	if (srv->conns->used > srv->max_conns) {
 		return;
 	}
 
