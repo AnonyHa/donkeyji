@@ -3,46 +3,11 @@
 #include "conn.h"
 #include "log.h"
 #include "chunk.h"
+static void conn_process_chunk(conn* c);
+static void _conn_handle_read(struct bufferevent* bev, void* arg);
+static void _conn_handle_err(struct bufferevent* bev, short what, void* arg);
 
-static void _conn_handle_read(struct bufferevent* bev, void* arg)
-{
-	log_msg(__FILE__, __LINE__, "data from conn to read: fd = %d", ((conn*)arg)->fd);
-
-	/*
-	size_t len = bev->input->off;
-	if (len == 0) {
-		log_msg(__FILE__, __LINE__, "no data");
-		return;
-	}
-	*/
-
-	//足够大的缓冲
-	conn* con = (conn*)arg;//connection对象
-	size_t len = 1024;
-	char buf[len];
-	bzero(buf, len);
-
-	size_t read_len = bufferevent_read(bev, buf, len);
-	if (read_len <= 0) {
-		log_msg(__FILE__, __LINE__, "bufferevent read error: %s", strerror(errno));
-		return;
-	}
-	chunk* ck = chunkqueue_get_append_chunk(con->read_q);	
-	if (ck == NULL) 
-		return;
-	buffer_append(ck->mem, buf, read_len);
-
-	log_msg(__FILE__, __LINE__, "read data: %s", buf);
-}
-
-
-static void _conn_handle_err(struct bufferevent* bev, short what, void* arg)
-{
-	log_msg(__FILE__, __LINE__, "conn error: fd = %d", ((conn*)arg)->fd);
-	bufferevent_free(bev);
-	close((int)arg);
-}
-
+//---------------------------------------------------
 
 conn* conn_new(int sock)
 {
@@ -75,6 +40,8 @@ void conn_free(conn* c)
 
 	free(c);
 }
+
+
 //----------------------------------------------------------
 conn_mgr* conn_mgr_new()
 {
@@ -107,4 +74,52 @@ int conn_mgr_add(conn_mgr* cm, conn* c)
 }
 
 int conn_mgr_del(conn_mgr* cm, conn* c)
+{}
+
+
+//----------------------------------------------------------
+static void _conn_handle_read(struct bufferevent* bev, void* arg)
+{
+	log_msg(__FILE__, __LINE__, "data from conn to read: fd = %d", ((conn*)arg)->fd);
+
+	/*
+	size_t len = bev->input->off;
+	if (len == 0) {
+		log_msg(__FILE__, __LINE__, "no data");
+		return;
+	}
+	*/
+
+	//足够大的缓冲
+	conn* c = (conn*)arg;//connection对象
+	size_t len = 1024;
+	char buf[len];
+	bzero(buf, len);
+
+	size_t read_len = bufferevent_read(bev, buf, len);
+	if (read_len <= 0) {
+		log_msg(__FILE__, __LINE__, "bufferevent read error: %s", strerror(errno));
+		return;
+	}
+	chunk* ck = chunkqueue_get_append_chunk(c->read_q);	
+	if (ck == NULL) 
+		return;
+	buffer_append(ck->mem, buf, read_len);
+
+	log_msg(__FILE__, __LINE__, "read data: %s", buf);
+
+	conn_process_chunk(c);
+}
+
+
+static void _conn_handle_err(struct bufferevent* bev, short what, void* arg)
+{
+	conn* c = (conn*)arg;//connection对象
+	log_msg(__FILE__, __LINE__, "conn error: fd = %d", c->fd);
+	bufferevent_free(bev);
+	close(c->fd);
+	log_msg(__FILE__, __LINE__, "close sock: Fd = %d", c->fd);
+}
+
+static void conn_process_chunk(conn* c)
 {}

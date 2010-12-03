@@ -50,5 +50,6 @@ int buffer_append(buffer* b, char* buf, size_t size)
 			return -1;
 	}
 	memcpy((void*)(b->ptr + b->used), (void*)buf, size);
+	log_msg(__FILE__, __LINE__, "append over");
 	return 0;
 }
