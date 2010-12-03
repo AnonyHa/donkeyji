@@ -1,7 +1,7 @@
 #ifndef _CONN_H
 #define _CONN_H
 
-#include <sys/types.h>
+#include <mp.h>
 
 #include "chunk.h"
 

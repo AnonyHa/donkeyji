@@ -1,14 +1,4 @@
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>
-#include <errno.h>
-#include <time.h>
-#include <assert.h>
+#include <mp.h>
 
 #include "conf.h"
 #include "log.h"
@@ -16,6 +6,8 @@
 
 static void _log_output(int log_level, const char* msg);
 static void _log_warn_helper(int log_level, int log_errno, const char* filename, unsigned int line, const char* fmt, va_list ap);
+static int _log_vsnprintf(char* buf, size_t buflen, const char* fmt, va_list ap);
+static int _log_snprintf(char* buf, size_t buflen, const char* fmt, ...);
 
 LOG_LEVEL log_level = LOG_MSG;
 char* log_file = NULL; 
@@ -46,19 +38,19 @@ void log_init()
 void log_destroy()
 {}
 
-static int evutil_vsnprintf(char* buf, size_t buflen, const char* fmt, va_list ap)
+static int _log_vsnprintf(char* buf, size_t buflen, const char* fmt, va_list ap)
 {
 	int r = vsnprintf(buf, buflen, fmt, ap);
 	buf[buflen-1] = '\0';//字符串结尾
 	return r;
 }
 
-static int evutil_snprintf(char* buf, size_t buflen, const char* fmt, ...)
+static int _log_snprintf(char* buf, size_t buflen, const char* fmt, ...)
 {
 	int r;
 	va_list ap;
 	va_start(ap, fmt);
-	r = evutil_vsnprintf(buf, buflen, fmt, ap);
+	r = _log_vsnprintf(buf, buflen, fmt, ap);
 	va_end(ap);
 	return r;
 }
@@ -74,7 +66,7 @@ static void _log_warn_helper(int log_level, int log_errno, const char* filename,
 
 
 	if (fmt != NULL) {
-		evutil_vsnprintf(buf, sizeof(buf), fmt, ap);
+		_log_vsnprintf(buf, sizeof(buf), fmt, ap);
 	} else {
 		buf[0] = '\0';
 	}
@@ -86,7 +78,7 @@ static void _log_warn_helper(int log_level, int log_errno, const char* filename,
 
 	/*
 	len = strlen(buf);
-	evutil_snprintf(buf+len, sizeof(buf)-len, ": %s, %s", filename, line);
+	_log_snprintf(buf+len, sizeof(buf)-len, ": %s, %s", filename, line);
 	*/
 
 	_log_output(log_level, buf);
@@ -128,7 +120,7 @@ static void _log_output(int log_level, const char* msg)
 	);
 	//time_buf[20] = '\0';//sprintf会自动加上'\0'
 	//fprintf(stderr, "[%s]  [%s]  %s\n", time_buf, level_str, msg);//实际的打印输出语句
-	evutil_snprintf(buf, 1024, "[%s]  [%s]  %s\n", time_buf, level_str, msg);
+	_log_snprintf(buf, 1024, "[%s]  [%s]  %s\n", time_buf, level_str, msg);
 	int len = strlen(buf);
 	write(log_fd, buf, len);
 	printf("%s", buf);

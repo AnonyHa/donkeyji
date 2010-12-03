@@ -1,13 +1,6 @@
-#include <lua.h>
-#include <lualib.h>
-#include <lauxlib.h>
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <mp.h>
 
 #include "conf.h"
-
 
 //global config
 config* cfg = NULL;
