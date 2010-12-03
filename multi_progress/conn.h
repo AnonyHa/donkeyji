@@ -18,6 +18,7 @@ conn* conn_new(int sock);
 void conn_free(conn* c);
 
 //-------------------------------------
+//Êý×éÈÝÆ÷
 typedef struct _conn_mgr
 {
 	conn** ptr;
