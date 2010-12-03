@@ -1,5 +1,9 @@
+#include <stdio.h>
+#include <stdlib.h>
+
 #include "chunk.h"
-//#include "buffer.h"
+#include "buffer.h"
+
 static chunk* chunkqueue_get_unused_chunk(chunkqueue* cq);
 static void chunkqueue_append_chunk(chunkqueue* cq, chunk* c);
 
@@ -18,7 +22,7 @@ void chunk_free(chunk* c)
 	if (c == NULL)
 		return;
 	buffer_free(c->mem);
-	//ä¸å¤„ç†c->next
+	//²»´¦Àíc->next
 	free(c);
 }
 
@@ -27,7 +31,7 @@ void chunk_reset(chunk* c)
 	if (c == NULL)
 		return;
 	buffer_reset(c->mem);
-	//ä¸å¤„ç†c->next
+	//²»´¦Àíc->next
 }
 
 //---------------------------------------
@@ -61,13 +65,13 @@ void chunkqueue_free(chunkqueue* cq)
 	}
 }
 
-//å¯¹å¤–æŽ¥å£
+//¶ÔÍâ½Ó¿Ú
 chunk* chunkqueue_get_append_chunk(chunkqueue* cq)
 {
-	chunk* c = chunkqueue_get_unused_chunk(cq);//ä»Žunusedé“¾è¡¨ä¸­æ‰¾åˆ°ä¸€ä¸ªchunk
+	chunk* c = chunkqueue_get_unused_chunk(cq);//´ÓunusedÁ´±íÖÐÕÒµ½Ò»¸öchunk
 	if (c == NULL)
 		return NULL;
-	chunkqueue_append_chunk(cq, c);//append åˆ°queueä¸­
+	chunkqueue_append_chunk(cq, c);//append µ½queueÖÐ
 	return c; 
 }
 
@@ -75,28 +79,28 @@ static chunk* chunkqueue_get_unused_chunk(chunkqueue* cq)
 {
 	chunk* c;
 	if (cq->unused == NULL) {
-		c = chunk_new();//ä¸æ”¾å…¥unusedé“¾è¡¨ï¼Œå› ä¸ºè¯¥chunkæ˜¯è¦ä½¿ç”¨çš„
+		c = chunk_new();//²»·ÅÈëunusedÁ´±í£¬ÒòÎª¸ÃchunkÊÇÒªÊ¹ÓÃµÄ
 	} else {
-		c = cq->unused;//å–ä¸‹unusedé“¾è¡¨çš„è¡¨å¤´ä½¿ç”¨
+		c = cq->unused;//È¡ÏÂunusedÁ´±íµÄ±íÍ·Ê¹ÓÃ
 		cq->unused = c->next;
-		c->next = NULL;//è¯¥chunkä¸Žunusedé“¾è¡¨è„±ç¦»å…³ç³»
+		c->next = NULL;//¸ÃchunkÓëunusedÁ´±íÍÑÀë¹ØÏµ
 		cq->unused_chunks--;
 	}
 	return c;
 }
 
-//åªç®¡appendï¼Œä¸ç®¡unusedå˜åŒ–
+//Ö»¹Üappend£¬²»¹Üunused±ä»¯
 static void chunkqueue_append_chunk(chunkqueue* cq, chunk* c)
 {
-	/* æ— éœ€åšè¿™ç§æ£€æŸ¥ï¼Œç›¸ä¿¡è°ƒç”¨è€…
+	/* ÎÞÐè×öÕâÖÖ¼ì²é£¬ÏàÐÅµ÷ÓÃÕß
 	if (cq == NULL)
 		return;
 	*/
-	if (c->tail != NULL)
+	if (cq->tail != NULL)
 		cq->tail->next = c;
 	cq->tail = c;
-	if (c->head == NULL)
-		c->head = c;
+	if (cq->head == NULL)
+		cq->head = c;
 }
 
 void chunkqueue_remove_finished_chunks(chunkqueue* cq)

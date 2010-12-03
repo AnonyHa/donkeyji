@@ -33,10 +33,10 @@ static void _conn_handle_read(struct bufferevent* bev, void* arg)
 		log_msg(__FILE__, __LINE__, "bufferevent read error: %s", strerror(errno));
 		return;
 	}
-	chunk* ck = chunkqueue_get_append_chunk(conn->read_q);	
+	chunk* ck = chunkqueue_get_append_chunk(con->read_q);	
 	if (ck == NULL) 
 		return;
-	chunk_append(ck, buf, read_len);
+	buffer_append(ck->mem, buf, read_len);
 
 	log_msg(__FILE__, __LINE__, "read data: %s", buf);
 }
