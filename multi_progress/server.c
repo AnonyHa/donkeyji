@@ -7,12 +7,12 @@
 
 
 static void _server_handle_listen(int fd, short ev, void* arg);
-static int _server_add_conn(conn* c);
 static int _server_create_listen_sock(int port);
 //----------------------------------------
 server* srv = NULL;
 
-void server_init()
+void 
+server_init()
 {
 	log_msg(__FILE__, __LINE__, "server init");
 
@@ -35,10 +35,12 @@ void server_init()
 	log_msg(__FILE__, __LINE__, "server obj created");
 }
 
-void server_destroy()
+void 
+server_destroy()
 {}
 
-int server_network_register() 
+int 
+server_network_register() 
 {
 	log_msg(__FILE__, __LINE__, "begin to init libevent");
 	event_set(srv->listen_ev, srv->listen_sock, EV_READ|EV_PERSIST, _server_handle_listen, srv->listen_ev);
@@ -48,7 +50,8 @@ int server_network_register()
 }
 
 
-static void _server_handle_listen(int fd, short ev, void* arg)
+static void 
+_server_handle_listen(int fd, short ev, void* arg)
 {
 	log_msg(__FILE__, __LINE__, "a connection comes, pid=%d", getpid());
 	log_msg(__FILE__, __LINE__, "used = %d, max = %d, pid=%d", srv->conns->used, srv->max_conns, getpid());
@@ -71,23 +74,13 @@ static void _server_handle_listen(int fd, short ev, void* arg)
 	fcntl(sock, F_SETFL, flag);
 
 	//需要改进，修改为内存池方式，做一个connection的池
-	conn* c = conn_new(sock);
+	conn_mgr_add_conn(srv->conns, sock);
 
-	int ret = _server_add_conn(c);
-	if (ret < 0) {
-		log_msg(__FILE__, __LINE__, "add connection to server failed");
-		conn_free(c);
-		return;
-	}
 	log_msg(__FILE__, __LINE__, "add connection succeed");
 }
 
-static int _server_add_conn(conn* c)
-{
-	return conn_mgr_add(srv->conns, c);
-}
-
-static int _server_create_listen_sock(int port)
+static int 
+_server_create_listen_sock(int port)
 {
 	int sock;
 	int flag;
