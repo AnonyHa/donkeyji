@@ -30,7 +30,13 @@ server_init()
 	srv->conns = conn_mgr_new();
 	assert(srv->conns);
 
+	//³õÊ¼»¯libevent
 	event_init();
+
+	if (cfg->daemon == 1) {
+		log_msg(__FILE__, __LINE__, "to daemon");
+		daemon(1, 1);
+	}
 
 	log_msg(__FILE__, __LINE__, "server obj created");
 }
@@ -44,6 +50,7 @@ server_network_register()
 {
 	log_msg(__FILE__, __LINE__, "begin to init libevent");
 	event_set(srv->listen_ev, srv->listen_sock, EV_READ|EV_PERSIST, _server_handle_listen, srv->listen_ev);
+	log_msg(__FILE__, __LINE__, "11111111111");
 	event_add(srv->listen_ev, NULL);
 	log_msg(__FILE__, __LINE__, "listen_ev add to libevent");
 	return 0;

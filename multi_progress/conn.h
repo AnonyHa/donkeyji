@@ -15,8 +15,10 @@ typedef struct _conn
 	chunkqueue* write_q;
 }conn;
 
-//-------------------------------------
+//--------------------------------------------------
 //数组容器
+//用完的conn归还入conn_mgr，reset conn，以备下次再用
+//--------------------------------------------------
 typedef struct _conn_mgr
 {
 	conn** ptr;
@@ -28,4 +30,5 @@ conn_mgr* conn_mgr_new();
 void conn_mgr_free(conn_mgr* cm);
 void conn_mgr_reset(conn_mgr* cm);
 void conn_mgr_add_conn(conn_mgr* cm, int sock);
+
 #endif

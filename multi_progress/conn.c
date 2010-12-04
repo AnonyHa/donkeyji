@@ -14,7 +14,6 @@ static void _conn_handle_err(struct bufferevent* bev, short what, void* arg);
 static conn* 
 conn_new()
 {
-	/*在构造函数里的malloc失败如何处理比较好????*/
 	conn* c = (conn*)calloc(1, sizeof(conn));
 	assert(c);
 	c->fd = -1;//这里也不设置fd
@@ -48,18 +47,18 @@ conn_free(conn* c)
 	free(c);
 }
 
-//设置fd
-static void 
-conn_set_fd(conn* c, int fd)
-{
-	c->fd = fd;
-}
-
 //为conn注册read/write事件
-static void 
+static void
 conn_register_event(conn* c)
 {
+	//只能重新生成bufferevent
 	c->bev = bufferevent_new(c->fd, _conn_handle_read, NULL, _conn_handle_err, (void*)c);
+	//log_msg(__FILE__, __LINE__, "bufferevent_new c->bev->input = %x", c->bev->input);
+	//log_msg(__FILE__, __LINE__, "bufferevent_new c->bev->output = %x", c->bev->output);
+	if (c->bev == NULL) {
+		log_msg(__FILE__, __LINE__, "bufferevent_new failed");
+		return;
+	}
 	bufferevent_enable(c->bev, EV_READ|EV_WRITE);
 }
 
@@ -70,15 +69,17 @@ conn_unregister_event(conn* c)
 	bufferevent_free(c->bev);
 }
 
-
+//----------------------
 //重置，而不是释放内存
+//----------------------
 static void
 conn_reset(conn* c)
 {
 	if (c == NULL)
 		return;
 
-	conn_unregister_event(c);//这里不能reset，只好free掉，注册的时候再malloc了，悲剧。。。
+	//buffervern对象不能reset，只好free掉，注册的时候再malloc了，悲剧...
+	conn_unregister_event(c);
 
 	if (c->read_q != NULL)
 		chunkqueue_reset(c->read_q);
@@ -127,9 +128,12 @@ conn_mgr_add_conn(conn_mgr* cm, int sock)
 {
 	conn* c;
 	int i;
+	log_msg(__FILE__, __LINE__, "5555555");
 	if (cm->size == 0) {//第一次分配
 		cm->size = 128;
+		log_msg(__FILE__, __LINE__, "6666666");
 		cm->ptr = (conn**)calloc(cm->size, sizeof(conn*));
+		log_msg(__FILE__, __LINE__, "7777777");
 		for (i=0; i<cm->size; i++) {
 			cm->ptr[i] = conn_new();
 		}
@@ -140,22 +144,28 @@ conn_mgr_add_conn(conn_mgr* cm, int sock)
 			cm->ptr[i] = conn_new();
 		}
 	}
+
 	c = cm->ptr[cm->used];
+	//conn_reset(c);//其实在归还conn对象时已经reset过了，这里无需重复
+
 	c->ndx = cm->used;
 	cm->used++;
 
-	conn_set_fd(c, sock);
+	//注册网络事件
+	c->fd = sock;
 	conn_register_event(c);
-
 }
 
 //
 static void 
 conn_mgr_del_conn(conn_mgr* cm, conn* c)
 {
-	int ndx = c->ndx;
+	int ndx;
 	conn* tmp;
+	if (c == NULL)
+		return;
 
+	ndx = c->ndx;
 	if (ndx == -1)//不在数组里
 		return;
 
@@ -183,8 +193,9 @@ static void
 _conn_handle_read(struct bufferevent* bev, void* arg)
 {
 	log_msg(__FILE__, __LINE__, "data from conn to read: fd = %d", ((conn*)arg)->fd);
+	log_msg(__FILE__, __LINE__, "bev->input = %d", bev->input);
 
-	/*
+	/* 奇怪，为什么bev->input始终为0????
 	size_t len = bev->input->off;
 	if (len == 0) {
 		log_msg(__FILE__, __LINE__, "no data");
@@ -203,13 +214,20 @@ _conn_handle_read(struct bufferevent* bev, void* arg)
 		log_msg(__FILE__, __LINE__, "bufferevent read error: %s", strerror(errno));
 		return;
 	}
+	log_msg(__FILE__, __LINE__, "bufferevent read len = %d", read_len);
+
 	chunk* ck = chunkqueue_get_append_chunk(c->read_q);	
 	if (ck == NULL) 
 		return;
 	buffer_append(ck->mem, buf, read_len);
+	log_msg(__FILE__, __LINE__, "buffer used = %d, size = %d", ck->mem->used, ck->mem->size);
 
+	log_msg(__FILE__, __LINE__, "bev = %x", bev);
+	log_msg(__FILE__, __LINE__, "input = %x", bev->input);
+	log_msg(__FILE__, __LINE__, "output = %x", bev->output);
 	log_msg(__FILE__, __LINE__, "read data: %s", buf);
 
+	//每次有read时，就紧接着进行一次数据处理
 	conn_process_chunk(c);
 }
 
@@ -226,6 +244,9 @@ _conn_handle_err(struct bufferevent* bev, short what, void* arg)
 	log_msg(__FILE__, __LINE__, "close sock: Fd = %d", c->fd);
 }
 
+//---------------------------------------
+//每次有read时，就紧接着进行一次数据处理
+//---------------------------------------
 static void 
 conn_process_chunk(conn* c)
 {}
