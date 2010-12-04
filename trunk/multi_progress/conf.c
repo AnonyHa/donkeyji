@@ -5,7 +5,8 @@
 //global config
 config* cfg = NULL;
 
-void conf_init() 
+void 
+conf_init() 
 {
 	cfg = (config*)calloc(1, sizeof(config));
 	cfg->log_file = (char*)calloc(1, 20);
@@ -79,15 +80,23 @@ void conf_init()
 	memcpy((void*)cfg->doc_root, (const void*)tmp, len);
 	lua_pop(L, 1);//pop "log_dir"
 
+	lua_getfield(L, -1, "daemon");
+	if (!lua_isnumber(L, -1))
+		exit(1);
+	cfg->daemon = lua_tointeger(L, -1);
+	lua_pop(L, 1);//pop "log_dir"
+
 	lua_close(L);
 
 	conf_print();
 }
 
-int conf_destroy()
+int 
+conf_destroy()
 {}
 
-void conf_print()
+void 
+conf_print()
 {
 	printf("port : %d\n", cfg->port);
 	printf("max_conns : %d\n", cfg->max_conns);
@@ -95,9 +104,11 @@ void conf_print()
 	printf("log_fle : %s\n", cfg->log_file);
 	printf("log_dir : %s\n", cfg->log_dir);
 	printf("doc_root : %s\n", cfg->doc_root);
+	printf("daemon : %d\n", cfg->daemon);
 }
 
-void conf_free()
+void 
+conf_free()
 {
 	if (cfg == NULL)
 		return;

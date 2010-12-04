@@ -1,7 +1,7 @@
 CC = gcc
 FLAG = -g
 INC = -I ./
-LIBS = -llua5.1 -levent
+LIBS = -llua5.1 -levent -lrt
 
 TARGET = main
 

@@ -6,6 +6,7 @@
 typedef struct _chunk
 {
 	buffer* mem;
+	off_t offset;//处理过的字节
 	struct _chunk* next;
 }chunk;
 
@@ -21,6 +22,7 @@ typedef struct _chunkqueue
 
 chunk* chunk_new();
 void chunk_free(chunk* c);
+void chunk_reset(chunk* c);
 
 chunkqueue* chunkqueue_new();
 void chunkqueue_free(chunkqueue* cq);

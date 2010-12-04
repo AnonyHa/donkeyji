@@ -11,6 +11,7 @@ typedef struct _config
 	char* log_dir;
 
 	char* doc_root;
+	int daemon;
 }config;
 
 extern config* cfg; 

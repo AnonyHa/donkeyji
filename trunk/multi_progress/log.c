@@ -14,7 +14,8 @@ char* log_file = NULL;
 char* log_dir = NULL;
 int log_fd = -1;
 
-void log_init()
+void 
+log_init()
 {
 	log_level = cfg->log_level;
 	//printf("cfg->log_file = %s\n", cfg->log_file);
@@ -35,17 +36,20 @@ void log_init()
 	}
 }
 
-void log_destroy()
+void 
+log_destroy()
 {}
 
-static int _log_vsnprintf(char* buf, size_t buflen, const char* fmt, va_list ap)
+static int 
+_log_vsnprintf(char* buf, size_t buflen, const char* fmt, va_list ap)
 {
 	int r = vsnprintf(buf, buflen, fmt, ap);
 	buf[buflen-1] = '\0';//字符串结尾
 	return r;
 }
 
-static int _log_snprintf(char* buf, size_t buflen, const char* fmt, ...)
+static int 
+_log_snprintf(char* buf, size_t buflen, const char* fmt, ...)
 {
 	int r;
 	va_list ap;
@@ -56,7 +60,8 @@ static int _log_snprintf(char* buf, size_t buflen, const char* fmt, ...)
 }
 
 
-static void _log_warn_helper(int log_level, int log_errno, const char* filename, unsigned int line, const char* fmt, va_list ap)
+static void 
+_log_warn_helper(int log_level, int log_errno, const char* filename, unsigned int line, const char* fmt, va_list ap)
 {
 	char buf[1024];
 	//memset(buf, 0, 1024);
@@ -84,7 +89,8 @@ static void _log_warn_helper(int log_level, int log_errno, const char* filename,
 	_log_output(log_level, buf);
 }
 //打印出log信息
-static void _log_output(int log_level, const char* msg)
+static void 
+_log_output(int log_level, const char* msg)
 {
 	char time_buf[21];
 	char buf[1024];
@@ -128,7 +134,8 @@ static void _log_output(int log_level, const char* msg)
 
 
 
-void log_msg(const char* filename, unsigned int line, const char* fmt, ...)
+void 
+log_msg(const char* filename, unsigned int line, const char* fmt, ...)
 {
 	va_list ap;
 	va_start(ap, fmt);
@@ -136,12 +143,14 @@ void log_msg(const char* filename, unsigned int line, const char* fmt, ...)
 	va_end(ap);
 }
 
-void log_warn()
+void 
+log_warn()
 {}
 
-void log_debug()
+void 
+log_debug()
 {}
 
-void log_err()
+void 
+log_err()
 {}
-
