@@ -9,13 +9,11 @@ struct buffer;
 typedef struct _conn
 {
 	int fd;
+	int ndx;//记录在conn_mgr中的下标
 	struct bufferevent* bev;
 	chunkqueue* read_q;
 	chunkqueue* write_q;
 }conn;
-
-conn* conn_new(int sock);
-void conn_free(conn* c);
 
 //-------------------------------------
 //数组容器
@@ -28,6 +26,6 @@ typedef struct _conn_mgr
 
 conn_mgr* conn_mgr_new();
 void conn_mgr_free(conn_mgr* cm);
-int conn_mgr_add(conn_mgr* cm,  conn* c);
-int conn_mgr_del(conn_mgr* cm, conn* c);
+void conn_mgr_reset(conn_mgr* cm);
+void conn_mgr_add_conn(conn_mgr* cm, int sock);
 #endif

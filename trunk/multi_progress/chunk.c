@@ -63,6 +63,8 @@ void chunkqueue_free(chunkqueue* cq)
 		c = tmp;
 	}
 }
+void chunkqueue_reset(chunkqueue* cq)
+{}
 
 //对外接口
 chunk* chunkqueue_get_append_chunk(chunkqueue* cq)

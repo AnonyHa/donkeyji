@@ -15,6 +15,9 @@ typedef struct _server
 	conn_mgr* conns;
 }server;
 
+//全局的srv
+extern server* srv;
+
 void server_init();
 void server_destroy();
 
