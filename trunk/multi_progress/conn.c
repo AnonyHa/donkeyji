@@ -80,9 +80,6 @@ conn_reset(conn* c)
 
 	conn_unregister_event(c);//这里不能reset，只好free掉，注册的时候再malloc了，悲剧。。。
 
-	c->fd = -1;		
-	c->ndx = -1;
-
 	if (c->read_q != NULL)
 		chunkqueue_reset(c->read_q);
 
@@ -90,6 +87,9 @@ conn_reset(conn* c)
 		chunkqueue_reset(c->write_q);
 
 	close(c->fd);
+
+	c->fd = -1;		
+	c->ndx = -1;
 }
 
 //---------------------------------------------------
