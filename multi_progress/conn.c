@@ -78,6 +78,7 @@ conn_reset(conn* c)
 	if (c == NULL)
 		return;
 
+
 	//buffervern对象不能reset，只好free掉，注册的时候再malloc了，悲剧...
 	conn_unregister_event(c);
 
@@ -128,44 +129,53 @@ conn_mgr_add_conn(conn_mgr* cm, int sock)
 {
 	conn* c;
 	int i;
-	log_msg(__FILE__, __LINE__, "5555555");
 	if (cm->size == 0) {//第一次分配
 		cm->size = 128;
-		log_msg(__FILE__, __LINE__, "6666666");
 		cm->ptr = (conn**)calloc(cm->size, sizeof(conn*));
-		log_msg(__FILE__, __LINE__, "7777777");
 		for (i=0; i<cm->size; i++) {
 			cm->ptr[i] = conn_new();
 		}
 	} else if (cm->size == cm->used) {//之前分配的用完了
+		log_msg(__FILE__, __LINE__, "to alloc more conn");
 		cm->size += 128;	
 		cm->ptr = (conn**)realloc(cm->ptr, cm->size);
+		log_msg(__FILE__, __LINE__, "111111111");
 		for (i=cm->used; i<cm->size; i++) {
 			cm->ptr[i] = conn_new();
+			assert(cm->ptr[i]);
 		}
+		log_msg(__FILE__, __LINE__, "222222222");
 	}
 
+	log_msg(__FILE__, __LINE__, "33333333:  cm->used = %d, cm->size = %d", cm->used, cm->size);
 	c = cm->ptr[cm->used];
 	//conn_reset(c);//其实在归还conn对象时已经reset过了，这里无需重复
 
+	log_msg(__FILE__, __LINE__, "44444444:  cm->used = %d, c->ndx = %x", cm->used, c->ndx);
 	c->ndx = cm->used;
+	log_msg(__FILE__, __LINE__, "55555555");
 	cm->used++;
+	log_msg(__FILE__, __LINE__, "66666666");
 
 	//注册网络事件
 	c->fd = sock;
+	log_msg(__FILE__, __LINE__, "77777777");
 	conn_register_event(c);
+	log_msg(__FILE__, __LINE__, "88888888");
 }
 
 //
 static void 
 conn_mgr_del_conn(conn_mgr* cm, conn* c)
 {
+	log_msg(__FILE__, __LINE__, "try to delete conn: fd = %d", c->fd);
 	int ndx;
 	conn* tmp;
 	if (c == NULL)
 		return;
 
 	ndx = c->ndx;
+	log_msg(__FILE__, __LINE__, "ndx = %d", ndx);
 	if (ndx == -1)//不在数组里
 		return;
 
@@ -241,7 +251,7 @@ _conn_handle_err(struct bufferevent* bev, short what, void* arg)
 	//use global srv
 	//---------------
 	conn_mgr_del_conn(srv->conns, c);
-	log_msg(__FILE__, __LINE__, "close sock: Fd = %d", c->fd);
+	log_msg(__FILE__, __LINE__, "close sock: fd = %d", c->fd);
 }
 
 //---------------------------------------

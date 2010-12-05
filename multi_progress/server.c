@@ -50,7 +50,6 @@ server_network_register()
 {
 	log_msg(__FILE__, __LINE__, "begin to init libevent");
 	event_set(srv->listen_ev, srv->listen_sock, EV_READ|EV_PERSIST, _server_handle_listen, srv->listen_ev);
-	log_msg(__FILE__, __LINE__, "11111111111");
 	event_add(srv->listen_ev, NULL);
 	log_msg(__FILE__, __LINE__, "listen_ev add to libevent");
 	return 0;
@@ -64,6 +63,7 @@ _server_handle_listen(int fd, short ev, void* arg)
 	log_msg(__FILE__, __LINE__, "used = %d, max = %d, pid=%d", srv->conns->used, srv->max_conns, getpid());
 	//如何保证??
 	if (srv->conns->used > srv->max_conns) {
+		log_msg(__FILE__, __LINE__, "connections full%d");
 		return;
 	}
 
