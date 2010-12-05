@@ -14,13 +14,14 @@ const char* ip = "127.0.0.1";
 
 int create_socket()
 {
-	int _sock;
+	int sock;
 	int ret;
 	struct sockaddr_in addr;
 	int i;
+	char buf[1024];
 
-	_sock = socket(PF_INET, SOCK_STREAM, 0);
-	if (_sock == -1)
+	sock = socket(PF_INET, SOCK_STREAM, 0);
+	if (sock == -1)
 		return -1;
 
 	bzero(&addr, sizeof(struct sockaddr_in));
@@ -28,18 +29,29 @@ int create_socket()
 	addr.sin_port = htons(port);
 	addr.sin_addr.s_addr = inet_addr(ip);
 
-	ret = connect(_sock, (struct sockaddr*)&addr, sizeof(addr));//nonblocking socket立即返回
+	ret = connect(sock, (struct sockaddr*)&addr, sizeof(addr));//nonblocking socket立即返回
 	if (ret == -1) {
 		return -1;
 	}
 
-	for (i=0; i<20; i++) {
-		ret = send(_sock, "hello", 5, 0);
+	for (i=0; i<10; i++) {
+		ret = send(sock, "$hello?x=4&y=5#", 15, 0);
 		if (ret < 0) {
 			perror("send");
 			return -1;
 		}
-		printf("send %d\n", ret);
+		//printf("send %d\n", ret);
+	}
+	int shutdown = 0;
+	while (!shutdown) {
+		ret = recv(sock, buf, 1024, 0);
+		if (ret < 0) {
+			perror("recv");	
+			shutdown = 1;
+		} else {
+			printf("recv len = %d, data = %s\n", ret, buf);
+			break;
+		}
 	}
 
 	return 0; 

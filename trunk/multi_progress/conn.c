@@ -8,9 +8,9 @@
 
 static void _conn_handle_read(struct bufferevent* bev, void* arg);
 static void _conn_handle_err(struct bufferevent* bev, short what, void* arg);
-static void _conn_response(conn* c);
+static void _conn_write_response(conn* c);
 
-static void _conn_process(conn* c);
+static void _conn_process_read(conn* c);
 static void _conn_parse_request(conn* c);
 //---------------------------------------------------
 
@@ -224,7 +224,7 @@ _conn_handle_read(struct bufferevent* bev, void* arg)
 	log_msg(__FILE__, __LINE__, "buffer used = %d, size = %d", ck->mem->used, ck->mem->size);
 
 	//每次有read时，就紧接着进行一次数据处理
-	_conn_process(c);
+	_conn_process_read(c);
 }
 
 
@@ -243,23 +243,26 @@ _conn_handle_err(struct bufferevent* bev, short what, void* arg)
 //每次有read时，就紧接着进行一次数据处理
 //---------------------------------------
 static void 
-_conn_process(conn* c)
+_conn_process_read(conn* c)
 {
 	//先把处理过的chunk放入unused链表
 	chunkqueue_remove_finished_chunks(c->read_q);
 
 	_conn_parse_request(c);
 
-	_conn_response(c);
+	_conn_write_response(c);
 }
 
 static void 
-_conn_response(conn* c)
-{}
+_conn_write_response(conn* c)
+{
+	bufferevent_write(c->bev, "hello", 5);
+}
 
 static void 
 _conn_parse_request(conn* c)
 {
+	/*
 	char* cgi = "test.py";
 	char* arg = "15";
 	int ret;
@@ -311,4 +314,5 @@ _conn_parse_request(conn* c)
 		buffer_append(ck->mem, buf, strlen(buf));
 		break;
 	}
+	*/
 }
