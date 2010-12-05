@@ -138,8 +138,8 @@ conn_mgr_add_conn(conn_mgr* cm, int sock)
 	} else if (cm->size == cm->used) {//之前分配的用完了
 		log_msg(__FILE__, __LINE__, "to alloc more conn");
 		cm->size += 128;	
-		cm->ptr = (conn**)realloc(cm->ptr, cm->size);
-		log_msg(__FILE__, __LINE__, "111111111");
+		cm->ptr = (conn**)realloc(cm->ptr, cm->size * (sizeof(conn*)));
+		log_msg(__FILE__, __LINE__, "111111111:  cm->used = %d", cm->used);
 		for (i=cm->used; i<cm->size; i++) {
 			cm->ptr[i] = conn_new();
 			assert(cm->ptr[i]);

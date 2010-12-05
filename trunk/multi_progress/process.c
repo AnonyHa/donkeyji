@@ -29,7 +29,6 @@ int is_child = 0;
 static void 
 sig_register()
 {
-	/*
 	int i;
 	struct event* se;
 	int SIG[] = {SIGINT, SIGTERM, SIGCHLD, SIGHUP};
@@ -42,7 +41,6 @@ sig_register()
 		log_msg(__FILE__, __LINE__, "----------------");
 		signal_add(se, NULL);
 	}
-	*/
 }
 
 //父子进程处理信号逻辑不一样
@@ -141,6 +139,7 @@ master_start_worker()
 {
 	int i = 0;
 	pid_t pid;
+	//for (i=0; i<3; i++) {
 	for (i=0; i<1; i++) {
 		pid = master_spawn_worker();
 		log_msg(__FILE__, __LINE__, "master start the %d worker: pid=%d", i, pid);
