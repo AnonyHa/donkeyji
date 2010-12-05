@@ -5,10 +5,13 @@
 #include "log.h"
 #include "chunk.h"
 
-static void conn_process_chunk(conn* c);
+
 static void _conn_handle_read(struct bufferevent* bev, void* arg);
 static void _conn_handle_err(struct bufferevent* bev, short what, void* arg);
+static void _conn_response(conn* c);
 
+static void _conn_process(conn* c);
+static void _conn_parse_request(conn* c);
 //---------------------------------------------------
 
 static conn* 
@@ -194,7 +197,6 @@ _conn_handle_read(struct bufferevent* bev, void* arg)
 {
 	log_msg(__FILE__, __LINE__, "data from conn to read: fd = %d", ((conn*)arg)->fd);
 
-	///* 奇怪，为什么bev->input始终为0????
 	size_t len = bev->input->off;
 	if (len == 0) {
 		log_msg(__FILE__, __LINE__, "no data");
@@ -221,15 +223,8 @@ _conn_handle_read(struct bufferevent* bev, void* arg)
 	buffer_append(ck->mem, buf, read_len);
 	log_msg(__FILE__, __LINE__, "buffer used = %d, size = %d", ck->mem->used, ck->mem->size);
 
-	/*
-	log_msg(__FILE__, __LINE__, "bev = %x", bev);
-	log_msg(__FILE__, __LINE__, "input = %x", bev->input);
-	log_msg(__FILE__, __LINE__, "output = %x", bev->output);
-	log_msg(__FILE__, __LINE__, "read data: %s", buf);
-	*/
-
 	//每次有read时，就紧接着进行一次数据处理
-	conn_process_chunk(c);
+	_conn_process(c);
 }
 
 
@@ -248,5 +243,72 @@ _conn_handle_err(struct bufferevent* bev, short what, void* arg)
 //每次有read时，就紧接着进行一次数据处理
 //---------------------------------------
 static void 
-conn_process_chunk(conn* c)
+_conn_process(conn* c)
+{
+	//先把处理过的chunk放入unused链表
+	chunkqueue_remove_finished_chunks(c->read_q);
+
+	_conn_parse_request(c);
+
+	_conn_response(c);
+}
+
+static void 
+_conn_response(conn* c)
 {}
+
+static void 
+_conn_parse_request(conn* c)
+{
+	char* cgi = "test.py";
+	char* arg = "15";
+	int ret;
+	int stat;
+	int to_cgi_fds[2];
+	int from_cgi_fds[2];
+	char buf[1024];
+	chunk* ck;
+
+	if (pipe(to_cgi_fds) == -1) {
+		log_msg(__FILE__, __LINE__, strerror(errno));
+		return;
+	}
+
+	if (pipe(from_cgi_fds) == -1) {
+		log_msg(__FILE__, __LINE__, strerror(errno));
+		return;
+	}
+
+	pid_t pid = fork();
+	switch (pid) {
+	case 0://child
+		close(STDOUT_FILENO);//
+		dup2(from_cgi_fds[1], STDOUT_FILENO);
+		close(from_cgi_fds[0]);
+		close(from_cgi_fds[1]);
+
+		close(STDIN_FILENO);
+		dup2(to_cgi_fds[0], STDIN_FILENO);
+		close(to_cgi_fds[0]);
+		close(to_cgi_fds[1]);
+
+		//-----
+		//execve(cgi, arg, NULL);
+		break;
+	case -1:
+		break;
+	default://parent
+		close(from_cgi_fds[1]);
+		close(to_cgi_fds[0]);
+		ret = recv(from_cgi_fds[0], buf, 1024, 0);
+		if (ret == -1) {
+			log_msg(__FILE__, __LINE__, strerror(errno));
+			return;
+		}
+		ck = chunkqueue_get_append_chunk(c->write_q);
+		if (ck == NULL)
+			return;
+		buffer_append(ck->mem, buf, strlen(buf));
+		break;
+	}
+}
