@@ -140,9 +140,10 @@ static void
 master_start_worker()
 {
 	int i = 0;
-	for (i=0; i<3; i++) {
-		master_spawn_worker();
-		log_msg(__FILE__, __LINE__, "master start the %d worker", i);
+	pid_t pid;
+	for (i=0; i<1; i++) {
+		pid = master_spawn_worker();
+		log_msg(__FILE__, __LINE__, "master start the %d worker: pid=%d", i, pid);
 	}
 	log_msg(__FILE__, __LINE__, "master start worker succeed");
 }
@@ -160,7 +161,7 @@ master_spawn_worker()
 		worker_cycle();// a loop never break
 		break;//不会执行到这里
 	default:
-		break;
+		return ret;
 	}	
 }
 
