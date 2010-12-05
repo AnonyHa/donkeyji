@@ -71,8 +71,7 @@ _server_handle_listen(int fd, short ev, void* arg)
 	int len = sizeof(addr);
 	int sock = accept(fd, (struct sockaddr*)&addr, (socklen_t*)&len);
 	if (sock < 0) {
-		perror("accept");
-		log_msg(__FILE__, __LINE__, "accept failed");
+		log_msg(__FILE__, __LINE__, strerror(errno));
 		return;
 	}
 

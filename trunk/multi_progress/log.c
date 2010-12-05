@@ -18,8 +18,6 @@ void
 log_init()
 {
 	log_level = cfg->log_level;
-	//printf("cfg->log_file = %s\n", cfg->log_file);
-	//printf("cfg->log_dir = %s\n", cfg->log_dir);
 	log_file = (char*)malloc(20);
 	assert(log_file);
 
@@ -69,9 +67,11 @@ _log_warn_helper(int log_level, int log_errno, const char* filename, unsigned in
 	int ret;
 	int i;
 
+	_log_snprintf(buf, 1024, "[%-10s] [%-4d] ", filename, line);
+	len = strlen(buf);
 
 	if (fmt != NULL) {
-		_log_vsnprintf(buf, sizeof(buf), fmt, ap);
+		_log_vsnprintf(buf+len, sizeof(buf)-len, fmt, ap);
 	} else {
 		buf[0] = '\0';
 	}
@@ -79,11 +79,6 @@ _log_warn_helper(int log_level, int log_errno, const char* filename, unsigned in
 	/*
 	if (log_errno > 0) {
 	}
-	*/
-
-	/*
-	len = strlen(buf);
-	_log_snprintf(buf+len, sizeof(buf)-len, ": %s, %s", filename, line);
 	*/
 
 	_log_output(log_level, buf);
@@ -126,7 +121,7 @@ _log_output(int log_level, const char* msg)
 	);
 	//time_buf[20] = '\0';//sprintf会自动加上'\0'
 	//fprintf(stderr, "[%s]  [%s]  %s\n", time_buf, level_str, msg);//实际的打印输出语句
-	_log_snprintf(buf, 1024, "[%s]  [%s]  %s\n", time_buf, level_str, msg);
+	_log_snprintf(buf, 1024, "[%-18s] [%-5s] %s\n", time_buf, level_str, msg);
 	int len = strlen(buf);
 	write(log_fd, buf, len);
 	printf("%s", buf);
