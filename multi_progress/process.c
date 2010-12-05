@@ -59,13 +59,17 @@ _sig_callback_master(int sig, short event, void* arg)
 {
 	int stat;
 	int ret;
+	pid_t pid;
 	switch (sig) {
 	case SIGCHLD:
 		log_msg(__FILE__, __LINE__, "SIGCHLD caught");
 		ret = wait(&stat);
 		if (ret == 0) {
-			master_spawn_worker();
-		} else if (ret == -1) {}
+			pid = master_spawn_worker();
+			log_msg(__FILE__, __LINE__, "spawn one more worker: pid = %d", pid);
+		} else if (ret == -1) {
+			log_msg(__FILE__, __LINE__, "wait error: %s", strerror(errno));
+		}
 		break;
 	case SIGINT:
 	case SIGTERM:
@@ -140,7 +144,7 @@ master_start_worker()
 	int i = 0;
 	pid_t pid;
 	//for (i=0; i<3; i++) {
-	for (i=0; i<1; i++) {
+	for (i=0; i<2; i++) {
 		pid = master_spawn_worker();
 		log_msg(__FILE__, __LINE__, "master start the %d worker: pid=%d", i, pid);
 	}

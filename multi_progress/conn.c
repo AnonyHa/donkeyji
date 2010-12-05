@@ -53,8 +53,6 @@ conn_register_event(conn* c)
 {
 	//只能重新生成bufferevent
 	c->bev = bufferevent_new(c->fd, _conn_handle_read, NULL, _conn_handle_err, (void*)c);
-	//log_msg(__FILE__, __LINE__, "bufferevent_new c->bev->input = %x", c->bev->input);
-	//log_msg(__FILE__, __LINE__, "bufferevent_new c->bev->output = %x", c->bev->output);
 	if (c->bev == NULL) {
 		log_msg(__FILE__, __LINE__, "bufferevent_new failed");
 		return;
@@ -139,29 +137,22 @@ conn_mgr_add_conn(conn_mgr* cm, int sock)
 		log_msg(__FILE__, __LINE__, "to alloc more conn");
 		cm->size += 128;	
 		cm->ptr = (conn**)realloc(cm->ptr, cm->size * (sizeof(conn*)));
-		log_msg(__FILE__, __LINE__, "111111111:  cm->used = %d", cm->used);
 		for (i=cm->used; i<cm->size; i++) {
 			cm->ptr[i] = conn_new();
 			assert(cm->ptr[i]);
 		}
-		log_msg(__FILE__, __LINE__, "222222222");
 	}
 
-	log_msg(__FILE__, __LINE__, "33333333:  cm->used = %d, cm->size = %d", cm->used, cm->size);
+	log_msg(__FILE__, __LINE__, "cm->used = %d, cm->size = %d", cm->used, cm->size);
 	c = cm->ptr[cm->used];
 	//conn_reset(c);//其实在归还conn对象时已经reset过了，这里无需重复
 
-	log_msg(__FILE__, __LINE__, "44444444:  cm->used = %d, c->ndx = %x", cm->used, c->ndx);
 	c->ndx = cm->used;
-	log_msg(__FILE__, __LINE__, "55555555");
 	cm->used++;
-	log_msg(__FILE__, __LINE__, "66666666");
 
 	//注册网络事件
 	c->fd = sock;
-	log_msg(__FILE__, __LINE__, "77777777");
 	conn_register_event(c);
-	log_msg(__FILE__, __LINE__, "88888888");
 }
 
 //
@@ -175,7 +166,6 @@ conn_mgr_del_conn(conn_mgr* cm, conn* c)
 		return;
 
 	ndx = c->ndx;
-	log_msg(__FILE__, __LINE__, "ndx = %d", ndx);
 	if (ndx == -1)//不在数组里
 		return;
 
@@ -203,19 +193,18 @@ static void
 _conn_handle_read(struct bufferevent* bev, void* arg)
 {
 	log_msg(__FILE__, __LINE__, "data from conn to read: fd = %d", ((conn*)arg)->fd);
-	log_msg(__FILE__, __LINE__, "bev->input = %d", bev->input);
 
-	/* 奇怪，为什么bev->input始终为0????
+	///* 奇怪，为什么bev->input始终为0????
 	size_t len = bev->input->off;
 	if (len == 0) {
 		log_msg(__FILE__, __LINE__, "no data");
 		return;
 	}
-	*/
+	//*/
 
 	//足够大的缓冲
 	conn* c = (conn*)arg;//connection对象
-	size_t len = 1024;
+	//size_t len = 1024;
 	char buf[len];
 	bzero(buf, len);
 
@@ -232,10 +221,12 @@ _conn_handle_read(struct bufferevent* bev, void* arg)
 	buffer_append(ck->mem, buf, read_len);
 	log_msg(__FILE__, __LINE__, "buffer used = %d, size = %d", ck->mem->used, ck->mem->size);
 
+	/*
 	log_msg(__FILE__, __LINE__, "bev = %x", bev);
 	log_msg(__FILE__, __LINE__, "input = %x", bev->input);
 	log_msg(__FILE__, __LINE__, "output = %x", bev->output);
 	log_msg(__FILE__, __LINE__, "read data: %s", buf);
+	*/
 
 	//每次有read时，就紧接着进行一次数据处理
 	conn_process_chunk(c);
@@ -246,7 +237,6 @@ static void
 _conn_handle_err(struct bufferevent* bev, short what, void* arg)
 {
 	conn* c = (conn*)arg;//connection对象
-	log_msg(__FILE__, __LINE__, "conn error: fd = %d", c->fd);
 	//---------------
 	//use global srv
 	//---------------

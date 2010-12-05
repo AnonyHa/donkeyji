@@ -87,20 +87,17 @@ chunkqueue_reset(chunkqueue* cq)
 	chunk* c;
 	chunk* tmp;
 
-	log_msg(__FILE__, __LINE__, "111111111");
 	
 	/*
 	 * 标示为全部已经读取过了 c->offset = c->mem->used-1
 	 * 以便在chunkqueue_remove_finished_chunks中把处理完了的chunk放入unused链表
 	 */
 	for (c=cq->head; c!=NULL;) {
-		log_msg(__FILE__, __LINE__, "22222222");
 		c->offset = c->mem->used-1;	
 		c = c->next;
 	}
 
 	chunkqueue_remove_finished_chunks(cq);
-	log_msg(__FILE__, __LINE__, "33333333");
 }
 
 //对外接口
