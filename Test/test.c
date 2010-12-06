@@ -2,7 +2,6 @@
 #include "lua.h" 
 #include "lualib.h"
 #include "lauxlib.h"
-#include "windows.h"
 
 #define PRELOAD "preload.lua"
 
@@ -63,7 +62,9 @@ int main()
 	}
 
 	lua_getglobal(L, "f");
-	int ret = docall(L, 0, 0, 0);
+	lua_call(L, 0, 0);
+	int ret;
+	//int ret = docall(L, 0, 0, 0);
 	if (ret != 0) {
 		fprintf(stderr, "%s\n", lua_tostring(L, -1));//取栈顶的错误信息
 	}
