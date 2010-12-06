@@ -1,3 +1,5 @@
+/*仅仅包含系统文件，至于自定义的.h文件还是各自去处理吧*/
+
 //ansi c
 #include <stdio.h>
 #include <stdlib.h>
