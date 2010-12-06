@@ -2,5 +2,6 @@
 #define _PROCESS_H
 
 void master_cycle();
+void signal_init();
 
 #endif
