@@ -1,5 +1,5 @@
 FLAGS = -g -Wall
-CC = g++
+CC = gcc
 
 LUA_PATH_INC = "D:\Program Files\Lua\5.1\include" 
 LUA_PATH_LIB = "D:\Program Files\Lua\5.1\lib"
