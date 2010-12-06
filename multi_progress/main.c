@@ -10,6 +10,8 @@ int main()
 
 	log_init();
 
+	event_init();
+
 	signal_init();
 
 	//完成server对象的创建，listen socket的创建，libevent的初始化
