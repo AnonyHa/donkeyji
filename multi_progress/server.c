@@ -33,11 +33,6 @@ server_init()
 	//³õÊ¼»¯libevent
 	event_init();
 
-	if (cfg->daemon == 1) {
-		log_msg(__FILE__, __LINE__, "to daemon");
-		daemon(1, 1);
-	}
-
 	log_msg(__FILE__, __LINE__, "server obj created");
 }
 

@@ -26,6 +26,20 @@ static void _worker_exit();
 int is_child = 0;
 
 //-------------------------------------------------------
+void 
+daemon_run()
+{
+	if (cfg->daemon == 1) {
+		log_msg(__FILE__, __LINE__, "to run as daemon");
+		daemon(1, 1);
+	}
+}
+
+void 
+create_pidfile()
+{}
+
+//-------------------------------------------------------
 //fork出子进程之前注册信号
 void 
 signal_init()
