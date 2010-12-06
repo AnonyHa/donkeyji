@@ -76,8 +76,8 @@ _sig_callback_master(int sig, short event, void* arg)
 	switch (sig) {
 	case SIGCHLD:
 		log_msg(__FILE__, __LINE__, "SIGCHLD caught");
-		ret = wait(&stat);
-		if (ret == -1) {
+		ret = wait(&stat);//等待子进程退出
+		if (ret == -1) {//不处理wait时的出错
 			log_msg(__FILE__, __LINE__, "wait error: %s", strerror(errno));
 		} else {
 			log_msg(__FILE__, __LINE__, "wait child pid = %d", ret);
@@ -109,7 +109,7 @@ _sig_callback_worker(int sig, short event, void* arg)
 		log_msg(__FILE__, __LINE__, "SIGCHLD caught");
 		wait(NULL);
 		break;
-	case SIGINT:
+	case SIGINT://master进程会向子进程发送SIGINT/SIGTERM
 	case SIGTERM:
 		log_msg(__FILE__, __LINE__, "SIGINT/SIGTERM caught");
 		_worker_exit();
