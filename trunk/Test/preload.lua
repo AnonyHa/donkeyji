@@ -1,8 +1,8 @@
 function f()
 	local a = {}
 	print 'test trace'
-	debug.debug()
-	print_tbl(t)
+	if a > nil then
+	end
 end
 
 function print_tbl(tbl)

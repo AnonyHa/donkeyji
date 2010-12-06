@@ -1,10 +1,8 @@
-extern "C" {
 #include "lua.h"
 #include "lauxlib.h"
 #include "lualib.h"
 #include <dirent.h>//GNU c library
 #include <errno.h>
-}
 #include <string.h>
 #include <stdlib.h>
 
