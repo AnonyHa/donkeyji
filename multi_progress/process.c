@@ -7,7 +7,6 @@
 #include "log.h"
 
 //静态函数declaration
-static void _sig_register();
 static void _sig_callback(int sig, short event, void* arg);
 static void _sig_callback_master(int sig, short event, void* arg);
 static void _sig_callback_worker(int sig, short event, void* arg);
@@ -28,8 +27,8 @@ int is_child = 0;
 
 //-------------------------------------------------------
 //fork出子进程之前注册信号
-static void 
-_sig_register()
+void 
+signal_init()
 {
 	int i;
 	struct event* se;
@@ -116,7 +115,6 @@ static void
 _master_init()
 {
 	log_msg(__FILE__, __LINE__, "master init succeed");
-	_sig_register();
 	_master_set_proctitle("masterd");
 }
 
