@@ -30,9 +30,6 @@ server_init()
 	srv->conns = conn_mgr_new();
 	assert(srv->conns);
 
-	//≥ı ºªØlibevent
-	event_init();
-
 	log_msg(__FILE__, __LINE__, "server obj created");
 }
 
