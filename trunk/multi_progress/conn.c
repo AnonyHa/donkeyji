@@ -259,6 +259,22 @@ _conn_process_read(conn* c)
 static void 
 _conn_write_response(conn* c)
 {
+	chunkqueue* wcq = c->write_q;
+	chunkqueue_remove_finished_chunks(wcq);
+
+	log_msg(__FILE__, __LINE__, "write response");
+	off_t offset;
+	size_t size;
+	chunk* ck;
+	for (ck=wcq->head; ck!=NULL;) {
+		offset = ck->offset;
+		size = bufferevent_write(c->bev, (void*)(ck->mem->ptr + offset), (size_t)(ck->mem->used - offset));
+		if (size < 0) {
+			log_msg(__FILE__, __LINE__, "bufferevent_write failed");
+			return;
+		}
+		ck->offset += size;
+	}
 	bufferevent_write(c->bev, "hello", 5);
 }
 
