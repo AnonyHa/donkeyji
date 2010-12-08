@@ -107,7 +107,7 @@ _sig_callback_worker(int sig, short event, void* arg)
 	switch (sig) {
 	case SIGCHLD:
 		log_msg(__FILE__, __LINE__, "SIGCHLD caught");
-		wait(NULL);
+		wait(NULL);//cgi子进程
 		break;
 	case SIGINT://master进程会向子进程发送SIGINT/SIGTERM
 	case SIGTERM:
