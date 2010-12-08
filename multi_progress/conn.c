@@ -12,6 +12,9 @@ static void _conn_write_response(conn* c);
 
 static void _conn_process_read(conn* c);
 static void _conn_parse_request(conn* c);
+
+static void _cgi_read_callback(int fd, short event, void* arg);
+static void _cgi_handle_err(struct bufferevent* bev, short what, void* arg);
 //---------------------------------------------------
 
 static conn* 
@@ -262,20 +265,14 @@ _conn_write_response(conn* c)
 static void 
 _conn_parse_request(conn* c)
 {
-	/*
 	char* cgi = "test.py";
-	char* arg = "15";
+	char** arg = NULL;
 	int ret;
 	int stat;
-	int to_cgi_fds[2];
 	int from_cgi_fds[2];
 	char buf[1024];
 	chunk* ck;
-
-	if (pipe(to_cgi_fds) == -1) {
-		log_msg(__FILE__, __LINE__, strerror(errno));
-		return;
-	}
+	struct buffervent* bev;
 
 	if (pipe(from_cgi_fds) == -1) {
 		log_msg(__FILE__, __LINE__, strerror(errno));
@@ -285,34 +282,52 @@ _conn_parse_request(conn* c)
 	pid_t pid = fork();
 	switch (pid) {
 	case 0://child
-		close(STDOUT_FILENO);//
-		dup2(from_cgi_fds[1], STDOUT_FILENO);
 		close(from_cgi_fds[0]);
-		close(from_cgi_fds[1]);
+		dup2(from_cgi_fds[1], STDOUT_FILENO);
 
-		close(STDIN_FILENO);
-		dup2(to_cgi_fds[0], STDIN_FILENO);
-		close(to_cgi_fds[0]);
-		close(to_cgi_fds[1]);
-
-		//-----
-		//execve(cgi, arg, NULL);
+		execve(cgi, arg, NULL);
 		break;
 	case -1:
 		break;
 	default://parent
 		close(from_cgi_fds[1]);
-		close(to_cgi_fds[0]);
-		ret = recv(from_cgi_fds[0], buf, 1024, 0);
-		if (ret == -1) {
-			log_msg(__FILE__, __LINE__, strerror(errno));
-			return;
-		}
-		ck = chunkqueue_get_append_chunk(c->write_q);
-		if (ck == NULL)
-			return;
-		buffer_append(ck->mem, buf, strlen(buf));
+		//注册监听pipe fd的event
+		bev = bufferevent_new(from_cgi_fds[0], _cgi_handle_read, NULL, _cgi_handle_err, (void*)c);
+		bufferevent_enable(bev, EV_READ);
+		event_set(e, EV_READ, _cgi_read_callback, e);
+		event_add(e, NULL);
 		break;
 	}
-	*/
+}
+
+static void
+_cgi_handle_read(struct bufferevent* bev, void* arg)
+{
+	conn* c= (conn*)arg;
+	size_t len = bev->input->off;
+	if (len == 0) {
+		log_msg(__FILE__, __LINE__, "no data");
+		return;
+	}
+	char buf[len];
+	size_t read_len = bufferevent_read(bev, buf, len);
+	if (read_len <= 0) {
+		log_msg(__FILE__, __LINE__, "cgi bufferevent read error: %s", strerror(errno));
+		return;
+	}
+	log_msg(__FILE__, __LINE__, "cgi bufferevent read len = %d", read_len);
+
+	chunk* ck = chunkqueue_get_append_chunk(c->write_q);	
+	if (ck == NULL) 
+		return;
+	buffer_append(ck->mem, buf, read_len);
+	log_msg(__FILE__, __LINE__, "buffer used = %d, size = %d", ck->mem->used, ck->mem->size);
+}
+
+//cgi进程退出会关闭pipe fd
+static void
+_cgi_handle_err(struct bufferevent* bev, short what, void* arg)
+{
+	bufferevent_free(bev);
+	close();//如何正确的在父进程中关闭pipe fd???
 }
