@@ -13,7 +13,7 @@ static void _conn_write_response(conn* c);
 static void _conn_process_read(conn* c);
 static void _conn_parse_request(conn* c);
 
-static void _cgi_read_callback(int fd, short event, void* arg);
+static void _cgi_handle_read(struct bufferevent* bev, void* arg);
 static void _cgi_handle_err(struct bufferevent* bev, short what, void* arg);
 //---------------------------------------------------
 
@@ -272,7 +272,7 @@ _conn_parse_request(conn* c)
 	int from_cgi_fds[2];
 	char buf[1024];
 	chunk* ck;
-	struct buffervent* bev;
+	struct bufferevent* bev;
 
 	if (pipe(from_cgi_fds) == -1) {
 		log_msg(__FILE__, __LINE__, strerror(errno));
@@ -294,8 +294,6 @@ _conn_parse_request(conn* c)
 		//注册监听pipe fd的event
 		bev = bufferevent_new(from_cgi_fds[0], _cgi_handle_read, NULL, _cgi_handle_err, (void*)c);
 		bufferevent_enable(bev, EV_READ);
-		event_set(e, EV_READ, _cgi_read_callback, e);
-		event_add(e, NULL);
 		break;
 	}
 }
@@ -329,5 +327,5 @@ static void
 _cgi_handle_err(struct bufferevent* bev, short what, void* arg)
 {
 	bufferevent_free(bev);
-	close();//如何正确的在父进程中关闭pipe fd???
+	//close();//如何正确的在父进程中关闭pipe fd???
 }
