@@ -64,6 +64,7 @@ conn_register_event(conn* c)
 		return;
 	}
 	bufferevent_enable(c->bev, EV_READ|EV_WRITE);
+	//bufferevent_settimeout(c->bev, 5, 5);//设置超时
 }
 
 //删除为conn注册的事件
@@ -149,12 +150,12 @@ conn_mgr_add_conn(conn_mgr* cm, int sock)
 		}
 	}
 
-	log_msg(__FILE__, __LINE__, "cm->used = %d, cm->size = %d", cm->used, cm->size);
 	c = cm->ptr[cm->used];
 	//conn_reset(c);//其实在归还conn对象时已经reset过了，这里无需重复
 
 	c->ndx = cm->used;
 	cm->used++;
+	log_msg(__FILE__, __LINE__, "add conn: cm->used = %d, cm->size = %d", cm->used, cm->size);
 
 	//注册网络事件
 	c->fd = sock;
@@ -178,6 +179,8 @@ conn_mgr_del_conn(conn_mgr* cm, conn* c)
 	if (ndx == cm->used - 1) {//数组最尾的
 		c->ndx = -1;
 		conn_reset(c);//以备下次使用
+		cm->used--;
+		log_msg(__FILE__, __LINE__, "del conn: cm->used = %d, cm->size = %d", cm->used, cm->size);
 		return;
 	}
 
@@ -187,6 +190,8 @@ conn_mgr_del_conn(conn_mgr* cm, conn* c)
 	cm->ptr[ndx]->ndx = ndx;
 	cm->ptr[cm->used-1] = tmp;
 	cm->ptr[cm->used-1]->ndx = -1;//标示为未使用
+	cm->used--;
+	log_msg(__FILE__, __LINE__, "del conn: cm->used = %d, cm->size = %d", cm->used, cm->size);
 
 	//删除read/write事件，置sock = -1
 	conn_reset(c);
@@ -231,9 +236,13 @@ _conn_handle_read(struct bufferevent* bev, void* arg)
 }
 
 
+//读/写出错，或者一直没有数据读，回调此函数
 static void 
 _conn_handle_err(struct bufferevent* bev, short what, void* arg)
 {
+	if (what & EVBUFFER_TIMEOUT) {
+		log_msg(__FILE__, __LINE__, "conn timeout");
+	}
 	conn* c = (conn*)arg;//connection对象
 	//---------------
 	//use global srv
