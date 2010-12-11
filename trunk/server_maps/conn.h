@@ -30,4 +30,4 @@ conn_client* conn_client_new();
 void conn_client_free(conn_client* c);
 
 //创建listen sock，开始listen
-int conn_server_start(conn_server* s);
+int conn_server_startup(conn_server* s);
