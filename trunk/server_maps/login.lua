@@ -36,10 +36,10 @@ function get_session(uid)
 	return stbl[uid]['skey']
 end
 
-function check_user(urs, pwd)
+function on_check_user(urs, pwd)
 	local info = db.query()
 	if not info then
-		return -1
+		return nil
 	end
 	local uid = info['uid']
 	local skey = gen_session()
@@ -47,7 +47,7 @@ function check_user(urs, pwd)
 		['time'] = os.time(),
 		['skey'] = skey,
 	}
-	return 0
+	return uid, skey--return to C
 end
 
 function gen_session()

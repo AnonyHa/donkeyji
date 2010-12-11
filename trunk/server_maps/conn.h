@@ -1,6 +1,6 @@
 typedef void (*on_client_conn_cb)(conn* c);
 typedef void (*on_client_read_cb)(conn* c);
-typedef void (*on_client_close_cb)(conn* c);
+typedef void (*on_client_error_cb)(conn* c);
 
 typedef struct _conn_server
 {
@@ -9,7 +9,7 @@ typedef struct _conn_server
 	struct event* listen_ev;
 	on_client_conn_cb conn_cb;
 	on_client_read_cb read_cb;
-	on_client_close_cb close_cb;
+	on_client_error_cb error_cb;
 }conn_server;
 
 typedef struct _conn_client
