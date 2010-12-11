@@ -1,0 +1,13 @@
+client --------- login
+c2s_login {urs, pwd}
+s2c_login {result, userinfo{uid, session}}
+
+
+client --------- realm
+c2s_login {uid, session}
+s2c_login {result, srv_list}
+
+
+realm --------- login
+c2s_session {uid}
+s2c_session {uid, session}
