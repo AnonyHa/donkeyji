@@ -3,7 +3,7 @@ FLAG = -g
 INC = -I ./
 LIBS = -llua5.1 -levent -lrt
 
-TARGET = main
+TARGET = sm
 
 SRC = $(wildcard *.c)
 OBJ = $(patsubst %.c, %.o, $(SRC))
