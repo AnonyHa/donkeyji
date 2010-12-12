@@ -27,14 +27,12 @@ conf_init()
 {
 	cfg = (config*)calloc(1, sizeof(config));
 	cfg->log_file = (char*)calloc(1, 20);
-	cfg->log_dir = (char*)calloc(1, 20);
-	cfg->doc_root = (char*)calloc(1, 20);
 
 	//set default config
 	cfg->login_port = 10031;
 	cfg->login_max_conns = 20000;
 
-	cfg->log_level = LOG_DEBUG;
+	cfg->log_level = 1;
 	cfg->log_file = "sm.log";
 	cfg->is_daemon = 0;
 
