@@ -5,6 +5,7 @@
 
 int db_init()
 {
+	/*
 	lua_pushlstring(gL, cfg->db_name);
 	lua_pushlstring(gL, cfg->db_name);
 	lua_pushlstring(gL, cfg->db_pwd);
@@ -12,5 +13,6 @@ int db_init()
 	lua_pushlstring(gL, cfg->db_port);
 	lua_getglobal(L, "db_init");
 	lua_pcall(gL, 4, 0, NULL);
+	*/
 	return 0;
 }

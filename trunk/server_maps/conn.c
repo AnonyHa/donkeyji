@@ -9,9 +9,9 @@ static void _conn_server_listen_cb(int fd, short what, void* arg);
 static void _conn_server_read_cb(struct bufferevent* bev, void* arg);
 static void _conn_server_error_cb(struct bufferevent* bev, short what, void* arg);
 
-static int _conn_client_startup(conn* c)
+static int _conn_client_startup(conn_client* c);
 static void _conn_client_read_cb(struct bufferevent* bev, void* arg);
-static void _conn_client_error_cb(strut bufferevent* bev, short what, void* arg);
+static void _conn_client_error_cb(struct bufferevent* bev, short what, void* arg);
 //-----------------------------------------------------------------
 int conn_init()
 {
@@ -53,7 +53,7 @@ conn_server_startup(conn_server* s)
 
 	s->listen_ev = (struct event*)malloc(sizeof(struct event));
 	assert(s->listen_ev);
-	event_set(s->listen_ev, EV_READ|EV_PERSIST, _conn_server_listen_cb, s);
+	event_set(s->listen_ev, s->listen_sock, EV_READ|EV_PERSIST, _conn_server_listen_cb, (void*)s);
 	event_add(s->listen_ev, NULL);
 	return 0;
 }
@@ -70,13 +70,16 @@ conn_server_free(conn_server* s)
 	free(s);
 }
 
-int
-conn_server_add_client(conn_server* s, conn_client* c)
+conn_client*
+conn_server_add_client(conn_server* s, int fd)
 {
-	conn_client_mgr* cm = s->cmgr;
+	conn_client* c = conn_client_new();
 	c->srv_idx = s->idx;
-	int code = conn_client_mgr_add(cm, c);
-	return code;
+	c->sock = fd;
+
+	conn_client_mgr* cm = s->cmgr;
+	conn_client_mgr_add(cm, c);
+	return c;
 }
 
 
@@ -148,7 +151,7 @@ conn_client_mgr_free(conn_client_mgr* cm)
 	if (cm == NULL)
 		return;
 	if (cm->ptr != NULL) {
-		for (i=0; i<size; i++) {
+		for (i=0; i<cm->size; i++) {
 			if (cm->ptr[i] != NULL)
 				conn_client_free(cm->ptr[i]);
 		}
@@ -169,7 +172,7 @@ conn_client_mgr_reset(conn_client_mgr* cm)
 }
 
 int
-conn_client_mgr_add(conn_client_mgr* cm, int sock)
+conn_client_mgr_add(conn_client_mgr* cm, conn_client* c)
 {
 	int i;
 
@@ -187,8 +190,6 @@ conn_client_mgr_add(conn_client_mgr* cm, int sock)
 		}
 	}
 
-	conn_client* c = conn_client_new();
-	c->sock = sock;
 	c->idx = cm->used;
 
 	cm->ptr[cm->used] = c;
@@ -221,9 +222,9 @@ conn_client_mgr_del(conn_client_mgr* cm, conn_client* c)
 //static function
 //----------------------------------------------------------------
 static int 
-_conn_client_startup(conn* c)
+_conn_client_startup(conn_client* c)
 {
-	c->bev = bufferevent_new(c->fd, _conn_client_read_cb, NULL, _conn_client_error_cb, (void*)c);
+	c->bev = bufferevent_new(c->sock, _conn_client_read_cb, NULL, _conn_client_error_cb, (void*)c);
 	bufferevent_enable(c->bev, EV_READ|EV_WRITE);
 	return 0;
 }
@@ -254,7 +255,7 @@ _conn_client_read_cb(struct bufferevent* bev, void* arg)
 }
 
 static void 
-_conn_client_error_cb(strut bufferevent* bev, short what, void* arg)
+_conn_client_error_cb(struct bufferevent* bev, short what, void* arg)
 {
 	conn_client* c = (conn_client*)arg;
 
@@ -272,19 +273,19 @@ _conn_server_listen_cb(int fd, short what, void* arg)
 	struct sockaddr_in addr;
 	int len = sizeof(addr);
 
-	int fd = accept(fd, (struct sockaddr*)&addr, (socklen_t*)&len);
-	if (fd < 0) {
+	int sock = accept(fd, (struct sockaddr*)&addr, (socklen_t*)&len);
+	if (sock < 0) {
 		log_error();
 		return;
 	}
 
 	//to do:...
-	int flag = fcntl(fd, F_GETFL, 0);
+	int flag = fcntl(sock, F_GETFL, 0);
 	flag |= O_NONBLOCK;
-	fcntl(fd, F_SETFL, flag);
+	fcntl(sock, F_SETFL, flag);
 
 	//so nasty .......
-	conn_client_mgr_add(s, fd);
+	conn_client* c = conn_server_add_client(s, sock);
 
 	//call back
 	(s->conn_cb)(c);

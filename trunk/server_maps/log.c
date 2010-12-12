@@ -1,4 +1,4 @@
-#include <mp.h>
+#include <sm.h>
 
 #include "conf.h"
 #include "log.h"
@@ -147,5 +147,5 @@ log_debug()
 {}
 
 void 
-log_err()
+log_error()
 {}

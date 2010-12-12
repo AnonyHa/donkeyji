@@ -1,24 +1,39 @@
-int main()
+#include "sm.h"
+#include "conf.h"
+
+int set_pwd()
+{}
+
+int sig_init()
+{}
+
+int set_rlimit()
+{}
+
+int main(char** argv, int argc)
 {
 	char* conf_file = NULL;
 	char* log_file = NULL;
 	int srv_mode = -1;
+	char c;
 
 	while ((c = getopt(argc, argv, "f:m:l:")) != -1) {
-	case 'f':
-		break;
-	case 'm':
-		break;
-	case 'l':
-		break;
-	default:
-		break;
+		switch (c) {
+		case 'f':
+			break;
+		case 'm':
+			break;
+		case 'l':
+			break;
+		default:
+			break;
+		}
 	}
 
 	conf_init();
 
-	if (cfg.is_daemon) {
-		daemon();
+	if (cfg->is_daemon) {
+		daemon(1, 1);
 	}
 
 	set_pwd();

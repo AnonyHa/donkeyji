@@ -1,3 +1,4 @@
+#include "conf.h"
 #include "conn.h"
 #include "login.h"
 
@@ -19,10 +20,10 @@ int
 login_init()
 {
 	//lua init
-	gL = lua_newstate();
-	lua_openlibs(gL);
-	luaopen_luasql_mysql(gL);
-	lua_dofile(gL, "login.lua");
+	gL = luaL_newstate();
+	luaL_openlibs(gL);
+	//luaopen_luasql_mysql(gL);
+	luaL_dofile(gL, "login.lua");
 
 	//must after lua_dofile(gL, "login.lua")
 	db_init();//use lua to access mysql
@@ -43,7 +44,7 @@ login_init()
 	s2->conn_cb = _login_realm_reg;
 	s2->read_cb = _login_realm_data;
 	s2->error_cb = _login_realm_unreg;
-	int ret = conn_server_startup(s2);
+	ret = conn_server_startup(s2);
 	if (ret < 0) {
 		log_error();
 		exit(0);
@@ -57,10 +58,10 @@ _conn_get_session(long uid)
 {
 	session* s = (session*)calloc(1, sizeof(session));
 	assert(s);
-	lua_getglobal(L, "stbl");
-	lua_pushinteger(L, uid);
-	lua_gettable(L, -2);
-	lua_tostring(L, -1);
+	lua_getglobal(gL, "stbl");
+	lua_pushinteger(gL, uid);
+	lua_gettable(gL, -2);
+	lua_tostring(gL, -1);
 }
 
 //-------------------------------------------------
@@ -72,6 +73,7 @@ _login_client_conn(conn_client* c)
 static void
 _login_client_read(conn_client* c)
 {
+	/*
 	int proto_id;
 
 	switch (proto_id) {
@@ -98,6 +100,7 @@ _login_client_read(conn_client* c)
 		conn_client_del(c);
 		break;
 	}
+	*/
 }
 
 static void
@@ -111,6 +114,7 @@ _login_realm_reg(conn_client* c)
 static void
 _login_realm_data(conn_client* c)
 {
+	/*
 	int proto_id;
 	switch (proto_id) {
 	case CONFIRM:
@@ -129,6 +133,7 @@ _login_realm_data(conn_client* c)
 	default:
 		break;
 	}
+	*/
 }
 
 static void
