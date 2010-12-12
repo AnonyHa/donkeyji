@@ -28,3 +28,6 @@
 //libevent
 #include <event.h>
 
+#define MODE_LOGIN 1
+
+#define EXIT_ERROR 1
