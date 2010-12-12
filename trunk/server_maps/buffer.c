@@ -10,6 +10,7 @@ buffer_new()
 	b->ptr = NULL;
 	b->used = 0;
 	b->size = 0;
+	b->offset = 0;
 	return b;
 }
 
@@ -33,6 +34,7 @@ buffer_reset(buffer* b)
 		b->ptr[0] = '\0';//字符串结尾
 	}
 	b->used = 0;
+	b->offset = 0;
 }
 
 //append数据到buffer末尾
@@ -61,3 +63,17 @@ buffer_append(buffer* b, char* buf, size_t size)
 	log_msg(__FILE__, __LINE__, "append over");
 	return 0;
 }
+
+//move到顶头
+int buffer_movehead(buffer* b)
+{
+	if (b->offset <= 0)
+		return 0;
+	memmove(b->ptr, b->ptr+b->offset, b->used-b->offset);
+	b->used -= b->offset;
+	b->offset = 0;
+	return 0;
+}
+
+int buffer_getchunk(buffer* b)
+{}
