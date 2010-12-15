@@ -6,10 +6,9 @@ LUA_PATH_LIB = "D:\Program Files\Lua\5.1\lib"
 INC = -I $(LUA_PATH_INC)
 LIB = -L $(LUA_PATH_LIB) -llua51
 
-#SRC = test.cpp mod.cpp
-SRC = $(wildcard *.cpp)
-#OBJ = test.o mod.o
-OBJ = $(patsubst %.cpp, %.o, $(SRC))
+SRC = $(wildcard *.c)
+OBJ = $(patsubst %.c, %.o, $(SRC))
+
 TARGET = test
 
 
@@ -24,7 +23,7 @@ $(TARGET): $(OBJ)
 	$(CC) -o $(TARGET) $(OBJ) $(LIB)
 
 # 静态模式
-$(OBJ): %.o : %.cpp
+$(OBJ): %.o : %.c
 	$(CC) -c $(FLAGS) $< $(INC)
 
 # 显示表明伪目标

@@ -5,11 +5,24 @@
 #include <errno.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 
+static void _t(lua_State* L)
+{
+	int top = lua_gettop(L);
+	lua_pushinteger(L, 1);
+	printf("after push: top = %d\n", lua_gettop(L));
+	lua_settop(L, top);
+	printf("after set: top = %d\n", lua_gettop(L));
+}
 
 static int test(lua_State* L)
 {
-	lua_istable(L, -1);
+	//lua_istable(L, -1);
+	int top = lua_gettop(L);
+	printf("top = %d\n", top);
+	_t(L);
+	printf("out: top = %d\n", lua_gettop(L));
 	return 0;
 }
 
@@ -18,6 +31,7 @@ static const struct luaL_Reg hujilib[] = {
 	{"test", test},
 	{NULL, NULL}
 };
+
 
 // -------------
 // 面向对象访问

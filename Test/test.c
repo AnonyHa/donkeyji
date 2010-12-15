@@ -35,7 +35,7 @@ int reset_eval_cost(lua_State *L)
 	//lua_sethook(L, infinite_loop, LUA_MASKCALL, 0);
 	return 0;
 }
-
+/*
 int docall (lua_State *L, int narg, int nresults, int)
 {
 	int status;
@@ -47,13 +47,14 @@ int docall (lua_State *L, int narg, int nresults, int)
 	lua_remove(L, base);  //remove traceback function
 	return status;
 }
+*/
 
 //-----------------------------------------
 int main()
 {
 	lua_State* L = luaL_newstate();
 	luaL_openlibs(L);
-	//luaopen_hujilib(L);
+	luaopen_hujilib(L);
 	int error = luaL_loadfile(L, PRELOAD) || lua_pcall(L, 0, LUA_MULTRET, 0);
 	if (error){//此时lua会把错误信息string放在栈顶
 		printf("[error]");
