@@ -23,7 +23,7 @@ def my_copytree(src_dir, dst_dir, special_list):
 					i = i + 1
 					new_dst_name = os.path.join(dst_dir, '%s_bak_%d' % (name, i))
 					if i > 1000:# prevent endless loop
-						print 'need to del some files'
+						print 'need to del some backup files'
 						raise
 				# finally find a name that never used
 				os.rename(dstname, new_dst_name)
