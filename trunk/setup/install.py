@@ -2,7 +2,7 @@ import os
 import sys
 import shutil
 
-def _copy(src_dir, dst_dir, special_list):
+def my_copytree(src_dir, dst_dir, special_list):
 	if not os.path.exists(dst_dir):
 		print 'make dir', dst_dir
 		#os.mkdir(dst_dir)
@@ -28,8 +28,8 @@ def _copy(src_dir, dst_dir, special_list):
 		try:
 			if os.path.isdir(srcname):
 				print '----', srcname
-				# recursively _copy
-				_copy(srcname, dstname, [])# no special list
+				# recursively my_copytree
+				my_copytree(srcname, dstname, [])# no special list
 			else:
 				print '++++', srcname
 				shutil.copy2(srcname, dstname)
@@ -60,7 +60,7 @@ def setup(src_dir, dst_dir):
 		return
 
 	special_list = ['hello', 'hellosvr']
-	_copy(src_dir, dst_dir, special_list)
+	my_copytree(src_dir, dst_dir, special_list)
 
 #------------------------------
 if __name__ == '__main__':
@@ -72,5 +72,6 @@ if __name__ == '__main__':
 	print 'dst dir', dst_dir
 
 	real_dst_dir = os.path.join(dst_dir, 'itown_sdk')
+	print 'real dst dir', real_dst_dir
 	
 	setup('./sdk', real_dst_dir)
