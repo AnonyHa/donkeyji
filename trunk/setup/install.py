@@ -22,6 +22,9 @@ def my_copytree(src_dir, dst_dir, special_list):
 				while os.path.exists(new_dst_name):
 					i = i + 1
 					new_dst_name = os.path.join(dst_dir, '%s_bak_%d' % (name, i))
+					if i > 1000:# prevent endless loop
+						print 'need to del some files'
+						raise
 				# finally find a name that never used
 				os.rename(dstname, new_dst_name)
 
@@ -38,22 +41,25 @@ def my_copytree(src_dir, dst_dir, special_list):
 			print 'error, some file are being used'
 		except Error, err:
 			errors.extend(err.args[0])
-			#exit(1)
+			# do not raise here
 
 		try:	
 			shutil.copystat(src_dir, dst_dir)
 		except WindowsError:
 			pass
 		if errors:
+			print 'have error when copy' 
 			raise Error(errors)
 
 def setup(src_dir, dst_dir):
 	# never exists, copy directly
+	'''
 	if not os.path.exists(dst_dir):
 		try:
 			shutil.copytree(src_dir, dst_dir)
 		except:
 			raise
+	'''
 
 	if dst_dir == src_dir:
 		print 'same dir'
