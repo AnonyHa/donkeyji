@@ -293,3 +293,11 @@ _conn_server_listen_cb(int fd, short what, void* arg)
 	//register READ/WRITE event for client
 	_conn_client_startup(c);
 }
+
+static void 
+_conn_server_read_cb(struct bufferevent* bev, void* arg)
+{}
+
+static void 
+_conn_server_error_cb(struct bufferevent* bev, short what, void* arg)
+{}
