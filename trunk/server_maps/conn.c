@@ -89,6 +89,9 @@ conn_server_del_client(conn_server* s, conn_client* c)
 	return code;
 }
 
+int conn_kick_client(conn_client* c)
+{}
+
 
 //---------------------------------------------------------------
 conn_client*

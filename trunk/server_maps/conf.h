@@ -5,7 +5,8 @@ typedef struct _config
 {
 	int server_mode;
 
-	int login_port;
+	int login_client_port;
+	int login_realm_port;
 	int login_max_conns;
 
 	int log_level;

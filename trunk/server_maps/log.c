@@ -11,7 +11,6 @@ static int _log_snprintf(char* buf, size_t buflen, const char* fmt, ...);
 
 LOG_LEVEL log_level = LOG_MSG;
 char* log_file = NULL; 
-char* log_dir = NULL;
 int log_fd = -1;
 
 void 
@@ -21,11 +20,7 @@ log_init()
 	log_file = (char*)malloc(20);
 	assert(log_file);
 
-	log_dir = (char*)malloc(20);
-	assert(log_dir);
-
 	strcpy(log_file, cfg->log_file);
-	strcpy(log_dir, cfg->log_dir);
 
 	log_fd = open(log_file, O_APPEND|O_WRONLY|O_CREAT, 0644);
 	if (log_fd == -1) {
