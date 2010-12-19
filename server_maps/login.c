@@ -119,21 +119,20 @@ _login_client_read(conn_client* c)
 		}
 
 		//pop return value from lua
-		long uid = lua_tointeger(gL, -1);
-		int uid = get_uid();
+		LWORD uid = lua_tointeger(gL, -1);
 		lua_pop(gL, 1);
 		const char* skey = lua_tostring(gL, -1);
-		size_t slen = strlen(skey);
+		BYTE slen = strlen(skey);
 
 		char buf[1024];
-		unsigned char package_len = LEN_HEADER + sizeof(long) + 1 + slen;
-		unsigned int p_id = 2;
-		memcpy(buf, (void*)&package_len, sizeof(unsigned char));
-		memcpy(buf + sizeof(unsigned char), (void*)&p_id, sizeof(unsigned int));
-		memcpy(buf + sizeof(unsigned char) + sizeof(unsigned int), (void*)&uid, sizeof(long));
-		memcpy(buf + sizeof(unsigned char) + sizeof(unsigned int) + sizeof(long), (void*)&slen, 1);
+		size_t package_len = LEN_HEADER + LEN_LWORD + 1 + slen;
+		DWORD p_id = 2;
+		memcpy(buf, (void*)&package_len, sizeof(BYTE));
+		memcpy(buf + sizeof(BYTE), (void*)&p_id, sizeof(DWORD));
+		memcpy(buf + sizeof(BYTE) + sizeof(DWORD), (void*)&uid, sizeof(LWORD));
+		memcpy(buf + sizeof(BYTE) + sizeof(DWORD) + sizeof(LWORD), (void*)&slen, 1);
 
-		memcpy(buf + sizeof(unsigned char) + sizeof(unsigned int) + sizeof(long) + 1, (void*)skey, slen);
+		memcpy(buf + sizeof(BYTE) + sizeof(DWORD) + sizeof(LWORD) + 1, (void*)skey, slen);
 
 		buffer_append(c->wbuf, buf, package_len);
 		conn_client_send(c);
