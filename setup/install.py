@@ -1,7 +1,59 @@
 import os
 import sys
 import shutil
+import time
+# ------------------------------------------------------------------------
+# extension for win32
+# ------------------------------------------------------------------------
+import win32api, win32pdhutil, win32con
+import win32pdh, string
 
+# ------------------------------------------------------------------------
+def get_all_processes():
+    object = "Process"
+    items, instances = win32pdh.EnumObjectItems(None,None,object, win32pdh.PERF_DETAIL_WIZARD)
+    return instances
+
+# ------------------------------------------------------------------------
+def get_process_id(name):
+    object = "Process"
+    items, instances = win32pdh.EnumObjectItems(None,None,object, win32pdh.PERF_DETAIL_WIZARD)
+    val = None
+
+    if name in instances :
+        hq = win32pdh.OpenQuery()
+        hcs = []
+        item = "ID Process"
+        path = win32pdh.MakeCounterPath( (None,object,name, None, 0, item) )
+        hcs.append(win32pdh.AddCounter(hq, path))
+        win32pdh.CollectQueryData(hq)
+        time.sleep(0.01)
+        win32pdh.CollectQueryData(hq)
+
+        for hc in hcs:
+            type, val = win32pdh.GetFormattedCounterValue(hc, win32pdh.PDH_FMT_LONG)
+            win32pdh.RemoveCounter(hc)
+            win32pdh.CloseQuery(hq)
+            return val
+
+# ------------------------------------------------------------------------
+def kill_process_pid(pid) :
+    handle = win32api.OpenProcess(win32con.PROCESS_TERMINATE, 0, pid) #get process handle
+    win32api.TerminateProcess(handle,0) #kill by handle
+    win32api.CloseHandle(handle) #close api
+
+# ------------------------------------------------------------------------
+def kill_process ( name ) :
+    pid = get_process_id (name)
+    print pid
+
+    if pid:
+        print "exist"
+        kill_process_pid(pid)
+    else:
+        print "not this proccess"
+# ------------------------------------------------------------------------
+# setup 
 def my_copytree(src_dir, dst_dir, special_list):
 	if not os.path.exists(dst_dir):
 		print 'make dir', dst_dir
@@ -30,11 +82,11 @@ def my_copytree(src_dir, dst_dir, special_list):
 
 		try:
 			if os.path.isdir(srcname):
-				print '----', srcname
+				print '[copy dir:]', srcname
 				# recursively my_copytree
 				my_copytree(srcname, dstname, [])# no special list
 			else:
-				print '++++', srcname
+				print '[copy file:]', srcname
 				shutil.copy2(srcname, dstname)
 		except (IOError, os.error), why:
 			errors.append((srcname, dstname, str(why)))
@@ -51,6 +103,7 @@ def my_copytree(src_dir, dst_dir, special_list):
 			print 'have error when copy' 
 			raise Error(errors)
 
+# ------------------------------------------------------------------------
 def setup(src_dir, dst_dir):
 	# never exists, copy directly
 	'''
@@ -61,6 +114,13 @@ def setup(src_dir, dst_dir):
 			raise
 	'''
 
+	all_process = ['client', 'sdk_app', 'w9xopen', 'errorrpt']
+	for proc_name in all_process:
+		pid = get_process_id(proc_name)
+		if pid:
+			print 'you need to close your process %s first and try again' % proc_name 
+			raise
+
 	if dst_dir == src_dir:
 		print 'same dir'
 		return
@@ -68,7 +128,7 @@ def setup(src_dir, dst_dir):
 	special_list = ['hello', 'hellosvr']
 	my_copytree(src_dir, dst_dir, special_list)
 
-#------------------------------
+# ------------------------------------------------------------------------
 if __name__ == '__main__':
 	if len(sys.argv) != 2:
 		print 'argument wrong'
