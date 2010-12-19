@@ -1,10 +1,10 @@
 #ifndef _TYPEDEF_H
 #define _TYPEDEF_H
 
-typedef BYTE unsigned char;
-typedef WORD unsigned short;
-typedef DWORD unsigned int;
-typedef LWORD unsigned long long;
+typedef unsigned char BYTE;
+typedef unsigned short WORD;
+typedef unsigned int DWORD;
+typedef unsigned long long LWORD;
 
 #define LEN_BYTE sizeof(BYTE)
 #define LEN_WORD sizeof(WORD)

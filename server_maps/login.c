@@ -13,6 +13,7 @@ static void _login_realm_reg(conn_client* c);
 static void _login_realm_data(conn_client* c);
 static void _login_realm_unreg(conn_client* c);
 
+static void conn_client_send(conn_client* c);
 static session* _conn_get_session(long uid);
 //------------------------------------------
 lua_State* gL = NULL;
@@ -30,7 +31,7 @@ login_init()
 	db_init();//use lua to access mysql
 
 	conn_server* s = conn_server_new();//for all the client
-	s->port = cfg->port;
+	s->port = cfg->login_client_port;
 	s->conn_cb = _login_client_conn;
 	s->read_cb = _login_client_read;
 	s->error_cb = _login_client_error;
@@ -41,7 +42,7 @@ login_init()
 	}
 
 	conn_server* s2 = conn_server_new();//for all the client
-	s2->port = cfg->port;
+	s2->port = cfg->login_realm_port;
 	s2->conn_cb = _login_realm_reg;
 	s2->read_cb = _login_realm_data;
 	s2->error_cb = _login_realm_unreg;
@@ -90,13 +91,14 @@ _login_client_read(conn_client* c)
 	}
 	offset += LEN_BYTE;//chunk len size
 	//2个byte的proto id
-	SHORT proto_id = (SHORT)(*(SHORT*)(ptr+offset));
+	WORD proto_id = (WORD)(*(WORD*)(ptr+offset));
 
-	offset += LEN_SHORT;
+	offset += LEN_WORD;
 
+	BYTE urs_len;
 	switch (proto_id) {
 	case S_CHECK:
-		BYTE urs_len = (BYTE)(*(ptr + offset));//1个byte的string的长度
+		urs_len = (BYTE)(*(ptr + offset));//1个byte的string的长度
 		offset += LEN_BYTE;
 		char* urs = ptr + offset;
 		offset += urs_len;
@@ -141,7 +143,7 @@ _login_client_read(conn_client* c)
 		//-------------------------
 		//to do: kick out the user, destroy client_conn
 		//-------------------------
-		conn_client_del(c);
+		conn_kick_client(c);
 		break;
 	}
 }

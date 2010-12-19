@@ -29,7 +29,7 @@ conf_init()
 	cfg->log_file = (char*)calloc(1, 20);
 
 	//set default config
-	cfg->login_port = 10031;
+	cfg->login_client_port = 10031;
 	cfg->login_max_conns = 20000;
 
 	cfg->log_level = 1;
@@ -48,6 +48,7 @@ conf_init()
 	}
 	
 	int i;
+	/*
 	for (i=0; items[i].name!=NULL &&items[i].type!=NULL; i++) {
 		const char* name = items[i].name;
 		const char* type = items[i].type;
@@ -70,6 +71,7 @@ conf_init()
 			exit(1);
 		}
 	}
+	*/
 
 	lua_close(L);
 
