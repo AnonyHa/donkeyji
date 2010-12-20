@@ -10,12 +10,6 @@ import win32api, win32pdhutil, win32con
 import win32pdh, string
 
 # ------------------------------------------------------------------------
-def get_all_processes():
-    object = "Process"
-    items, instances = win32pdh.EnumObjectItems(None,None,object, win32pdh.PERF_DETAIL_WIZARD)
-    return instances
-
-# ------------------------------------------------------------------------
 def get_process_id(name):
     object = "Process"
     items, instances = win32pdh.EnumObjectItems(None,None,object, win32pdh.PERF_DETAIL_WIZARD)
@@ -37,22 +31,6 @@ def get_process_id(name):
             win32pdh.CloseQuery(hq)
             return val
 
-# ------------------------------------------------------------------------
-def kill_process_pid(pid) :
-    handle = win32api.OpenProcess(win32con.PROCESS_TERMINATE, 0, pid) #get process handle
-    win32api.TerminateProcess(handle,0) #kill by handle
-    win32api.CloseHandle(handle) #close api
-
-# ------------------------------------------------------------------------
-def kill_process ( name ) :
-    pid = get_process_id (name)
-    print pid
-
-    if pid:
-        print "exist"
-        kill_process_pid(pid)
-    else:
-        print "not this proccess"
 # ------------------------------------------------------------------------
 # setup 
 def my_copytree(src_dir, dst_dir, special_list):
