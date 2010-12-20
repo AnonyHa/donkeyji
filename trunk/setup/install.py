@@ -85,7 +85,7 @@ def my_copytree(src_dir, dst_dir, special_list):
 
 		if errors:
 			print 'have error when copy' 
-			raise Exception, 'have error when copy'
+			raise shutil.Error(errors)
 
 # ------------------------------------------------------------------------
 def setup(src_dir, dst_dir):
