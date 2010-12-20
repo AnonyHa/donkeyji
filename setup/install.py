@@ -2,6 +2,7 @@ import os
 import sys
 import shutil
 import time
+import exceptions
 # ------------------------------------------------------------------------
 # extension for win32
 # ------------------------------------------------------------------------
@@ -76,7 +77,7 @@ def my_copytree(src_dir, dst_dir, special_list):
 					new_dst_name = os.path.join(dst_dir, '%s_bak_%d' % (name, i))
 					if i > 1000:# prevent endless loop
 						print 'need to del some backup files'
-						raise
+						raise Exception, 'too many backup of directory %s exist, delete some of them' % name
 				# finally find a name that never used
 				os.rename(dstname, new_dst_name)
 
@@ -87,7 +88,8 @@ def my_copytree(src_dir, dst_dir, special_list):
 				my_copytree(srcname, dstname, [])# no special list
 			else:
 				print '[copy file:]', srcname
-				shutil.copy2(srcname, dstname)
+				#shutil.copy2(srcname, dstname)
+				shutil.copy(srcname, dstname)
 		except (IOError, os.error), why:
 			errors.append((srcname, dstname, str(why)))
 			print 'error, some file are being used'
@@ -95,10 +97,14 @@ def my_copytree(src_dir, dst_dir, special_list):
 			errors.extend(err.args[0])
 			# do not raise here
 
+		'''
+		# copy per
 		try:	
 			shutil.copystat(src_dir, dst_dir)
 		except WindowsError:
 			pass
+		'''
+
 		if errors:
 			print 'have error when copy' 
 			raise Error(errors)
@@ -119,11 +125,11 @@ def setup(src_dir, dst_dir):
 		pid = get_process_id(proc_name)
 		if pid:
 			print 'you need to close your process %s first and try again' % proc_name 
-			raise
+			raise Exception, 'the process %s is running'
 
 	if dst_dir == src_dir:
-		print 'same dir'
-		return
+		print 'the src dir is same as the dst dir'
+		raise Exception, 'the src dir is same as the dst dir'
 
 	special_list = ['hello', 'hellosvr']
 	my_copytree(src_dir, dst_dir, special_list)
@@ -131,13 +137,13 @@ def setup(src_dir, dst_dir):
 # ------------------------------------------------------------------------
 if __name__ == '__main__':
 	if len(sys.argv) != 2:
-		print 'argument wrong'
-		raise
+		print 'wrong argument' 
+		raise Exception, 'argument number wrong'
 
-	dst_dir = sys.argv[1]
+	dst_dir = sys.argv[1]# dst_dir
 	print 'dst dir', dst_dir
 
-	real_dst_dir = os.path.join(dst_dir, 'itown_sdk')
+	real_dst_dir = os.path.join(dst_dir, 'igate_sdk')#add a default dir "igate_sdk"
 	print 'real dst dir', real_dst_dir
 	
 	setup('./sdk', real_dst_dir)
