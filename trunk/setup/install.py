@@ -8,6 +8,7 @@ import exceptions
 # ------------------------------------------------------------------------
 import win32api, win32pdhutil, win32con
 import win32pdh, string
+import psutil
 
 # ------------------------------------------------------------------------
 def get_process_id(name):
@@ -71,7 +72,7 @@ def my_copytree(src_dir, dst_dir, special_list):
 		except (IOError, os.error), why:
 			errors.append((srcname, dstname, str(why)))
 			print 'error, some file are being used'
-		except Error, err:
+		except shutil.Error, err:
 			errors.extend(err.args[0])
 			# do not raise here
 
@@ -98,12 +99,19 @@ def setup(src_dir, dst_dir):
 			raise
 	'''
 
-	all_process = ['client', 'sdk_app', 'w9xopen', 'errorrpt']
+	#all_process = ['client', 'sdk_app', 'w9xopen', 'errorrpt']
+	all_process = {'client' : 'client', 'sdk_app' : 'tools', 'w9xopen' : 'tools', 'errorrpt' : '.'}
 	for proc_name in all_process:
+		dst_exe_dir= os.path.abspath(os.path.join(dst_dir, all_process[proc_name]))
 		pid = get_process_id(proc_name)
 		if pid:
-			print 'you need to close your process %s first and try again' % proc_name 
-			raise Exception, 'the process %s is running'
+			proc = psutil.Process(pid)
+			exe_path = os.path.dirname(proc.exe)
+			print 'exe_path', exe_path
+			print 'dst_exe_dir', dst_exe_dir
+			if exe_path == dst_exe_dir:
+				print 'you need to close your process %s first and try again' % proc_name 
+				raise Exception, 'the process %s is running' % proc_name
 
 	if dst_dir == src_dir:
 		print 'the src dir is same as the dst dir'
