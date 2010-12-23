@@ -2,8 +2,7 @@ import os
 import sys
 
 def check_class_name(pto_file):
-	f = file(pto_file, 'r')
-	data = f.read()
+	# check file_name is same as class name
 	pass
 
 dst_dir = './pto_def'
