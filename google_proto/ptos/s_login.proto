@@ -1,4 +1,4 @@
- message s_buy_item { 
+ message s_login { 
   required string name = 1; 
   required int32 id = 2;        // Unique ID number for this person. 
   optional string email = 3; 

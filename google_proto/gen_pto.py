@@ -9,7 +9,8 @@ def gen_pto(pto_dir):
 	for file in files:
 		path = os.path.join(dir, file)
 		if os.path.isdir(path):
-			gen_pto(path)
+			if file != '.svn':# ingore svn dir
+				gen_pto(path)
 		else:
 			global i
 			i = i + 1
@@ -27,3 +28,4 @@ if __name__ == '__main__':
 	print dir
 	f = file('pto_macro.h', 'w')
 	gen_pto(dir)
+	f.write('int max_proto_id = %s\n' % i)
