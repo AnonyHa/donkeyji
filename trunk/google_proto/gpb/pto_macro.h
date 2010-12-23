@@ -4,4 +4,6 @@
 #define C_BUY_ITEM_ID 2
 #define S_LOGIN_T s_login
 #define S_LOGIN_ID 3
-#define MAX_PROTO_ID 3
+#define C_LOGIN_T c_login
+#define C_LOGIN_ID 4
+#define MAX_PROTO_ID 4
