@@ -5,6 +5,7 @@
 #include "login_mod.h"
 
 std::map<int, void*> handler;
+extern int is_svr[];
 
 int reg_msg()
 {
@@ -17,7 +18,8 @@ int check_reg()
 {
 	for (int i=1; i<MAX_PROTO_ID; i++) {
 		printf("i = %d\n", i);
-		assert(handler[i]);
+		if (is_svr[i])
+			assert(handler[i]);
 		printf("func %d: %x\n", i, handler[i]);
 	}
 	return 0;

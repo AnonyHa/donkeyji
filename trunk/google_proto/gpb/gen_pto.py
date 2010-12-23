@@ -19,13 +19,20 @@ def gen_pto(pto_dir):
 			os.system(cmd)
 			name, ext = os.path.splitext(file)
 			name.upper()
-			f.write('#define %s_T %s\n' % (name.upper(), name.lower()))
-			f.write('#define %s_ID %s\n' % (name.upper(), i))
+			f_macro.write('#define %s_T %s\n' % (name.upper(), name.lower()))
+			f_macro.write('#define %s_ID %s\n' % (name.upper(), i))
+			if name[0] == 's':
+				f_issvr.write('\ttrue,\n')
+			else:
+				f_issvr.write('\tfalse,\n')
 	pass
 
 if __name__ == '__main__':
 	dir = sys.argv[1]
 	print dir
-	f = file('pto_macro.h', 'w')
+	f_macro = file('pto_macro.h', 'w')
+	f_issvr = file('pto_issvr.c', 'w')
+	f_issvr.write('bool is_svr[] = {\n')
 	gen_pto(dir)
-	f.write('#define MAX_PROTO_ID %s\n' % i)
+	f_macro.write('#define MAX_PROTO_ID %s\n' % i)
+	f_issvr.write('};')
