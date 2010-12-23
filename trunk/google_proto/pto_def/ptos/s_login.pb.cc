@@ -12,13 +12,13 @@
 
 namespace {
 
-const ::google::protobuf::Descriptor* s_buy_item_descriptor_ = NULL;
+const ::google::protobuf::Descriptor* s_login_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
-  s_buy_item_reflection_ = NULL;
-const ::google::protobuf::Descriptor* s_buy_item_PhoneNumber_descriptor_ = NULL;
+  s_login_reflection_ = NULL;
+const ::google::protobuf::Descriptor* s_login_PhoneNumber_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
-  s_buy_item_PhoneNumber_reflection_ = NULL;
-const ::google::protobuf::EnumDescriptor* s_buy_item_PhoneType_descriptor_ = NULL;
+  s_login_PhoneNumber_reflection_ = NULL;
+const ::google::protobuf::EnumDescriptor* s_login_PhoneType_descriptor_ = NULL;
 
 }  // namespace
 
@@ -29,41 +29,41 @@ void protobuf_AssignDesc_ptos_2fs_5flogin_2eproto() {
     ::google::protobuf::DescriptorPool::generated_pool()->FindFileByName(
       "ptos/s_login.proto");
   GOOGLE_CHECK(file != NULL);
-  s_buy_item_descriptor_ = file->message_type(0);
-  static const int s_buy_item_offsets_[4] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(s_buy_item, name_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(s_buy_item, id_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(s_buy_item, email_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(s_buy_item, phone_),
+  s_login_descriptor_ = file->message_type(0);
+  static const int s_login_offsets_[4] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(s_login, name_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(s_login, id_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(s_login, email_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(s_login, phone_),
   };
-  s_buy_item_reflection_ =
+  s_login_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
-      s_buy_item_descriptor_,
-      s_buy_item::default_instance_,
-      s_buy_item_offsets_,
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(s_buy_item, _has_bits_[0]),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(s_buy_item, _unknown_fields_),
+      s_login_descriptor_,
+      s_login::default_instance_,
+      s_login_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(s_login, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(s_login, _unknown_fields_),
       -1,
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
-      sizeof(s_buy_item));
-  s_buy_item_PhoneNumber_descriptor_ = s_buy_item_descriptor_->nested_type(0);
-  static const int s_buy_item_PhoneNumber_offsets_[2] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(s_buy_item_PhoneNumber, number_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(s_buy_item_PhoneNumber, type_),
+      sizeof(s_login));
+  s_login_PhoneNumber_descriptor_ = s_login_descriptor_->nested_type(0);
+  static const int s_login_PhoneNumber_offsets_[2] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(s_login_PhoneNumber, number_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(s_login_PhoneNumber, type_),
   };
-  s_buy_item_PhoneNumber_reflection_ =
+  s_login_PhoneNumber_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
-      s_buy_item_PhoneNumber_descriptor_,
-      s_buy_item_PhoneNumber::default_instance_,
-      s_buy_item_PhoneNumber_offsets_,
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(s_buy_item_PhoneNumber, _has_bits_[0]),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(s_buy_item_PhoneNumber, _unknown_fields_),
+      s_login_PhoneNumber_descriptor_,
+      s_login_PhoneNumber::default_instance_,
+      s_login_PhoneNumber_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(s_login_PhoneNumber, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(s_login_PhoneNumber, _unknown_fields_),
       -1,
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
-      sizeof(s_buy_item_PhoneNumber));
-  s_buy_item_PhoneType_descriptor_ = s_buy_item_descriptor_->enum_type(0);
+      sizeof(s_login_PhoneNumber));
+  s_login_PhoneType_descriptor_ = s_login_descriptor_->enum_type(0);
 }
 
 namespace {
@@ -77,18 +77,18 @@ inline void protobuf_AssignDescriptorsOnce() {
 void protobuf_RegisterTypes(const ::std::string&) {
   protobuf_AssignDescriptorsOnce();
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-    s_buy_item_descriptor_, &s_buy_item::default_instance());
+    s_login_descriptor_, &s_login::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-    s_buy_item_PhoneNumber_descriptor_, &s_buy_item_PhoneNumber::default_instance());
+    s_login_PhoneNumber_descriptor_, &s_login_PhoneNumber::default_instance());
 }
 
 }  // namespace
 
 void protobuf_ShutdownFile_ptos_2fs_5flogin_2eproto() {
-  delete s_buy_item::default_instance_;
-  delete s_buy_item_reflection_;
-  delete s_buy_item_PhoneNumber::default_instance_;
-  delete s_buy_item_PhoneNumber_reflection_;
+  delete s_login::default_instance_;
+  delete s_login_reflection_;
+  delete s_login_PhoneNumber::default_instance_;
+  delete s_login_PhoneNumber_reflection_;
 }
 
 void protobuf_AddDesc_ptos_2fs_5flogin_2eproto() {
@@ -98,18 +98,18 @@ void protobuf_AddDesc_ptos_2fs_5flogin_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\022ptos/s_login.proto\"\324\001\n\ns_buy_item\022\014\n\004n"
-    "ame\030\001 \002(\t\022\n\n\002id\030\002 \002(\005\022\r\n\005email\030\003 \001(\t\022&\n\005"
-    "phone\030\004 \003(\0132\027.s_buy_item.PhoneNumber\032H\n\013"
-    "PhoneNumber\022\016\n\006number\030\001 \002(\t\022)\n\004type\030\002 \001("
-    "\0162\025.s_buy_item.PhoneType:\004HOME\"+\n\tPhoneT"
-    "ype\022\n\n\006MOBILE\020\000\022\010\n\004HOME\020\001\022\010\n\004WORK\020\002", 235);
+    "\n\022ptos/s_login.proto\"\313\001\n\007s_login\022\014\n\004name"
+    "\030\001 \002(\t\022\n\n\002id\030\002 \002(\005\022\r\n\005email\030\003 \001(\t\022#\n\005pho"
+    "ne\030\004 \003(\0132\024.s_login.PhoneNumber\032E\n\013PhoneN"
+    "umber\022\016\n\006number\030\001 \002(\t\022&\n\004type\030\002 \001(\0162\022.s_"
+    "login.PhoneType:\004HOME\"+\n\tPhoneType\022\n\n\006MO"
+    "BILE\020\000\022\010\n\004HOME\020\001\022\010\n\004WORK\020\002", 226);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "ptos/s_login.proto", &protobuf_RegisterTypes);
-  s_buy_item::default_instance_ = new s_buy_item();
-  s_buy_item_PhoneNumber::default_instance_ = new s_buy_item_PhoneNumber();
-  s_buy_item::default_instance_->InitAsDefaultInstance();
-  s_buy_item_PhoneNumber::default_instance_->InitAsDefaultInstance();
+  s_login::default_instance_ = new s_login();
+  s_login_PhoneNumber::default_instance_ = new s_login_PhoneNumber();
+  s_login::default_instance_->InitAsDefaultInstance();
+  s_login_PhoneNumber::default_instance_->InitAsDefaultInstance();
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_ptos_2fs_5flogin_2eproto);
 }
 
@@ -123,11 +123,11 @@ struct StaticDescriptorInitializer_ptos_2fs_5flogin_2eproto {
 
 // ===================================================================
 
-const ::google::protobuf::EnumDescriptor* s_buy_item_PhoneType_descriptor() {
+const ::google::protobuf::EnumDescriptor* s_login_PhoneType_descriptor() {
   protobuf_AssignDescriptorsOnce();
-  return s_buy_item_PhoneType_descriptor_;
+  return s_login_PhoneType_descriptor_;
 }
-bool s_buy_item_PhoneType_IsValid(int value) {
+bool s_login_PhoneType_IsValid(int value) {
   switch(value) {
     case 0:
     case 1:
@@ -139,45 +139,45 @@ bool s_buy_item_PhoneType_IsValid(int value) {
 }
 
 #ifndef _MSC_VER
-const s_buy_item_PhoneType s_buy_item::MOBILE;
-const s_buy_item_PhoneType s_buy_item::HOME;
-const s_buy_item_PhoneType s_buy_item::WORK;
-const s_buy_item_PhoneType s_buy_item::PhoneType_MIN;
-const s_buy_item_PhoneType s_buy_item::PhoneType_MAX;
-const int s_buy_item::PhoneType_ARRAYSIZE;
+const s_login_PhoneType s_login::MOBILE;
+const s_login_PhoneType s_login::HOME;
+const s_login_PhoneType s_login::WORK;
+const s_login_PhoneType s_login::PhoneType_MIN;
+const s_login_PhoneType s_login::PhoneType_MAX;
+const int s_login::PhoneType_ARRAYSIZE;
 #endif  // _MSC_VER
-const ::std::string s_buy_item_PhoneNumber::_default_number_;
+const ::std::string s_login_PhoneNumber::_default_number_;
 #ifndef _MSC_VER
-const int s_buy_item_PhoneNumber::kNumberFieldNumber;
-const int s_buy_item_PhoneNumber::kTypeFieldNumber;
+const int s_login_PhoneNumber::kNumberFieldNumber;
+const int s_login_PhoneNumber::kTypeFieldNumber;
 #endif  // !_MSC_VER
 
-s_buy_item_PhoneNumber::s_buy_item_PhoneNumber()
+s_login_PhoneNumber::s_login_PhoneNumber()
   : ::google::protobuf::Message() {
   SharedCtor();
 }
 
-void s_buy_item_PhoneNumber::InitAsDefaultInstance() {
+void s_login_PhoneNumber::InitAsDefaultInstance() {
 }
 
-s_buy_item_PhoneNumber::s_buy_item_PhoneNumber(const s_buy_item_PhoneNumber& from)
+s_login_PhoneNumber::s_login_PhoneNumber(const s_login_PhoneNumber& from)
   : ::google::protobuf::Message() {
   SharedCtor();
   MergeFrom(from);
 }
 
-void s_buy_item_PhoneNumber::SharedCtor() {
+void s_login_PhoneNumber::SharedCtor() {
   _cached_size_ = 0;
   number_ = const_cast< ::std::string*>(&_default_number_);
   type_ = 1;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
-s_buy_item_PhoneNumber::~s_buy_item_PhoneNumber() {
+s_login_PhoneNumber::~s_login_PhoneNumber() {
   SharedDtor();
 }
 
-void s_buy_item_PhoneNumber::SharedDtor() {
+void s_login_PhoneNumber::SharedDtor() {
   if (number_ != &_default_number_) {
     delete number_;
   }
@@ -185,27 +185,27 @@ void s_buy_item_PhoneNumber::SharedDtor() {
   }
 }
 
-void s_buy_item_PhoneNumber::SetCachedSize(int size) const {
+void s_login_PhoneNumber::SetCachedSize(int size) const {
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
   _cached_size_ = size;
   GOOGLE_SAFE_CONCURRENT_WRITES_END();
 }
-const ::google::protobuf::Descriptor* s_buy_item_PhoneNumber::descriptor() {
+const ::google::protobuf::Descriptor* s_login_PhoneNumber::descriptor() {
   protobuf_AssignDescriptorsOnce();
-  return s_buy_item_PhoneNumber_descriptor_;
+  return s_login_PhoneNumber_descriptor_;
 }
 
-const s_buy_item_PhoneNumber& s_buy_item_PhoneNumber::default_instance() {
+const s_login_PhoneNumber& s_login_PhoneNumber::default_instance() {
   if (default_instance_ == NULL) protobuf_AddDesc_ptos_2fs_5flogin_2eproto();  return *default_instance_;
 }
 
-s_buy_item_PhoneNumber* s_buy_item_PhoneNumber::default_instance_ = NULL;
+s_login_PhoneNumber* s_login_PhoneNumber::default_instance_ = NULL;
 
-s_buy_item_PhoneNumber* s_buy_item_PhoneNumber::New() const {
-  return new s_buy_item_PhoneNumber;
+s_login_PhoneNumber* s_login_PhoneNumber::New() const {
+  return new s_login_PhoneNumber;
 }
 
-void s_buy_item_PhoneNumber::Clear() {
+void s_login_PhoneNumber::Clear() {
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     if (_has_bit(0)) {
       if (number_ != &_default_number_) {
@@ -218,7 +218,7 @@ void s_buy_item_PhoneNumber::Clear() {
   mutable_unknown_fields()->Clear();
 }
 
-bool s_buy_item_PhoneNumber::MergePartialFromCodedStream(
+bool s_login_PhoneNumber::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
 #define DO_(EXPRESSION) if (!(EXPRESSION)) return false
   ::google::protobuf::uint32 tag;
@@ -240,7 +240,7 @@ bool s_buy_item_PhoneNumber::MergePartialFromCodedStream(
         break;
       }
       
-      // optional .s_buy_item.PhoneType type = 2 [default = HOME];
+      // optional .s_login.PhoneType type = 2 [default = HOME];
       case 2: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
@@ -249,8 +249,8 @@ bool s_buy_item_PhoneNumber::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
                  input, &value)));
-          if (::s_buy_item_PhoneType_IsValid(value)) {
-            set_type(static_cast< ::s_buy_item_PhoneType >(value));
+          if (::s_login_PhoneType_IsValid(value)) {
+            set_type(static_cast< ::s_login_PhoneType >(value));
           } else {
             mutable_unknown_fields()->AddVarint(2, value);
           }
@@ -277,7 +277,7 @@ bool s_buy_item_PhoneNumber::MergePartialFromCodedStream(
 #undef DO_
 }
 
-void s_buy_item_PhoneNumber::SerializeWithCachedSizes(
+void s_login_PhoneNumber::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // required string number = 1;
   if (_has_bit(0)) {
@@ -288,7 +288,7 @@ void s_buy_item_PhoneNumber::SerializeWithCachedSizes(
       1, this->number(), output);
   }
   
-  // optional .s_buy_item.PhoneType type = 2 [default = HOME];
+  // optional .s_login.PhoneType type = 2 [default = HOME];
   if (_has_bit(1)) {
     ::google::protobuf::internal::WireFormatLite::WriteEnum(
       2, this->type(), output);
@@ -300,7 +300,7 @@ void s_buy_item_PhoneNumber::SerializeWithCachedSizes(
   }
 }
 
-::google::protobuf::uint8* s_buy_item_PhoneNumber::SerializeWithCachedSizesToArray(
+::google::protobuf::uint8* s_login_PhoneNumber::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
   // required string number = 1;
   if (_has_bit(0)) {
@@ -312,7 +312,7 @@ void s_buy_item_PhoneNumber::SerializeWithCachedSizes(
         1, this->number(), target);
   }
   
-  // optional .s_buy_item.PhoneType type = 2 [default = HOME];
+  // optional .s_login.PhoneType type = 2 [default = HOME];
   if (_has_bit(1)) {
     target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
       2, this->type(), target);
@@ -325,7 +325,7 @@ void s_buy_item_PhoneNumber::SerializeWithCachedSizes(
   return target;
 }
 
-int s_buy_item_PhoneNumber::ByteSize() const {
+int s_login_PhoneNumber::ByteSize() const {
   int total_size = 0;
   
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
@@ -336,7 +336,7 @@ int s_buy_item_PhoneNumber::ByteSize() const {
           this->number());
     }
     
-    // optional .s_buy_item.PhoneType type = 2 [default = HOME];
+    // optional .s_login.PhoneType type = 2 [default = HOME];
     if (has_type()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::EnumSize(this->type());
@@ -354,10 +354,10 @@ int s_buy_item_PhoneNumber::ByteSize() const {
   return total_size;
 }
 
-void s_buy_item_PhoneNumber::MergeFrom(const ::google::protobuf::Message& from) {
+void s_login_PhoneNumber::MergeFrom(const ::google::protobuf::Message& from) {
   GOOGLE_CHECK_NE(&from, this);
-  const s_buy_item_PhoneNumber* source =
-    ::google::protobuf::internal::dynamic_cast_if_available<const s_buy_item_PhoneNumber*>(
+  const s_login_PhoneNumber* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const s_login_PhoneNumber*>(
       &from);
   if (source == NULL) {
     ::google::protobuf::internal::ReflectionOps::Merge(from, this);
@@ -366,7 +366,7 @@ void s_buy_item_PhoneNumber::MergeFrom(const ::google::protobuf::Message& from) 
   }
 }
 
-void s_buy_item_PhoneNumber::MergeFrom(const s_buy_item_PhoneNumber& from) {
+void s_login_PhoneNumber::MergeFrom(const s_login_PhoneNumber& from) {
   GOOGLE_CHECK_NE(&from, this);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     if (from._has_bit(0)) {
@@ -379,25 +379,25 @@ void s_buy_item_PhoneNumber::MergeFrom(const s_buy_item_PhoneNumber& from) {
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
 
-void s_buy_item_PhoneNumber::CopyFrom(const ::google::protobuf::Message& from) {
+void s_login_PhoneNumber::CopyFrom(const ::google::protobuf::Message& from) {
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-void s_buy_item_PhoneNumber::CopyFrom(const s_buy_item_PhoneNumber& from) {
+void s_login_PhoneNumber::CopyFrom(const s_login_PhoneNumber& from) {
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool s_buy_item_PhoneNumber::IsInitialized() const {
+bool s_login_PhoneNumber::IsInitialized() const {
   if ((_has_bits_[0] & 0x00000001) != 0x00000001) return false;
   
   return true;
 }
 
-void s_buy_item_PhoneNumber::Swap(s_buy_item_PhoneNumber* other) {
+void s_login_PhoneNumber::Swap(s_login_PhoneNumber* other) {
   if (other != this) {
     std::swap(number_, other->number_);
     std::swap(type_, other->type_);
@@ -407,41 +407,41 @@ void s_buy_item_PhoneNumber::Swap(s_buy_item_PhoneNumber* other) {
   }
 }
 
-::google::protobuf::Metadata s_buy_item_PhoneNumber::GetMetadata() const {
+::google::protobuf::Metadata s_login_PhoneNumber::GetMetadata() const {
   protobuf_AssignDescriptorsOnce();
   ::google::protobuf::Metadata metadata;
-  metadata.descriptor = s_buy_item_PhoneNumber_descriptor_;
-  metadata.reflection = s_buy_item_PhoneNumber_reflection_;
+  metadata.descriptor = s_login_PhoneNumber_descriptor_;
+  metadata.reflection = s_login_PhoneNumber_reflection_;
   return metadata;
 }
 
 
 // -------------------------------------------------------------------
 
-const ::std::string s_buy_item::_default_name_;
-const ::std::string s_buy_item::_default_email_;
+const ::std::string s_login::_default_name_;
+const ::std::string s_login::_default_email_;
 #ifndef _MSC_VER
-const int s_buy_item::kNameFieldNumber;
-const int s_buy_item::kIdFieldNumber;
-const int s_buy_item::kEmailFieldNumber;
-const int s_buy_item::kPhoneFieldNumber;
+const int s_login::kNameFieldNumber;
+const int s_login::kIdFieldNumber;
+const int s_login::kEmailFieldNumber;
+const int s_login::kPhoneFieldNumber;
 #endif  // !_MSC_VER
 
-s_buy_item::s_buy_item()
+s_login::s_login()
   : ::google::protobuf::Message() {
   SharedCtor();
 }
 
-void s_buy_item::InitAsDefaultInstance() {
+void s_login::InitAsDefaultInstance() {
 }
 
-s_buy_item::s_buy_item(const s_buy_item& from)
+s_login::s_login(const s_login& from)
   : ::google::protobuf::Message() {
   SharedCtor();
   MergeFrom(from);
 }
 
-void s_buy_item::SharedCtor() {
+void s_login::SharedCtor() {
   _cached_size_ = 0;
   name_ = const_cast< ::std::string*>(&_default_name_);
   id_ = 0;
@@ -449,11 +449,11 @@ void s_buy_item::SharedCtor() {
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
-s_buy_item::~s_buy_item() {
+s_login::~s_login() {
   SharedDtor();
 }
 
-void s_buy_item::SharedDtor() {
+void s_login::SharedDtor() {
   if (name_ != &_default_name_) {
     delete name_;
   }
@@ -464,27 +464,27 @@ void s_buy_item::SharedDtor() {
   }
 }
 
-void s_buy_item::SetCachedSize(int size) const {
+void s_login::SetCachedSize(int size) const {
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
   _cached_size_ = size;
   GOOGLE_SAFE_CONCURRENT_WRITES_END();
 }
-const ::google::protobuf::Descriptor* s_buy_item::descriptor() {
+const ::google::protobuf::Descriptor* s_login::descriptor() {
   protobuf_AssignDescriptorsOnce();
-  return s_buy_item_descriptor_;
+  return s_login_descriptor_;
 }
 
-const s_buy_item& s_buy_item::default_instance() {
+const s_login& s_login::default_instance() {
   if (default_instance_ == NULL) protobuf_AddDesc_ptos_2fs_5flogin_2eproto();  return *default_instance_;
 }
 
-s_buy_item* s_buy_item::default_instance_ = NULL;
+s_login* s_login::default_instance_ = NULL;
 
-s_buy_item* s_buy_item::New() const {
-  return new s_buy_item;
+s_login* s_login::New() const {
+  return new s_login;
 }
 
-void s_buy_item::Clear() {
+void s_login::Clear() {
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     if (_has_bit(0)) {
       if (name_ != &_default_name_) {
@@ -503,7 +503,7 @@ void s_buy_item::Clear() {
   mutable_unknown_fields()->Clear();
 }
 
-bool s_buy_item::MergePartialFromCodedStream(
+bool s_login::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
 #define DO_(EXPRESSION) if (!(EXPRESSION)) return false
   ::google::protobuf::uint32 tag;
@@ -558,7 +558,7 @@ bool s_buy_item::MergePartialFromCodedStream(
         break;
       }
       
-      // repeated .s_buy_item.PhoneNumber phone = 4;
+      // repeated .s_login.PhoneNumber phone = 4;
       case 4: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
@@ -589,7 +589,7 @@ bool s_buy_item::MergePartialFromCodedStream(
 #undef DO_
 }
 
-void s_buy_item::SerializeWithCachedSizes(
+void s_login::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // required string name = 1;
   if (_has_bit(0)) {
@@ -614,7 +614,7 @@ void s_buy_item::SerializeWithCachedSizes(
       3, this->email(), output);
   }
   
-  // repeated .s_buy_item.PhoneNumber phone = 4;
+  // repeated .s_login.PhoneNumber phone = 4;
   for (int i = 0; i < this->phone_size(); i++) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       4, this->phone(i), output);
@@ -626,7 +626,7 @@ void s_buy_item::SerializeWithCachedSizes(
   }
 }
 
-::google::protobuf::uint8* s_buy_item::SerializeWithCachedSizesToArray(
+::google::protobuf::uint8* s_login::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
   // required string name = 1;
   if (_has_bit(0)) {
@@ -653,7 +653,7 @@ void s_buy_item::SerializeWithCachedSizes(
         3, this->email(), target);
   }
   
-  // repeated .s_buy_item.PhoneNumber phone = 4;
+  // repeated .s_login.PhoneNumber phone = 4;
   for (int i = 0; i < this->phone_size(); i++) {
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
@@ -667,7 +667,7 @@ void s_buy_item::SerializeWithCachedSizes(
   return target;
 }
 
-int s_buy_item::ByteSize() const {
+int s_login::ByteSize() const {
   int total_size = 0;
   
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
@@ -693,7 +693,7 @@ int s_buy_item::ByteSize() const {
     }
     
   }
-  // repeated .s_buy_item.PhoneNumber phone = 4;
+  // repeated .s_login.PhoneNumber phone = 4;
   total_size += 1 * this->phone_size();
   for (int i = 0; i < this->phone_size(); i++) {
     total_size +=
@@ -712,10 +712,10 @@ int s_buy_item::ByteSize() const {
   return total_size;
 }
 
-void s_buy_item::MergeFrom(const ::google::protobuf::Message& from) {
+void s_login::MergeFrom(const ::google::protobuf::Message& from) {
   GOOGLE_CHECK_NE(&from, this);
-  const s_buy_item* source =
-    ::google::protobuf::internal::dynamic_cast_if_available<const s_buy_item*>(
+  const s_login* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const s_login*>(
       &from);
   if (source == NULL) {
     ::google::protobuf::internal::ReflectionOps::Merge(from, this);
@@ -724,7 +724,7 @@ void s_buy_item::MergeFrom(const ::google::protobuf::Message& from) {
   }
 }
 
-void s_buy_item::MergeFrom(const s_buy_item& from) {
+void s_login::MergeFrom(const s_login& from) {
   GOOGLE_CHECK_NE(&from, this);
   phone_.MergeFrom(from.phone_);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
@@ -741,19 +741,19 @@ void s_buy_item::MergeFrom(const s_buy_item& from) {
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
 
-void s_buy_item::CopyFrom(const ::google::protobuf::Message& from) {
+void s_login::CopyFrom(const ::google::protobuf::Message& from) {
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-void s_buy_item::CopyFrom(const s_buy_item& from) {
+void s_login::CopyFrom(const s_login& from) {
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool s_buy_item::IsInitialized() const {
+bool s_login::IsInitialized() const {
   if ((_has_bits_[0] & 0x00000003) != 0x00000003) return false;
   
   for (int i = 0; i < phone_size(); i++) {
@@ -762,7 +762,7 @@ bool s_buy_item::IsInitialized() const {
   return true;
 }
 
-void s_buy_item::Swap(s_buy_item* other) {
+void s_login::Swap(s_login* other) {
   if (other != this) {
     std::swap(name_, other->name_);
     std::swap(id_, other->id_);
@@ -774,11 +774,11 @@ void s_buy_item::Swap(s_buy_item* other) {
   }
 }
 
-::google::protobuf::Metadata s_buy_item::GetMetadata() const {
+::google::protobuf::Metadata s_login::GetMetadata() const {
   protobuf_AssignDescriptorsOnce();
   ::google::protobuf::Metadata metadata;
-  metadata.descriptor = s_buy_item_descriptor_;
-  metadata.reflection = s_buy_item_reflection_;
+  metadata.descriptor = s_login_descriptor_;
+  metadata.reflection = s_login_reflection_;
   return metadata;
 }
 

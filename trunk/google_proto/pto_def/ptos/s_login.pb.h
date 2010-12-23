@@ -30,39 +30,39 @@ void  protobuf_AddDesc_ptos_2fs_5flogin_2eproto();
 void protobuf_AssignDesc_ptos_2fs_5flogin_2eproto();
 void protobuf_ShutdownFile_ptos_2fs_5flogin_2eproto();
 
-class s_buy_item;
-class s_buy_item_PhoneNumber;
+class s_login;
+class s_login_PhoneNumber;
 
-enum s_buy_item_PhoneType {
-  s_buy_item_PhoneType_MOBILE = 0,
-  s_buy_item_PhoneType_HOME = 1,
-  s_buy_item_PhoneType_WORK = 2
+enum s_login_PhoneType {
+  s_login_PhoneType_MOBILE = 0,
+  s_login_PhoneType_HOME = 1,
+  s_login_PhoneType_WORK = 2
 };
-bool s_buy_item_PhoneType_IsValid(int value);
-const s_buy_item_PhoneType s_buy_item_PhoneType_PhoneType_MIN = s_buy_item_PhoneType_MOBILE;
-const s_buy_item_PhoneType s_buy_item_PhoneType_PhoneType_MAX = s_buy_item_PhoneType_WORK;
-const int s_buy_item_PhoneType_PhoneType_ARRAYSIZE = s_buy_item_PhoneType_PhoneType_MAX + 1;
+bool s_login_PhoneType_IsValid(int value);
+const s_login_PhoneType s_login_PhoneType_PhoneType_MIN = s_login_PhoneType_MOBILE;
+const s_login_PhoneType s_login_PhoneType_PhoneType_MAX = s_login_PhoneType_WORK;
+const int s_login_PhoneType_PhoneType_ARRAYSIZE = s_login_PhoneType_PhoneType_MAX + 1;
 
-const ::google::protobuf::EnumDescriptor* s_buy_item_PhoneType_descriptor();
-inline const ::std::string& s_buy_item_PhoneType_Name(s_buy_item_PhoneType value) {
+const ::google::protobuf::EnumDescriptor* s_login_PhoneType_descriptor();
+inline const ::std::string& s_login_PhoneType_Name(s_login_PhoneType value) {
   return ::google::protobuf::internal::NameOfEnum(
-    s_buy_item_PhoneType_descriptor(), value);
+    s_login_PhoneType_descriptor(), value);
 }
-inline bool s_buy_item_PhoneType_Parse(
-    const ::std::string& name, s_buy_item_PhoneType* value) {
-  return ::google::protobuf::internal::ParseNamedEnum<s_buy_item_PhoneType>(
-    s_buy_item_PhoneType_descriptor(), name, value);
+inline bool s_login_PhoneType_Parse(
+    const ::std::string& name, s_login_PhoneType* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<s_login_PhoneType>(
+    s_login_PhoneType_descriptor(), name, value);
 }
 // ===================================================================
 
-class s_buy_item_PhoneNumber : public ::google::protobuf::Message {
+class s_login_PhoneNumber : public ::google::protobuf::Message {
  public:
-  s_buy_item_PhoneNumber();
-  virtual ~s_buy_item_PhoneNumber();
+  s_login_PhoneNumber();
+  virtual ~s_login_PhoneNumber();
   
-  s_buy_item_PhoneNumber(const s_buy_item_PhoneNumber& from);
+  s_login_PhoneNumber(const s_login_PhoneNumber& from);
   
-  inline s_buy_item_PhoneNumber& operator=(const s_buy_item_PhoneNumber& from) {
+  inline s_login_PhoneNumber& operator=(const s_login_PhoneNumber& from) {
     CopyFrom(from);
     return *this;
   }
@@ -76,17 +76,17 @@ class s_buy_item_PhoneNumber : public ::google::protobuf::Message {
   }
   
   static const ::google::protobuf::Descriptor* descriptor();
-  static const s_buy_item_PhoneNumber& default_instance();
+  static const s_login_PhoneNumber& default_instance();
   
-  void Swap(s_buy_item_PhoneNumber* other);
+  void Swap(s_login_PhoneNumber* other);
   
   // implements Message ----------------------------------------------
   
-  s_buy_item_PhoneNumber* New() const;
+  s_login_PhoneNumber* New() const;
   void CopyFrom(const ::google::protobuf::Message& from);
   void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const s_buy_item_PhoneNumber& from);
-  void MergeFrom(const s_buy_item_PhoneNumber& from);
+  void CopyFrom(const s_login_PhoneNumber& from);
+  void MergeFrom(const s_login_PhoneNumber& from);
   void Clear();
   bool IsInitialized() const;
   
@@ -119,14 +119,14 @@ class s_buy_item_PhoneNumber : public ::google::protobuf::Message {
   inline void set_number(const char* value, size_t size);
   inline ::std::string* mutable_number();
   
-  // optional .s_buy_item.PhoneType type = 2 [default = HOME];
+  // optional .s_login.PhoneType type = 2 [default = HOME];
   inline bool has_type() const;
   inline void clear_type();
   static const int kTypeFieldNumber = 2;
-  inline ::s_buy_item_PhoneType type() const;
-  inline void set_type(::s_buy_item_PhoneType value);
+  inline ::s_login_PhoneType type() const;
+  inline void set_type(::s_login_PhoneType value);
   
-  // @@protoc_insertion_point(class_scope:s_buy_item.PhoneNumber)
+  // @@protoc_insertion_point(class_scope:s_login.PhoneNumber)
  private:
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   mutable int _cached_size_;
@@ -152,18 +152,18 @@ class s_buy_item_PhoneNumber : public ::google::protobuf::Message {
   }
   
   void InitAsDefaultInstance();
-  static s_buy_item_PhoneNumber* default_instance_;
+  static s_login_PhoneNumber* default_instance_;
 };
 // -------------------------------------------------------------------
 
-class s_buy_item : public ::google::protobuf::Message {
+class s_login : public ::google::protobuf::Message {
  public:
-  s_buy_item();
-  virtual ~s_buy_item();
+  s_login();
+  virtual ~s_login();
   
-  s_buy_item(const s_buy_item& from);
+  s_login(const s_login& from);
   
-  inline s_buy_item& operator=(const s_buy_item& from) {
+  inline s_login& operator=(const s_login& from) {
     CopyFrom(from);
     return *this;
   }
@@ -177,17 +177,17 @@ class s_buy_item : public ::google::protobuf::Message {
   }
   
   static const ::google::protobuf::Descriptor* descriptor();
-  static const s_buy_item& default_instance();
+  static const s_login& default_instance();
   
-  void Swap(s_buy_item* other);
+  void Swap(s_login* other);
   
   // implements Message ----------------------------------------------
   
-  s_buy_item* New() const;
+  s_login* New() const;
   void CopyFrom(const ::google::protobuf::Message& from);
   void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const s_buy_item& from);
-  void MergeFrom(const s_buy_item& from);
+  void CopyFrom(const s_login& from);
+  void MergeFrom(const s_login& from);
   void Clear();
   bool IsInitialized() const;
   
@@ -208,31 +208,31 @@ class s_buy_item : public ::google::protobuf::Message {
   
   // nested types ----------------------------------------------------
   
-  typedef s_buy_item_PhoneNumber PhoneNumber;
+  typedef s_login_PhoneNumber PhoneNumber;
   
-  typedef s_buy_item_PhoneType PhoneType;
-  static const PhoneType MOBILE = s_buy_item_PhoneType_MOBILE;
-  static const PhoneType HOME = s_buy_item_PhoneType_HOME;
-  static const PhoneType WORK = s_buy_item_PhoneType_WORK;
+  typedef s_login_PhoneType PhoneType;
+  static const PhoneType MOBILE = s_login_PhoneType_MOBILE;
+  static const PhoneType HOME = s_login_PhoneType_HOME;
+  static const PhoneType WORK = s_login_PhoneType_WORK;
   static inline bool PhoneType_IsValid(int value) {
-    return s_buy_item_PhoneType_IsValid(value);
+    return s_login_PhoneType_IsValid(value);
   }
   static const PhoneType PhoneType_MIN =
-    s_buy_item_PhoneType_PhoneType_MIN;
+    s_login_PhoneType_PhoneType_MIN;
   static const PhoneType PhoneType_MAX =
-    s_buy_item_PhoneType_PhoneType_MAX;
+    s_login_PhoneType_PhoneType_MAX;
   static const int PhoneType_ARRAYSIZE =
-    s_buy_item_PhoneType_PhoneType_ARRAYSIZE;
+    s_login_PhoneType_PhoneType_ARRAYSIZE;
   static inline const ::google::protobuf::EnumDescriptor*
   PhoneType_descriptor() {
-    return s_buy_item_PhoneType_descriptor();
+    return s_login_PhoneType_descriptor();
   }
   static inline const ::std::string& PhoneType_Name(PhoneType value) {
-    return s_buy_item_PhoneType_Name(value);
+    return s_login_PhoneType_Name(value);
   }
   static inline bool PhoneType_Parse(const ::std::string& name,
       PhoneType* value) {
-    return s_buy_item_PhoneType_Parse(name, value);
+    return s_login_PhoneType_Parse(name, value);
   }
   
   // accessors -------------------------------------------------------
@@ -264,19 +264,19 @@ class s_buy_item : public ::google::protobuf::Message {
   inline void set_email(const char* value, size_t size);
   inline ::std::string* mutable_email();
   
-  // repeated .s_buy_item.PhoneNumber phone = 4;
+  // repeated .s_login.PhoneNumber phone = 4;
   inline int phone_size() const;
   inline void clear_phone();
   static const int kPhoneFieldNumber = 4;
-  inline const ::s_buy_item_PhoneNumber& phone(int index) const;
-  inline ::s_buy_item_PhoneNumber* mutable_phone(int index);
-  inline ::s_buy_item_PhoneNumber* add_phone();
-  inline const ::google::protobuf::RepeatedPtrField< ::s_buy_item_PhoneNumber >&
+  inline const ::s_login_PhoneNumber& phone(int index) const;
+  inline ::s_login_PhoneNumber* mutable_phone(int index);
+  inline ::s_login_PhoneNumber* add_phone();
+  inline const ::google::protobuf::RepeatedPtrField< ::s_login_PhoneNumber >&
       phone() const;
-  inline ::google::protobuf::RepeatedPtrField< ::s_buy_item_PhoneNumber >*
+  inline ::google::protobuf::RepeatedPtrField< ::s_login_PhoneNumber >*
       mutable_phone();
   
-  // @@protoc_insertion_point(class_scope:s_buy_item)
+  // @@protoc_insertion_point(class_scope:s_login)
  private:
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   mutable int _cached_size_;
@@ -286,7 +286,7 @@ class s_buy_item : public ::google::protobuf::Message {
   ::google::protobuf::int32 id_;
   ::std::string* email_;
   static const ::std::string _default_email_;
-  ::google::protobuf::RepeatedPtrField< ::s_buy_item_PhoneNumber > phone_;
+  ::google::protobuf::RepeatedPtrField< ::s_login_PhoneNumber > phone_;
   friend void  protobuf_AddDesc_ptos_2fs_5flogin_2eproto();
   friend void protobuf_AssignDesc_ptos_2fs_5flogin_2eproto();
   friend void protobuf_ShutdownFile_ptos_2fs_5flogin_2eproto();
@@ -305,50 +305,50 @@ class s_buy_item : public ::google::protobuf::Message {
   }
   
   void InitAsDefaultInstance();
-  static s_buy_item* default_instance_;
+  static s_login* default_instance_;
 };
 // ===================================================================
 
 
 // ===================================================================
 
-// s_buy_item_PhoneNumber
+// s_login_PhoneNumber
 
 // required string number = 1;
-inline bool s_buy_item_PhoneNumber::has_number() const {
+inline bool s_login_PhoneNumber::has_number() const {
   return _has_bit(0);
 }
-inline void s_buy_item_PhoneNumber::clear_number() {
+inline void s_login_PhoneNumber::clear_number() {
   if (number_ != &_default_number_) {
     number_->clear();
   }
   _clear_bit(0);
 }
-inline const ::std::string& s_buy_item_PhoneNumber::number() const {
+inline const ::std::string& s_login_PhoneNumber::number() const {
   return *number_;
 }
-inline void s_buy_item_PhoneNumber::set_number(const ::std::string& value) {
+inline void s_login_PhoneNumber::set_number(const ::std::string& value) {
   _set_bit(0);
   if (number_ == &_default_number_) {
     number_ = new ::std::string;
   }
   number_->assign(value);
 }
-inline void s_buy_item_PhoneNumber::set_number(const char* value) {
+inline void s_login_PhoneNumber::set_number(const char* value) {
   _set_bit(0);
   if (number_ == &_default_number_) {
     number_ = new ::std::string;
   }
   number_->assign(value);
 }
-inline void s_buy_item_PhoneNumber::set_number(const char* value, size_t size) {
+inline void s_login_PhoneNumber::set_number(const char* value, size_t size) {
   _set_bit(0);
   if (number_ == &_default_number_) {
     number_ = new ::std::string;
   }
   number_->assign(reinterpret_cast<const char*>(value), size);
 }
-inline ::std::string* s_buy_item_PhoneNumber::mutable_number() {
+inline ::std::string* s_login_PhoneNumber::mutable_number() {
   _set_bit(0);
   if (number_ == &_default_number_) {
     number_ = new ::std::string;
@@ -356,62 +356,62 @@ inline ::std::string* s_buy_item_PhoneNumber::mutable_number() {
   return number_;
 }
 
-// optional .s_buy_item.PhoneType type = 2 [default = HOME];
-inline bool s_buy_item_PhoneNumber::has_type() const {
+// optional .s_login.PhoneType type = 2 [default = HOME];
+inline bool s_login_PhoneNumber::has_type() const {
   return _has_bit(1);
 }
-inline void s_buy_item_PhoneNumber::clear_type() {
+inline void s_login_PhoneNumber::clear_type() {
   type_ = 1;
   _clear_bit(1);
 }
-inline ::s_buy_item_PhoneType s_buy_item_PhoneNumber::type() const {
-  return static_cast< ::s_buy_item_PhoneType >(type_);
+inline ::s_login_PhoneType s_login_PhoneNumber::type() const {
+  return static_cast< ::s_login_PhoneType >(type_);
 }
-inline void s_buy_item_PhoneNumber::set_type(::s_buy_item_PhoneType value) {
-  GOOGLE_DCHECK(::s_buy_item_PhoneType_IsValid(value));
+inline void s_login_PhoneNumber::set_type(::s_login_PhoneType value) {
+  GOOGLE_DCHECK(::s_login_PhoneType_IsValid(value));
   _set_bit(1);
   type_ = value;
 }
 
 // -------------------------------------------------------------------
 
-// s_buy_item
+// s_login
 
 // required string name = 1;
-inline bool s_buy_item::has_name() const {
+inline bool s_login::has_name() const {
   return _has_bit(0);
 }
-inline void s_buy_item::clear_name() {
+inline void s_login::clear_name() {
   if (name_ != &_default_name_) {
     name_->clear();
   }
   _clear_bit(0);
 }
-inline const ::std::string& s_buy_item::name() const {
+inline const ::std::string& s_login::name() const {
   return *name_;
 }
-inline void s_buy_item::set_name(const ::std::string& value) {
+inline void s_login::set_name(const ::std::string& value) {
   _set_bit(0);
   if (name_ == &_default_name_) {
     name_ = new ::std::string;
   }
   name_->assign(value);
 }
-inline void s_buy_item::set_name(const char* value) {
+inline void s_login::set_name(const char* value) {
   _set_bit(0);
   if (name_ == &_default_name_) {
     name_ = new ::std::string;
   }
   name_->assign(value);
 }
-inline void s_buy_item::set_name(const char* value, size_t size) {
+inline void s_login::set_name(const char* value, size_t size) {
   _set_bit(0);
   if (name_ == &_default_name_) {
     name_ = new ::std::string;
   }
   name_->assign(reinterpret_cast<const char*>(value), size);
 }
-inline ::std::string* s_buy_item::mutable_name() {
+inline ::std::string* s_login::mutable_name() {
   _set_bit(0);
   if (name_ == &_default_name_) {
     name_ = new ::std::string;
@@ -420,56 +420,56 @@ inline ::std::string* s_buy_item::mutable_name() {
 }
 
 // required int32 id = 2;
-inline bool s_buy_item::has_id() const {
+inline bool s_login::has_id() const {
   return _has_bit(1);
 }
-inline void s_buy_item::clear_id() {
+inline void s_login::clear_id() {
   id_ = 0;
   _clear_bit(1);
 }
-inline ::google::protobuf::int32 s_buy_item::id() const {
+inline ::google::protobuf::int32 s_login::id() const {
   return id_;
 }
-inline void s_buy_item::set_id(::google::protobuf::int32 value) {
+inline void s_login::set_id(::google::protobuf::int32 value) {
   _set_bit(1);
   id_ = value;
 }
 
 // optional string email = 3;
-inline bool s_buy_item::has_email() const {
+inline bool s_login::has_email() const {
   return _has_bit(2);
 }
-inline void s_buy_item::clear_email() {
+inline void s_login::clear_email() {
   if (email_ != &_default_email_) {
     email_->clear();
   }
   _clear_bit(2);
 }
-inline const ::std::string& s_buy_item::email() const {
+inline const ::std::string& s_login::email() const {
   return *email_;
 }
-inline void s_buy_item::set_email(const ::std::string& value) {
+inline void s_login::set_email(const ::std::string& value) {
   _set_bit(2);
   if (email_ == &_default_email_) {
     email_ = new ::std::string;
   }
   email_->assign(value);
 }
-inline void s_buy_item::set_email(const char* value) {
+inline void s_login::set_email(const char* value) {
   _set_bit(2);
   if (email_ == &_default_email_) {
     email_ = new ::std::string;
   }
   email_->assign(value);
 }
-inline void s_buy_item::set_email(const char* value, size_t size) {
+inline void s_login::set_email(const char* value, size_t size) {
   _set_bit(2);
   if (email_ == &_default_email_) {
     email_ = new ::std::string;
   }
   email_->assign(reinterpret_cast<const char*>(value), size);
 }
-inline ::std::string* s_buy_item::mutable_email() {
+inline ::std::string* s_login::mutable_email() {
   _set_bit(2);
   if (email_ == &_default_email_) {
     email_ = new ::std::string;
@@ -477,28 +477,28 @@ inline ::std::string* s_buy_item::mutable_email() {
   return email_;
 }
 
-// repeated .s_buy_item.PhoneNumber phone = 4;
-inline int s_buy_item::phone_size() const {
+// repeated .s_login.PhoneNumber phone = 4;
+inline int s_login::phone_size() const {
   return phone_.size();
 }
-inline void s_buy_item::clear_phone() {
+inline void s_login::clear_phone() {
   phone_.Clear();
 }
-inline const ::s_buy_item_PhoneNumber& s_buy_item::phone(int index) const {
+inline const ::s_login_PhoneNumber& s_login::phone(int index) const {
   return phone_.Get(index);
 }
-inline ::s_buy_item_PhoneNumber* s_buy_item::mutable_phone(int index) {
+inline ::s_login_PhoneNumber* s_login::mutable_phone(int index) {
   return phone_.Mutable(index);
 }
-inline ::s_buy_item_PhoneNumber* s_buy_item::add_phone() {
+inline ::s_login_PhoneNumber* s_login::add_phone() {
   return phone_.Add();
 }
-inline const ::google::protobuf::RepeatedPtrField< ::s_buy_item_PhoneNumber >&
-s_buy_item::phone() const {
+inline const ::google::protobuf::RepeatedPtrField< ::s_login_PhoneNumber >&
+s_login::phone() const {
   return phone_;
 }
-inline ::google::protobuf::RepeatedPtrField< ::s_buy_item_PhoneNumber >*
-s_buy_item::mutable_phone() {
+inline ::google::protobuf::RepeatedPtrField< ::s_login_PhoneNumber >*
+s_login::mutable_phone() {
   return &phone_;
 }
 
@@ -510,8 +510,8 @@ namespace google {
 namespace protobuf {
 
 template <>
-inline const EnumDescriptor* GetEnumDescriptor< ::s_buy_item_PhoneType>() {
-  return ::s_buy_item_PhoneType_descriptor();
+inline const EnumDescriptor* GetEnumDescriptor< ::s_login_PhoneType>() {
+  return ::s_login_PhoneType_descriptor();
 }
 
 }  // namespace google
