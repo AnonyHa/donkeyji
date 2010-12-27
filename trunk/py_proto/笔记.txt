@@ -1,0 +1,8 @@
+这里的python版本的协议，是通过dict的key来进行pack和unpack的，直接将key也pack到字符串流中去，unpack时将key解析出来，并还原。要求构造的dict的key要与协议定义的key一致，且消息处理函数的参数要与协议的可以一致。限制是比较大。
+
+过程：
+将dict的每一个成员pack成字符串，形成一个字符串数组，然后将这个数组pack成字符串。
+
+
+xy3的协议按照参数的顺序来进行pack和unpack。
+xy3处理table参数类型：按lua遍历table的顺序，依次处理pack/unpack参数table的各个key
