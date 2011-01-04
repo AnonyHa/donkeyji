@@ -1,25 +1,24 @@
 CC = g++
-FLAG = -g
+CFLAGS = -g -Wall
 INC = -I ./
 LIBS = -llua5.1 -levent -lrt
 
-TARGET = sm
 
-SRC = $(wildcard *.cc)
-OBJ = $(patsubst %.cc, %.o, $(SRC))
+SUBDIR = login util common
+TOPSRC = $(wildcard *.cc)
+TOPOBJ = $(TOPSRC: %.cc=%.o)
+SUBSRC = $(shell find $(SUBDIR) -name '*.cc')
+SUBOBJ = $(SUBSRC: %.cc = %.o)
+
+TARGET = sm
 
 all:$(TARGET)
 
-DEPENDS: $(SRC)
-	$(CC) -M $(SRC) $(INC) > DEPENDS
-include DEPENDS
+$(TARGET):$(TOPOBJ) $(SUBOBJ)
+	$(CC) $(CFLAGS) -o $(TARGET) $(TOPOBJ) $(SUBOBJ) $(LIBS)
 
-$(TARGET):$(OBJ)
-	$(CC) -o $(TARGET) $(OBJ) $(LIBS)
+.cc.o:
+	$(CC) $(CFLAGS) -c $(@D)/$(<F) -o $(@D)/$(@F)
 
-$(OBJ): %.o : %.cc
-	$(CC) -c $< $(FLAG) $(INC)
-
-.PHONY:clean
 clean:
-	rm *.o
+	rm $(TARGET) $(TOPOBJ) $(SUBOBJ)
