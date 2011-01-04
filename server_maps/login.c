@@ -21,6 +21,8 @@ lua_State* gL = NULL;
 int
 login_init()
 {
+	svc_login_init();//protocol init
+
 	//lua init
 	gL = luaL_newstate();
 	luaL_openlibs(gL);
@@ -72,6 +74,9 @@ static void
 _login_client_conn(conn_client* c)
 {}
 
+//-------------------------------------
+//没有用google protocol buffer
+//-------------------------------------
 static void
 _login_client_read(conn_client* c)
 {
@@ -148,6 +153,47 @@ _login_client_read(conn_client* c)
 	}
 }
 
+//------------------------------------
+//用google protocol buffer
+//------------------------------------
+static void
+_login_client_read2(conn_client* c)
+{
+	buffer* buf = c->rbuf;
+	char* ptr = buf->ptr;
+	size_t offset = buf->offset;
+	size_t size = buf->size;
+	size_t used = buf->used;
+	if (offset >= used)//没有数据读取
+		return;
+
+	//-----------------------------
+	//to do.....
+	//-----------------------------
+
+	//解析msg头，找出msg id和msg len
+	int msg_id = 0;
+	int msg_len = 0;
+
+	//根据msg id找到对应的rpc
+	rpc_method = rpc_map[msg_id];
+
+	MethodDescriptor* method = rpc_method->method;
+	//req用来unpack出msg中的request结构体
+	TestRequest* req = rpc_method->req->New();
+	//rsp用来pack向client发送响应
+	TestResponse* rsp = rpc_method->rsp->New();
+	//unpack出request
+	req->ParseFromString(buf);
+
+	//成员函数指针
+	Closure* done = NewCallBack(rpc_method, done_callback);
+	//CallMethod里会调用到Echo，Echo里调用到done->Run()
+	//done->Run()里调用rpc_method->*method()
+	rpc_method->svc->CallMethod(method, NULL, req, rsp, done);
+}
+
+//----------------------------------------
 static void
 _login_client_error(conn_client* c)
 {}
