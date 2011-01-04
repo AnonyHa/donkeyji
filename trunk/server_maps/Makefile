@@ -1,12 +1,12 @@
-CC = gcc
+CC = g++
 FLAG = -g
 INC = -I ./
 LIBS = -llua5.1 -levent -lrt
 
 TARGET = sm
 
-SRC = $(wildcard *.c)
-OBJ = $(patsubst %.c, %.o, $(SRC))
+SRC = $(wildcard *.cc)
+OBJ = $(patsubst %.cc, %.o, $(SRC))
 
 all:$(TARGET)
 
@@ -17,7 +17,7 @@ include DEPENDS
 $(TARGET):$(OBJ)
 	$(CC) -o $(TARGET) $(OBJ) $(LIBS)
 
-$(OBJ): %.o : %.c
+$(OBJ): %.o : %.cc
 	$(CC) -c $< $(FLAG) $(INC)
 
 .PHONY:clean
