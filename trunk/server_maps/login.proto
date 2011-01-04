@@ -1,0 +1,17 @@
+package login;
+
+message LoginRequest
+{
+  required string urs = 1;
+  required string pwd = 2;
+};
+
+message LoginResponse
+{
+  required int32 uid = 1;
+};
+
+service LoginService
+{
+  rpc Echo(LoginRequest) returns (LoginResponse);
+};
