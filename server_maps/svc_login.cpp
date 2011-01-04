@@ -1,19 +1,21 @@
 #include "svc_login.h"
+
 LoginServiceImpl::LoginServiceImpl()
 {
 	register_service(this);
 }
 
 void LoginServiceImpl::Echo(
-		gpb::RpcController* controller,
-		TestRequest* req,
-		TestResponse* rsp,
-		Closure* done
-	)
-{}
+		::google::protobuf::RpcController* controller,
+		const ::login::LoginRequest* req,
+		::login::LoginResponse* rsp,
+		::google::protobuf::Closure* done)
+{
+
+}
 
 void svc_login_init()
 {
 	//静态初始化svc
-	Service* s = new TestServiceImpl();
+	gpb::Service* svc = new LoginServiceImpl();
 }

@@ -1,3 +1,4 @@
+#include "login.pb.h"
 
 //为每一个service写一个***_mod.cpp文件，用来注册service
 class LoginServiceImpl : public LoginService
