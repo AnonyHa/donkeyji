@@ -1,12 +1,14 @@
 CC = gcc
 
-CFLAGS = -Wall -g
+CFLAGS = -Wall -g #make会隐含使用这个变量，c编译器参数
+#CXXFLAGS = #c++编译器参数
+#CPPFLAGS = #c预处理器参数
 
 LUA_PATH_INC = "D:\Program Files\Lua\5.1\include" 
 LUA_PATH_LIB = "D:\Program Files\Lua\5.1\lib"
 
 LIBS = -L $(LUA_PATH_LIB) -llua51
-LDFLAGS := $(LDFLAGS) $(LIBS)
+LDFLAGS := $(LDFLAGS) $(LIBS) # make会隐含使用这个变量，链接器参数
 
 INCLUDES = -I $(LUA_PATH_INC)   # 指明包含外部头文件的目录
 

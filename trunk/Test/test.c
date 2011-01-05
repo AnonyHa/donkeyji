@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include "lua.h" 
 #include "lualib.h"
 #include "lauxlib.h"
@@ -63,12 +64,18 @@ int main()
 	}
 
 	lua_getglobal(L, "f");
-	lua_call(L, 0, 0);
-	int ret;
+	int ret = lua_pcall(L, 0, 1, 0);
 	//int ret = docall(L, 0, 0, 0);
 	if (ret != 0) {
+		printf("=========\n");
 		fprintf(stderr, "%s\n", lua_tostring(L, -1));//取栈顶的错误信息
 	}
+	/*
+	ret = lua_isstring(L, -1);
+	printf("ret = %d\n", ret);
+	const char* s = lua_tostring(L, -1);
+	printf("%s, %d\n", s, strlen(s));
+	*/
 	
 	lua_close(L);
 
