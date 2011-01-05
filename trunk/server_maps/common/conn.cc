@@ -1,4 +1,5 @@
 #include "conn.h"
+#include "log.h"
 
 //max 32
 static conn_server* srv_mgr[MAX_CONN_SRV];
@@ -41,7 +42,7 @@ conn_server_startup(conn_server* s)
 {
 	//reach to the max cnt for tcp server
 	if (srv_idx >= MAX_CONN_SRV) {
-		log_error();
+		log_err();
 		return -1;
 	}
 	//add to the server mgr
@@ -148,7 +149,7 @@ conn_client_mgr_new()
 void
 conn_client_mgr_free(conn_client_mgr* cm)
 {
-	int i;
+	unsigned int i;
 	if (cm == NULL)
 		return;
 	if (cm->ptr != NULL) {
@@ -166,7 +167,7 @@ conn_client_mgr_reset(conn_client_mgr* cm)
 {
 	if (cm ==NULL)
 		return;
-	int i;
+	unsigned int i;
 	for (i=0; i<cm->used; i++)
 		conn_client_reset(cm->ptr[i]);
 	cm->used = 0;
@@ -175,7 +176,7 @@ conn_client_mgr_reset(conn_client_mgr* cm)
 int
 conn_client_mgr_add(conn_client_mgr* cm, conn_client* c)
 {
-	int i;
+	unsigned int i;
 
 	if (cm->size == 0) {
 		cm->size += 128;
@@ -276,7 +277,7 @@ _conn_server_listen_cb(int fd, short what, void* arg)
 
 	int sock = accept(fd, (struct sockaddr*)&addr, (socklen_t*)&len);
 	if (sock < 0) {
-		log_error();
+		log_err();
 		return;
 	}
 
