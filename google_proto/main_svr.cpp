@@ -1,10 +1,8 @@
-//pack response，发送出去
-void done_callbak()
-{}
-
 int main()
 {
 	event_init();
+
+	conn_init();
 
 	server_init();
 

@@ -2,11 +2,7 @@
 //client
 //------------------------------------------
 struct conn_client
-{
-	Message* req;
-	Message* rsp;
-	MethodDescriptor* method;
-};
+{};
 
 //------------------------------------------
 //server
@@ -21,7 +17,7 @@ void listen_callback()
 	int fd = accept();
 	conn_client* c = conn_client_new(fd);
 
-	bufferevent_new();
+	bufferevent_new(fd);
 	bufferevent_enable();
 
 	int vfd = gen_vfd();
