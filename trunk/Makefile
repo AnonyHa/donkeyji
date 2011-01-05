@@ -14,7 +14,8 @@ DEPENDFLAG = -MM             # 生成依赖关系文件的参数
 
 CFLAGS := $(CFLAGS) $(INCLUDES)
 
-SRCDIRS = . common login util
+SRCDIRS = common login util#子目录
+SRCDIRS += .#加上当前根目录
 
 TARGET = test
 
