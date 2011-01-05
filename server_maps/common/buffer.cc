@@ -1,5 +1,6 @@
 #include <sm.h>
 #include "buffer.h"
+#include "log.h"
 
 buffer* 
 buffer_new()
@@ -76,4 +77,6 @@ int buffer_movehead(buffer* b)
 }
 
 int buffer_getchunk(buffer* b)
-{}
+{
+	return 0;
+}

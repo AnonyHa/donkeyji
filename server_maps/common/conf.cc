@@ -33,7 +33,7 @@ conf_init()
 	cfg->login_max_conns = 20000;
 
 	cfg->log_level = 1;
-	cfg->log_file = "sm.log";
+	cfg->log_file = (char*)"sm.log";
 	cfg->is_daemon = 0;
 
 	//use lua as config file
@@ -47,7 +47,7 @@ conf_init()
 		exit(1);
 	}
 	
-	int i;
+	//int i;
 	/*
 	for (i=0; items[i].name!=NULL &&items[i].type!=NULL; i++) {
 		const char* name = items[i].name;
@@ -80,7 +80,9 @@ conf_init()
 
 int 
 conf_destroy()
-{}
+{
+	return 0;
+}
 
 void 
 conf_print()

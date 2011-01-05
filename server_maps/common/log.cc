@@ -16,7 +16,7 @@ int log_fd = -1;
 void 
 log_init()
 {
-	log_level = cfg->log_level;
+	log_level = (LOG_LEVEL)cfg->log_level;
 	log_file = (char*)malloc(20);
 	assert(log_file);
 
