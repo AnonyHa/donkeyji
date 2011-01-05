@@ -1,32 +1,40 @@
-FLAGS = -g -Wall
 CC = gcc
+
+CFLAGS = -Wall -g
 
 LUA_PATH_INC = "D:\Program Files\Lua\5.1\include" 
 LUA_PATH_LIB = "D:\Program Files\Lua\5.1\lib"
-INC = -I $(LUA_PATH_INC)
-LIB = -L $(LUA_PATH_LIB) -llua51
 
-SRC = $(wildcard *.c)
-OBJ = $(patsubst %.c, %.o, $(SRC))
+LIBS = -L $(LUA_PATH_LIB) -llua51
+LDFLAGS := $(LDFLAGS) $(LIBS)
+
+INCLUDES = -I $(LUA_PATH_INC)   # 指明包含外部头文件的目录
+
+DEPENDFLAG = -MM             # 生成依赖关系文件的参数
+
+CFLAGS := $(CFLAGS) $(INCLUDES)
+
+SRCDIRS = . common login util
 
 TARGET = test
 
+SRCS = $(foreach dir, $(SRCDIRS), $(wildcard $(dir)/*.c))
 
-# 默认目标，作为最终目标文件
+OBJS = $(SRCS:.c=.o)
+
+DEPENDS = $(SRCS:.c=.d)
+
 all: $(TARGET)
 
-DEPENDS:$(SRC)
-	$(CC) -M $(SRC) $(INC) > DEPENDS
-include DEPENDS
+$(TARGET): $(OBJS)
+	$(CC) -o $@ $(filter %.o ,$+) $(LDFLAGS)
 
-$(TARGET): $(OBJ)
-	$(CC) -o $(TARGET) $(OBJ) $(LIB)
+%.d: %.c
+	$(CC) $(DEPENDFLAG) $(CFLAGS) $< |\
+ sed "s?\\(.*\\):?$(basename $<).o $(basename $<).d :?g" \
+ > $@ || $(RM) $@
 
-# 静态模式
-$(OBJ): %.o : %.c
-	$(CC) -c $(FLAGS) $< $(INC)
+-include $(DEPENDS)
 
-# 显示表明伪目标
-.PHONY:clean
 clean:
-	del $(TARGET).exe $(OBJ)
+	rm $(OBJS) $(DEPENDS) $(TARGET)
