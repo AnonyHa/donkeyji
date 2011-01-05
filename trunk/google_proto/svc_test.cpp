@@ -1,3 +1,5 @@
+#include "ptos/test.pb.h"
+
 //为每一个service写一个***_mod.cpp文件，用来注册service
 class TestServiceImpl : public TestService
 {
@@ -9,7 +11,7 @@ public:
 	}
 
 	virtual void Echo(
-		RpcController* controller,
+		gpb::RpcController* controller,
 		TestRequest* req,
 		TestResponse* rsp,
 		Closure* done
@@ -17,5 +19,5 @@ public:
 	{}
 };
 
-//静态初始化
+//静态初始化svc
 Service* s = new TestServiceImpl();
