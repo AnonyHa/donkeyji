@@ -1,0 +1,67 @@
+# 配置部分
+# 下面的变量可以在shell 的环境变量里面指定。
+# 也可以象下面这样在 Makefile 里面指定。
+CC=arm-elf-gcc                # 编译器
+# CC=gcc                         # 编译器
+CFLAGS=-Wall -Werror -g -O2 -c  # 编译器参数
+# CFLAGS=-Werror -g -O2            # 编译器参数
+LD=arm-elf-gcc -g -O2 -Wl,-elf2flt  # 连接器参数
+# LDFLAGS= $(LIBS)  -lpthread # 连接器参数
+DEPENDFLAG=-MM             # 生成依赖关系文件的参数
+# INCLUDES=-Idir1 -Idir2      # 指明包含外部头文件的目录
+# LIBS=-la -lb -lc                   # 指明引用外部的库文件
+# CFLAGS:=$(CFLAGS) $(INCLUDES)
+# LDFLAGS:=$(LDFLAGS) $(LIBS)
+
+# 指明项目中,包含源程序的所有的子目录。
+SRCDIRS=vpapi vpdrv
+
+# 指明最终生成的可执行文件的名称
+PROGRAMS=test
+
+# 下面的部分一般不用改动
+
+# 从所有子目录中得到源代码的列表
+# 这样会产生一个所有以'.c'结尾的文件的列表，然后存入变量 SRCS里。
+SRCS=$(foreach dir,$(SRCDIRS),$(wildcard $(dir)/*.c))
+
+# 得到源代码对应的目标文件的列表
+# “＄(SRCS:.c=.o)”中的“.c=.o”的意思是做一个替换，把变量
+# $(SRCS)所有[.c]的字串都替换成[.o]
+OBJS=$(SRCS:.c=.o)
+
+# 得到源代码对应的依赖关系文件的列表
+# 依赖关系文件就是一个目标文件依赖于哪些头文件和源程序，依赖关系是自动
+# 生成的，并且用 include 语句包含在Makefile 中。
+DEPENDS=$(SRCS:.c=.d)
+
+# 指明默认目标是生成最终可执行文件。
+all: $(PROGRAMS)
+
+$(PROGRAMS): $(OBJS)
+	$(LD) $(LDFLAGS) -o $@ $(filter %.o ,$+)
+
+#生成依赖关系文件
+%.d: %.c
+	$(CC) $(DEPENDFLAG) $(CFLAGS)  $< |\
+ sed "s?\\(.*\\):?$(basename $<).o $(basename $<).d :?g" \
+ > $@ || $(RM) $@
+
+# 包含依赖关系文件,"-"表示忽略文件不存在的错误
+-include $(DEPENDS)
+
+# 删除生成的中间文件
+clean:
+	rm $(OBJS) $(DEPENDS) $(PROGRAMS)
+
+# $@  扩展为当前规则的目标文件名；
+# $<  扩展为当前规则依赖文件列表中的第一个依赖文件;
+# $?  扩展为所有的修改日期比当前规则的目标文件的创建日期更晚的依赖文件，该值只
+# 有在使用显式规则时才会被使用；
+# $*  扩展成当前规则中目标文件和依赖文件共享的文件名，不含扩展名；
+# $^  扩展为整个依赖文件的列表(除掉了所有重复的文件名)。
+
+# 在 GNU Make 里有一个名为 'wildcard'  的函数，它只有一个参数，功能是展开成一列所
+# 有符合由其参数描述的文件名，文件名以空格间隔。可以像下面所示使用这个命令：
+# SOURCES = $(wildcard *.c)
+# 这样会产生一个所有以 '.c'  结尾的文件的列表，然后存入变量 SOURCES  里。
