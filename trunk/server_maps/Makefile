@@ -22,64 +22,91 @@
 ## Customizing Section: adjust the following if necessary. 
 ##============================================================================= 
 
+# ----------------------------------------------
 # The executable file name. 
 # It must be specified. 
 # PROGRAM   := a.out    # the executable name 
-PROGRAM   := test
+# ----------------------------------------------
+PROGRAM   := mp
 
+# ----------------------------------------------
 # The directories in which source files reside. 
 # At least one path should be specified. 
 # SRCDIRS   := .        # current directory 
-SRCDIRS   := . dir1
+# ----------------------------------------------
+SRCDIRS   := . common login util
 
+# ----------------------------------------------
 # The source file types (headers excluded). 
 # At least one type should be specified. 
 # The valid suffixes are among of .c, .C, .cc, .cpp, .CPP, .c++, .cp, or .cxx. 
 # SRCEXTS   := .c      # C program 
 # SRCEXTS   := .cpp    # C++ program 
 # SRCEXTS   := .c .cpp # C/C++ program 
-SRCEXTS   := .c
+# ----------------------------------------------
+SRCEXTS   := .cc
 
+# ----------------------------------------------
 # The flags used by the cpp (man cpp for more). 
 # CPPFLAGS  := -Wall -Werror # show all warnings and take them as errors 
+# ----------------------------------------------
 CPPFLAGS  :=  -Wall -g
 
+# ----------------------------------------------
 # The compiling flags used only for C. 
 # If it is a C++ program, no need to set these flags. 
 # If it is a C and C++ merging program, set these flags for the C parts. 
-LUA_PATH_INC = "D:\Program Files\Lua\5.1\include" 
-CFLAGS    := -I $(LUA_PATH_INC)
+# ----------------------------------------------
+CFLAGS    :=
 CFLAGS    += 
 
+
+# ----------------------------------------------
+# include path
+# ----------------------------------------------
+INCLUDE = -I ./include
+
+# ----------------------------------------------
 # The compiling flags used only for C++. 
 # If it is a C program, no need to set these flags. 
 # If it is a C and C++ merging program, set these flags for the C++ parts. 
+# ----------------------------------------------
 CXXFLAGS  := 
-CXXFLAGS  += 
+CXXFLAGS  += $(INCLUDE)
 
+# ----------------------------------------------
 # The library and the link options ( C and C++ common). 
-LUA_PATH_LIB = "D:\Program Files\Lua\5.1\lib"
-
+# ----------------------------------------------
 LDFLAGS   := 
-LDFLAGS   += -L $(LUA_PATH_LIB) -llua51
+LDFLAGS   +=
 
+# ----------------------------------------------
 ## Implict Section: change the following only when necessary. 
 ##============================================================================= 
 # The C program compiler. Uncomment it to specify yours explicitly. 
+# ----------------------------------------------
 CC      = gcc 
 
+# ----------------------------------------------
 # The C++ program compiler. Uncomment it to specify yours explicitly. 
+# ----------------------------------------------
 CXX     = g++ 
 
+# ----------------------------------------------
 # Uncomment the 2 lines to compile C programs as C++ ones. 
 #CC      = $(CXX) 
 #CFLAGS  = $(CXXFLAGS) 
+# ----------------------------------------------
 
+# ----------------------------------------------
 # The command used to delete file. 
 #RM        = rm -f 
+# ----------------------------------------------
 
+# ----------------------------------------------
 ## Stable Section: usually no need to be changed. But you can add more. 
 ##============================================================================= 
+# ----------------------------------------------
 SHELL   = /bin/sh 
 SOURCES = $(foreach d,$(SRCDIRS),$(wildcard $(addprefix $(d)/*,$(SRCEXTS)))) 
 OBJS    = $(foreach x,$(SRCEXTS), $(patsubst %$(x),%.o,$(filter %$(x),$(SOURCES)))) 
@@ -87,11 +114,14 @@ DEPS    = $(patsubst %.o,%.d,$(OBJS))
 
 .PHONY : all objs clean cleanall rebuild 
 
+# ----------------------------------------------
 #all是默认目标，只需"make"即可，无需"make all"
+# ----------------------------------------------
 all : $(PROGRAM)
 
+# ----------------------------------------------
 # Rules for creating the dependency files (.d). 
-#--------------------------------------------------- 
+# ----------------------------------------------
 %.d : %.c 
 	@$(CC) -MM -MD $(CFLAGS) $< -o $@
 
@@ -116,19 +146,26 @@ all : $(PROGRAM)
 %.d : %.cxx 
 	@$(CC) -MM -MD $(CXXFLAGS) $< -o $@
 
+# ----------------------------------------------
 # Rules for producing the objects. 
-#--------------------------------------------------- 
+# ----------------------------------------------
 objs : $(OBJS)
 
 
+# ----------------------------------------------
+objs : $(OBJS)
 # Rules for producing the executable. 
-#---------------------------------------------- 
+# ----------------------------------------------
+objs : $(OBJS)
+
+# ----------------------------------------------
 $(PROGRAM) : $(OBJS) 
 ifeq ($(strip $(SRCEXTS)), .c)  # C file 
 	$(CC) -o $(PROGRAM) $(OBJS) $(LDFLAGS)
 else                            # C++ file 
 	$(CXX) -o $(PROGRAM) $(OBJS) $(LDFLAGS)
 endif 
+# ----------------------------------------------
 #$(CC) -o $@ $(filter %.o, $+) $(LDFLAGS)
 #$(CXX) -o $@ $(filter %.o, $+) $(LDFLAGS)
 
@@ -166,5 +203,6 @@ clean :
 cleanall: clean
 	@$(RM) $(PROGRAM) $(PROGRAM).exe
 
+# ----------------------------------------------
 ### End of the Makefile ##  Suggestions are welcome  ## All rights reserved ### 
 ############################################################################### 
