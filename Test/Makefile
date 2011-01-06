@@ -30,7 +30,7 @@ PROGRAM   := test
 # The directories in which source files reside. 
 # At least one path should be specified. 
 # SRCDIRS   := .        # current directory 
-SRCDIRS   := .
+SRCDIRS   := . dir1
 
 # The source file types (headers excluded). 
 # At least one type should be specified. 
@@ -42,7 +42,7 @@ SRCEXTS   := .c
 
 # The flags used by the cpp (man cpp for more). 
 # CPPFLAGS  := -Wall -Werror # show all warnings and take them as errors 
-CPPFLAGS  := 
+CPPFLAGS  :=  -Wall -g
 
 # The compiling flags used only for C. 
 # If it is a C++ program, no need to set these flags. 
@@ -69,7 +69,7 @@ LDFLAGS   += -L $(LUA_PATH_LIB) -llua51
 CC      = gcc 
 
 # The C++ program compiler. Uncomment it to specify yours explicitly. 
-#CXX     = g++ 
+CXX     = g++ 
 
 # Uncomment the 2 lines to compile C programs as C++ ones. 
 #CC      = $(CXX) 
@@ -87,80 +87,84 @@ DEPS    = $(patsubst %.o,%.d,$(OBJS))
 
 .PHONY : all objs clean cleanall rebuild 
 
-all : $(PROGRAM) 
+#all是默认目标，只需"make"即可，无需"make all"
+all : $(PROGRAM)
 
 # Rules for creating the dependency files (.d). 
 #--------------------------------------------------- 
 %.d : %.c 
-	@$(CC) -MM -MD $(CFLAGS) $< 
+	@$(CC) -MM -MD $(CFLAGS) $< -o $@
 
 %.d : %.C 
-	@$(CC) -MM -MD $(CXXFLAGS) $< 
+	@$(CC) -MM -MD $(CXXFLAGS) $< -o $@
 
 %.d : %.cc 
-	@$(CC) -MM -MD $(CXXFLAGS) $< 
+	@$(CC) -MM -MD $(CXXFLAGS) $< -o $@
 
 %.d : %.cpp 
-	@$(CC) -MM -MD $(CXXFLAGS) $< 
+	@$(CC) -MM -MD $(CXXFLAGS) $< -o $@
 
 %.d : %.CPP 
-	@$(CC) -MM -MD $(CXXFLAGS) $< 
+	@$(CC) -MM -MD $(CXXFLAGS) $< -o $@
 
 %.d : %.c++ 
-	@$(CC) -MM -MD $(CXXFLAGS) $< 
+	@$(CC) -MM -MD $(CXXFLAGS) $< -o $@
 
 %.d : %.cp 
-	@$(CC) -MM -MD $(CXXFLAGS) $< 
+	@$(CC) -MM -MD $(CXXFLAGS) $< -o $@
 
 %.d : %.cxx 
-	@$(CC) -MM -MD $(CXXFLAGS) $< 
+	@$(CC) -MM -MD $(CXXFLAGS) $< -o $@
 
 # Rules for producing the objects. 
 #--------------------------------------------------- 
-objs : $(OBJS) 
+objs : $(OBJS)
 
-%.o : %.c 
-	$(CC) -c $(CPPFLAGS) $(CFLAGS) $< 
-
-%.o : %.C 
-	$(CXX) -c $(CPPFLAGS) $(CXXFLAGS) $< 
-
-%.o : %.cc
-	$(CXX) -c $(CPPFLAGS) $(CXXFLAGS) $< 
-
-%.o : %.cpp
-	$(CXX) -c $(CPPFLAGS) $(CXXFLAGS) $< 
-
-%.o : %.CPP
-	$(CXX) -c $(CPPFLAGS) $(CXXFLAGS) $< 
-
-%.o : %.c++
-	$(CXX -c $(CPPFLAGS) $(CXXFLAGS) $< 
-
-%.o : %.cp
-	$(CXX) -c $(CPPFLAGS) $(CXXFLAGS) $< 
-
-%.o : %.cxx
-	$(CXX) -c $(CPPFLAGS) $(CXXFLAGS) $< 
 
 # Rules for producing the executable. 
 #---------------------------------------------- 
 $(PROGRAM) : $(OBJS) 
 ifeq ($(strip $(SRCEXTS)), .c)  # C file 
-	$(CC) -o $(PROGRAM) $(OBJS) $(LDFLAGS) 
+	$(CC) -o $(PROGRAM) $(OBJS) $(LDFLAGS)
 else                            # C++ file 
-	$(CXX) -o $(PROGRAM) $(OBJS) $(LDFLAGS) 
+	$(CXX) -o $(PROGRAM) $(OBJS) $(LDFLAGS)
 endif 
+#$(CC) -o $@ $(filter %.o, $+) $(LDFLAGS)
+#$(CXX) -o $@ $(filter %.o, $+) $(LDFLAGS)
 
--include $(DEPS) 
+%.o : %.c 
+	$(CC) -c $(CPPFLAGS) $(CFLAGS) $< -o $@
 
-rebuild: clean all 
+%.o : %.C 
+	$(CXX) -c $(CPPFLAGS) $(CXXFLAGS) $< -o $@
 
-clean : 
-	@$(RM) *.o *.d 
+%.o : %.cc
+	$(CXX) -c $(CPPFLAGS) $(CXXFLAGS) $< -o $@
 
-cleanall: clean 
-	@$(RM) $(PROGRAM) $(PROGRAM).exe 
+%.o : %.cpp
+	$(CXX) -c $(CPPFLAGS) $(CXXFLAGS) $< -o $@
+
+%.o : %.CPP
+	$(CXX) -c $(CPPFLAGS) $(CXXFLAGS) $< -o $@
+
+%.o : %.c++
+	$(CXX -c $(CPPFLAGS) $(CXXFLAGS) $< -o $@
+
+%.o : %.cp
+	$(CXX) -c $(CPPFLAGS) $(CXXFLAGS) $< -o $@
+
+%.o : %.cxx
+	$(CXX) -c $(CPPFLAGS) $(CXXFLAGS) $< -o $@
+
+-include $(DEPS)
+
+rebuild: clean all
+
+clean :
+	@$(RM) *.o *.d
+
+cleanall: clean
+	@$(RM) $(PROGRAM) $(PROGRAM).exe
 
 ### End of the Makefile ##  Suggestions are welcome  ## All rights reserved ### 
 ############################################################################### 
