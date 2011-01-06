@@ -1,5 +1,6 @@
 #include "sm.h"
 #include "conf.h"
+#include "log.h"
 
 int set_pwd()
 {}
@@ -10,7 +11,7 @@ int sig_init()
 int set_rlimit()
 {}
 
-int main(char** argv, int argc)
+int main(int argc, char** argv)
 {
 	char* conf_file = NULL;
 	char* log_file = NULL;
