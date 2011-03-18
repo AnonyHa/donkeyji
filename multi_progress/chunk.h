@@ -3,22 +3,20 @@
 
 #include "buffer.h"
 
-typedef struct _chunk
-{
+typedef struct _chunk {
 	buffer* mem;
 	off_t offset;//处理过的字节
 	struct _chunk* next;
-}chunk;
+} chunk;
 
-typedef struct _chunkqueue
-{
+typedef struct _chunkqueue {
 	//维护的在使用的链表
 	chunk* head;
 	chunk* tail;
 	//维护的unused链表
 	chunk* unused;
 	size_t unused_chunks;
-}chunkqueue;
+} chunkqueue;
 
 chunk* chunk_new();
 void chunk_free(chunk* c);

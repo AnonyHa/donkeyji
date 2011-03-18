@@ -1,8 +1,7 @@
 #ifndef _EVSIGNAL_H
 #define  _EVSIGNAL_H
 
-struct evsignal_info
-{
+struct evsignal_info {
 	struct event ev_signal;
 	int ev_signal_pair[2];
 	int ev_signal_added;

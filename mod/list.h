@@ -1,12 +1,10 @@
-struct node_t
-{
+struct node_t {
 	struct node_t* pre;
 	struct node_t* next;
 	void* data;
 };
 
-struct list_t
-{
+struct list_t {
 	struct node_t* head;
 	struct node_t* tail;
 	unsigned int len;

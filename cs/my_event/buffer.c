@@ -11,8 +11,7 @@
 #include "evutil.h"
 
 
-struct evbuffer* evbuffer_new(void)
-{
+struct evbuffer* evbuffer_new(void) {
 	struct evbuffer* buf;
 	buf = calloc(1, sizeof(struct evbuffer));
 	return buf;
@@ -20,8 +19,10 @@ struct evbuffer* evbuffer_new(void)
 
 void evbuffer_free(struct evbuffer* buf)
 {
-	if (buf->orig_buffer != NULL)
+	if (buf->orig_buffer != NULL) {
 		free(buf->orig_buffer);
+	}
+
 	free(buf);
 }
 
@@ -33,7 +34,7 @@ void evbuffer_drain(struct evbuffer* buf, size_t len)
 	if (len >= buf->off) {//一下子全部消耗完
 		buf->off = 0;
 		buf->buffer = buf->orig_buffer;
-		buf->misalign = 0; 
+		buf->misalign = 0;
 		goto done;
 	}
 
@@ -41,9 +42,10 @@ void evbuffer_drain(struct evbuffer* buf, size_t len)
 	buf->misalign += len;
 	buf->off -= len;
 done:
+
 	if (buf->off != oldoff && buf->cb != NULL) {
 		event_debugx("evbuffer callback");
-		(*buf->cb)(buf, oldoff, buf->off, buf->cbarg); 
+		(*buf->cb)(buf, oldoff, buf->off, buf->cbarg);
 	}
 }
 
@@ -64,21 +66,34 @@ int evbuffer_read(struct evbuffer* buf, int fd, int howmuch)
 	/*
 	 * 缓冲区处理
 	 */
-	if (howmuch < 0 || howmuch > n) howmuch = n;
+	if (howmuch < 0 || howmuch > n) {
+		howmuch = n;
+	}
 
-	if (evbuffer_expand(buf, howmuch) == -1) return -1;
+	if (evbuffer_expand(buf, howmuch) == -1) {
+		return -1;
+	}
 
 	p = buf->buffer + buf->off;//get buf
 	n = recv(fd, p, howmuch, 0);//执行recv操作
-	if (n == -1) return -1;
-	if (n == 0) return 0;
+
+	if (n == -1) {
+		return -1;
+	}
+
+	if (n == 0) {
+		return 0;
+	}
 
 	/*
 	 * 缓冲区处理
 	 */
 	buf->off += n;
+
 	// 缓冲区的回调函数
-	if (buf->off != oldoff && buf->cb != NULL) (*buf->cb)(buf, oldoff, buf->off, buf->cbarg);
+	if (buf->off != oldoff && buf->cb != NULL) {
+		(*buf->cb)(buf, oldoff, buf->off, buf->cbarg);
+	}
 
 	return n;
 }
@@ -92,10 +107,17 @@ int evbuffer_write(struct evbuffer* buf, int fd)
 	//如果buf->off为0，会出错
 	n = send(fd, buf->buffer, buf->off, 0);
 	event_debugx("evbuffer_write: after send");
-	if (n == -1) return -1;
-	if (n == 0) return 0;
+
+	if (n == -1) {
+		return -1;
+	}
+
+	if (n == 0) {
+		return 0;
+	}
+
 	evbuffer_drain(buf, n);//掉了这句导致段错误
-	event_debugx("send len = %d", n);	
+	event_debugx("send len = %d", n);
 	return n;
 }
 
@@ -112,23 +134,38 @@ static void evbuffer_align(struct evbuffer* buf)
 int evbuffer_expand(struct evbuffer* buf, size_t datlen)
 {
 	size_t need = buf->misalign + buf->off + datlen;//需要的总长度
-	if (buf->totallen >= need) return 0;//无需扩展，空间已经足够
+
+	if (buf->totallen >= need) {
+		return 0;    //无需扩展，空间已经足够
+	}
 
 	if (buf->misalign >= datlen) {//空闲出的位置已经足够了
 		evbuffer_align(buf);
 	} else {
 		void* newbuf;
 		size_t length = buf->totallen;
-		if (length < 256) length = 256;
+
+		if (length < 256) {
+			length = 256;
+		}
 
 		//以256的翻倍
-		while (length < need) length <<= 1;// * 2
+		while (length < need) {
+			length <<= 1;    // * 2
+		}
 
-		if (buf->orig_buffer != buf->buffer) evbuffer_align(buf);//移到头
-		if ((newbuf = realloc(buf->buffer, length)) == NULL) return -1;//扩展空间
+		if (buf->orig_buffer != buf->buffer) {
+			evbuffer_align(buf);    //移到头
+		}
+
+		if ((newbuf = realloc(buf->buffer, length)) == NULL) {
+			return -1;    //扩展空间
+		}
+
 		buf->orig_buffer = buf->buffer = newbuf;
 		buf->totallen = length;
 	}
+
 	return 0;//表示成功
 }
 
@@ -141,7 +178,9 @@ int evbuffer_add(struct evbuffer* buf, const void* data, size_t datlen)
 	size_t oldoff = buf->off;
 
 	if (buf->totallen < need) {
-		if (evbuffer_expand(buf, datlen) == -1) return -1;
+		if (evbuffer_expand(buf, datlen) == -1) {
+			return -1;
+		}
 	}
 
 	memcpy(buf->buffer + buf->off, data, datlen);
@@ -150,5 +189,6 @@ int evbuffer_add(struct evbuffer* buf, const void* data, size_t datlen)
 	if (datlen && buf->cb != NULL) {
 		(*buf->cb)(buf, oldoff, buf->off, buf->cbarg);
 	}
+
 	return 0;
 }

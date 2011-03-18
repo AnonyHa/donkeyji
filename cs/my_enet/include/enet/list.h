@@ -3,18 +3,16 @@
 
 #include <stdlib.h>
 
-typedef struct _ENetListNode
-{
+typedef struct _ENetListNode {
 	struct _ENetListNode* next;
 	struct _ENetListNode* previous;
-}ENetListNode;
+} ENetListNode;
 
 typedef ENetListNode* ENetListIterator;
 
-typedef struct _ENetList
-{
+typedef struct _ENetList {
 	ENetListNode sentinel;
-}ENetList;
+} ENetList;
 
 extern void enet_list_clear(ENetList*);
 extern void* enet_list_remove(ENetListIterator);

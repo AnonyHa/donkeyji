@@ -4,17 +4,16 @@
 class TestServiceImpl : public TestService
 {
 public:
-	TestServiceImpl() : TestService()
-	{
+	TestServiceImpl() : TestService() {
 		//在构造函数里进行注册，然后生成一个全局变量，实现静态初始化
 		register_service(this);
 	}
 
 	virtual void Echo(
-		gpb::RpcController* controller,
-		TestRequest* req,
-		TestResponse* rsp,
-		Closure* done
+	    gpb::RpcController* controller,
+	    TestRequest* req,
+	    TestResponse* rsp,
+	    Closure* done
 	)
 	{}
 };

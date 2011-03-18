@@ -21,8 +21,10 @@ int create_socket()
 	char buf[1024];
 
 	sock = socket(PF_INET, SOCK_STREAM, 0);
-	if (sock == -1)
+
+	if (sock == -1) {
 		return -1;
+	}
 
 	bzero(&addr, sizeof(struct sockaddr_in));
 	addr.sin_family = AF_INET;
@@ -30,23 +32,29 @@ int create_socket()
 	addr.sin_addr.s_addr = inet_addr(ip);
 
 	ret = connect(sock, (struct sockaddr*)&addr, sizeof(addr));//nonblocking socket¡¢º¥∑µªÿ
+
 	if (ret == -1) {
 		return -1;
 	}
 
 	for (i=0; i<10; i++) {
 		ret = send(sock, "$hello?x=4&y=5#", 15, 0);
+
 		if (ret < 0) {
 			perror("send");
 			return -1;
 		}
+
 		//printf("send %d\n", ret);
 	}
+
 	int shutdown = 0;
+
 	while (!shutdown) {
 		ret = recv(sock, buf, 1024, 0);
+
 		if (ret < 0) {
-			perror("recv");	
+			perror("recv");
 			shutdown = 1;
 		} else {
 			printf("recv len = %d, data = %s\n", ret, buf);
@@ -54,14 +62,17 @@ int create_socket()
 		}
 	}
 
-	return 0; 
+	return 0;
 }
 
 int main()
 {
 	int ret;
 	ret = create_socket();
-	if (ret < 0)
+
+	if (ret < 0) {
 		return -1;
+	}
+
 	return 0;
 }

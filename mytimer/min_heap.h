@@ -3,10 +3,9 @@
 
 struct timer;
 
-typedef struct min_heap
-{
-    struct timer** p;
-    unsigned n, a;
+typedef struct min_heap {
+	struct timer** p;
+	unsigned n, a;
 } min_heap_t;
 
 void           min_heap_ctor(min_heap_t* s);

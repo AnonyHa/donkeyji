@@ -16,23 +16,23 @@
 /** be careful! set tail before head, or reset(SIZE()) runs wrong */
 #define RESET(sz)		do {TAIL = START + (sz) ; HEAD = START ;} while (0)
 
-#define INTERNAL	inline static  
+#define INTERNAL	inline static
 
-INTERNAL void 
-db_buf_Clear (db_buf *mbuf) 
+INTERNAL void
+db_buf_Clear (db_buf *mbuf)
 {
 	TAIL = HEAD = START ;
 }
 
-void 
-db_buf_full (db_buf *mbuf) 
+void
+db_buf_full (db_buf *mbuf)
 {
 	HEAD = START ;
 	TAIL = END ;
 }
 
-db_buf * 
-db_buf_new (size_t total) 
+db_buf *
+db_buf_new (size_t total)
 {
 	/** 会多出一个字节 char buf[1] */
 	db_buf * mbuf = (db_buf*) malloc (total + sizeof(db_buf)) ;//db_buf自身的大小和它管理的缓冲区大小---
@@ -42,16 +42,16 @@ db_buf_new (size_t total)
 	return mbuf ;
 }
 
-void 
-db_buf_delete (db_buf *mbuf) 
+void
+db_buf_delete (db_buf *mbuf)
 {
 	free (mbuf) ;//释放缓冲区---
 }
 
 
 //把数据向START移动，保证空间再利用---
-INTERNAL size_t 
-db_buf_Move (db_buf *mbuf) 
+INTERNAL size_t
+db_buf_Move (db_buf *mbuf)
 {
 	size_t sz = SIZE () ;
 	memmove (START, HEAD, sz) ;
@@ -60,23 +60,21 @@ db_buf_Move (db_buf *mbuf)
 }
 
 
-INTERNAL void * 
-db_buf_AllocLess (db_buf *mbuf, size_t  len, size_t * rlen) 
+INTERNAL void *
+db_buf_AllocLess (db_buf *mbuf, size_t  len, size_t * rlen)
 {
-	if (LEFT () < len) 
-	{
+	if (LEFT () < len) {
 		db_buf_Move (mbuf) ;
 	}
 
-	*rlen = (LEFT () >= len) ? len : LEFT () ; 
-	return (0 < *rlen) ? TAIL : NULL ; 
+	*rlen = (LEFT () >= len) ? len : LEFT () ;
+	return (0 < *rlen) ? TAIL : NULL ;
 }
 
-void * 
-db_buf_alloc (db_buf *mbuf, size_t  len) 
+void *
+db_buf_alloc (db_buf *mbuf, size_t  len)
 {
-	if (LEFT () < len) //剩余空间不够用，就向START移动，腾出空间---
-	{
+	if (LEFT () < len) { //剩余空间不够用，就向START移动，腾出空间---
 		db_buf_Move (mbuf) ;
 	}
 
@@ -99,39 +97,43 @@ db_buf_Chunk (db_buf *mbuf, size_t *len)
 	size_t sz = SIZE () ;//当前的有效数据长度---
 
 	// 当前有效数据大于一个包头长 && client数据包的有效参数pack后的长度 + client数据包头长度 < sz
-	/*if ((CHKHDRSZ <= sz) && ((CHKSZ () + CHKHDRSZ) <= sz)) 
+	/*if ((CHKHDRSZ <= sz) && ((CHKSZ () + CHKHDRSZ) <= sz))
 	{
-		if (NULL != len) 
+		if (NULL != len)
 		{
 			//*len = CHKSZ () ;//真正的client的package长度---
 		}
 		//return SEEKHEAD (CHKHDRSZ) ;//返回client包的开始位置---
-	} 
-	else 
+	}
+	else
 	{
-		if (NULL != len) 
-		{ 
-			*len = 0 ; 
+		if (NULL != len)
+		{
+			*len = 0 ;
 		}
 		return NULL ;
 	}
 	*/
 }
 
-void * 
+void *
 db_buf_seek_tail (db_buf *mbuf, size_t len)
 {
-	return (len <= LEFT ()) ? SEEKTAIL (len) : NULL ; 
+	return (len <= LEFT ()) ? SEEKTAIL (len) : NULL ;
 }
 
-void * 
+void *
 db_buf_seek_head (db_buf *mbuf, size_t len)
 {
-	if (len > SIZE ()) 
+	if (len > SIZE ()) {
 		return NULL ;
-	char * h = SEEKHEAD (len) ; 
-	if (HEAD == TAIL) /* if empty, rewind the buffer */
+	}
+
+	char * h = SEEKHEAD (len) ;
+
+	if (HEAD == TAIL) { /* if empty, rewind the buffer */
 		db_buf_Clear (mbuf) ;
+	}
 
 	return h ;
 }

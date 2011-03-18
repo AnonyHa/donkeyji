@@ -3,8 +3,7 @@
 
 #include <event.h>
 
-struct game_server
-{
+struct game_server {
 	int _fd;
 	int _state;
 	struct bufferevent* _bev;

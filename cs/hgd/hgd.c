@@ -30,7 +30,7 @@ int main()
 	}
 
 	event_dispatch();
-	
+
 	conn_close();
 	log_close();
 	return EXIT_SUCCESS;

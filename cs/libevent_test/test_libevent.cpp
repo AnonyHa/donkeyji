@@ -42,8 +42,10 @@ static void fifo_read(int fd, short event, void *arg)
 	bzero(IpAddress, sizeof(IpAddress));
 
 	int UserFd = accept(fd, (struct sockaddr*)&addr, (socklen_t*)&len);
-	if ( UserFd < 0 )
+
+	if ( UserFd < 0 ) {
 		return;
+	}
 
 	int flags = fcntl(UserFd, F_GETFL, 0);
 	flags |= O_NONBLOCK;// 设置为非阻塞
@@ -62,27 +64,35 @@ int main (int argc, char **argv)
 	struct event ev;
 
 	listen_socket = socket(AF_INET, SOCK_STREAM, 0);// IPv4域-----
-	if (listen_socket < 0)
+
+	if (listen_socket < 0) {
 		return -1;
+	}
 
 	iFlags = fcntl(listen_socket, F_GETFL, 0);
-	if (iFlags == -1 || fcntl(listen_socket, F_SETFL, iFlags | O_NONBLOCK))
+
+	if (iFlags == -1 || fcntl(listen_socket, F_SETFL, iFlags | O_NONBLOCK)) {
 		return -1;
+	}
 
 	bzero(&addr, sizeof(addr));
 	addr.sin_family = AF_INET;
 	addr.sin_addr.s_addr = htonl(INADDR_ANY);
 	addr.sin_port = htons(1300);
 	int optval = 1;
+
 	if (setsockopt(listen_socket, SOL_SOCKET, SO_REUSEADDR,//地址重用---
-		&optval, sizeof(optval)) == -1)
+	               &optval, sizeof(optval)) == -1) {
 		return -1;
+	}
 
-	if (bind(listen_socket, (struct sockaddr * ) &addr, sizeof(addr))<0)
+	if (bind(listen_socket, (struct sockaddr * ) &addr, sizeof(addr))<0) {
 		return -1;
+	}
 
-	if (listen(listen_socket, 5) < 0)
+	if (listen(listen_socket, 5) < 0) {
 		return -1;
+	}
 
 	event_init();
 	event_set(&ev, listen_socket, EV_READ|EV_PERSIST, fifo_read, NULL);

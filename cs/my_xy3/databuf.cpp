@@ -15,8 +15,9 @@ DataBuf::DataBuf(int len)
 
 DataBuf::~DataBuf()
 {
-	if (_data != NULL)
+	if (_data != NULL) {
 		delete []_data;
+	}
 }
 // 向开始位置移动
 void DataBuf::moveHead()
@@ -51,6 +52,7 @@ int DataBuf::cutData(int len)
 		cout<<"full"<<endl;
 		return -1;
 	}
+
 	_head = _head + len;
 	return 0;
 }
@@ -59,6 +61,7 @@ int DataBuf::cutData(int len)
 char* DataBuf::getPack(short& size)
 {
 	int valid = _tail - _head;
+
 	if (valid >= sizeof(short) && valid >= (_data[_head] + sizeof(short))) {
 		size = (*(short*)(_data+_head));//取得包头值
 		return _data + _head + sizeof(short);//包身开始的地址
@@ -85,7 +88,7 @@ void DataBuf::printData()
 	cout<<"_head = "<<_head<<endl;
 	cout<<"_tail = "<<_tail<<endl;
 	cout<<"_left = "<<_left<<endl;
-	cout<<"_len = "<<_len<<endl;  
+	cout<<"_len = "<<_len<<endl;
 }
 
 // 整体加入，要么成功，要么包头、包身都不加
@@ -94,10 +97,13 @@ int DataBuf::appendPack(byte* data, int len)
 	short head = len;
 	short size = len + sizeof(short);
 
-	if (size > _left)
+	if (size > _left) {
 		moveHead();
-	if (size > _left)//空间仍然不够
-		return -1;// 不添加，直接退出
+	}
+
+	if (size > _left) { //空间仍然不够
+		return -1;    // 不添加，直接退出
+	}
 
 	memcpy(_data+_tail, (char*)&head, sizeof(short));
 	_tail = _tail + sizeof(short);
@@ -113,16 +119,24 @@ int DataBuf::appendPack(byte* data, int len)
 int DataBuf::expandBuf(int need)
 {
 	moveHead();//先移到头
-	if (_left >= need)//此时如果还是空间不够就expand
+
+	if (_left >= need) { //此时如果还是空间不够就expand
 		return 0;
+	}
 
 	int newLen = _len<<1;//增长2倍
 	int realNeed = _len + need;//总共需要的长度
-	while (newLen < realNeed)
+
+	while (newLen < realNeed) {
 		newLen <<= 1;
+	}
+
 	char* newData = new char[newLen];
-	if (newData == NULL)
+
+	if (newData == NULL) {
 		return -1;
+	}
+
 	memcpy(newData, _data, _len);
 	delete[] _data;
 	// _head, _tail此时不需要改变

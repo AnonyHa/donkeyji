@@ -11,14 +11,15 @@ using namespace std;
 #define XYNET_ERROR_UNPACK_FORMAT	-1  //解包时数据包格式出错
 #define XYNET_ERROR_UNPACK_SCRIPT	-2  //脚本处理正确的数据包出错
 
-	
+
 extern std::string cur_char;
 //////////////////////////////////////////////////////////////////////////
 // 远程调用格式描述
 //////////////////////////////////
 class proto_manager ;
 
-class net_protocol {
+class net_protocol
+{
 	std::vector<fcall_base_arg*> _args ; // 参数列表
 	std::string _pack_func_name ;// 打包接口名称，引擎内实现
 	int _unpack_ref ;			 // 解包接口引用，脚本内实现
@@ -38,13 +39,15 @@ public:
 
 	net_protocol(int id) ;
 	~net_protocol() ;
-	int get_id () { return _id ; } 
+	int get_id () {
+		return _id ;
+	}
 
 	int load(lua_State*L) ; //  加载协议格式，栈顶为协议格式描述文件路径
 	int unpack(lua_State*L, const byte* buf, int buf_len, int ext) ;
 	int get_check_id(void);
 	int marshal(lua_State * L, byte * buf, size_t buf_len) ;
-	
+
 protected:
 	static int pack(lua_State* L) ; // 完成协议打包，被自动注册至lua虚拟机中供远程调用者使用
 
@@ -56,9 +59,10 @@ protected:
 // 用于数据发送的回调函数
 typedef int (*send_hook_t)(const byte* data, int data_len, int ext, int ismulticast, int mcpayloadlen);
 
-class proto_manager {
+class proto_manager
+{
 	static std::vector<net_protocol*> _s_protos;
-	static send_hook_t s_data_sender;  
+	static send_hook_t s_data_sender;
 	static unsigned _static_protocol_count ;  //静态的协议的个数
 	friend class net_protocol;
 public:
@@ -67,7 +71,7 @@ public:
 
 	static int stat (lua_State * L) ;
 
-	// 对外的引擎接口 
+	// 对外的引擎接口
 	int unpack_data(lua_State*L, const byte* buf, int buf_size, int ext);// 传入需解析的数据，返回实际解析的长度
 
 	// 对外的脚本接口

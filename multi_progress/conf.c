@@ -5,8 +5,8 @@
 //global config
 config* cfg = NULL;
 
-void 
-conf_init() 
+void
+conf_init()
 {
 	cfg = (config*)calloc(1, sizeof(config));
 	cfg->log_file = (char*)calloc(1, 20);
@@ -14,49 +14,59 @@ conf_init()
 	cfg->doc_root = (char*)calloc(1, 20);
 
 	//use lua as config file
-	lua_State* L = luaL_newstate();	
+	lua_State* L = luaL_newstate();
 	luaL_openlibs(L);
 	int error = luaL_loadfile(L, "mp.conf") || lua_pcall(L, 0, LUA_MULTRET, 0);
+
 	if (error != 0) {
 		printf("load conf file failed\n");
 		fprintf(stderr, "%s\n", lua_tostring(L, -1));//取栈顶的错误信息
 		lua_pop(L, 1);
 		exit(1);
 	}
-	
+
 	lua_getglobal(L, "server");
+
 	if (!lua_istable(L, -1)) {
 		printf("server should be a table\n");
 		exit(1);
 	}
+
 	lua_getfield(L, -1, "network");
 
 	if (!lua_istable(L, -1)) {
 		printf("network should be a table\n");
 		exit(1);
 	}
+
 	lua_getfield(L, -1, "port");
+
 	if (!lua_isnumber(L, -1)) {
 		printf("port should be a table\n");
 		exit(1);
 	}
+
 	cfg->port = lua_tointeger(L, -1);
 	lua_pop(L, 1);//pop "port"
 
 	lua_getfield(L, -1, "max_conns");
+
 	if (!lua_isnumber(L, -1)) {
 		printf("port should be a table\n");
 		exit(1);
 	}
+
 	cfg->max_conns = lua_tointeger(L, -1);
 	lua_pop(L, 1);//pop "max_conns"
 	lua_pop(L, 1);//pop "network"
 
 	lua_getfield(L, -1, "log");
+
 	if (!lua_istable(L, -1)) {
 		printf("log should be a table\n");
 		exit(1);
 	}
+
 	lua_getfield(L, -1, "log_level");
 	cfg->log_level = lua_tointeger(L, -1);
 	lua_pop(L, 1);//pop "log_level"
@@ -81,8 +91,11 @@ conf_init()
 	lua_pop(L, 1);//pop "log_dir"
 
 	lua_getfield(L, -1, "daemon");
-	if (!lua_isnumber(L, -1))
+
+	if (!lua_isnumber(L, -1)) {
 		exit(1);
+	}
+
 	cfg->daemon = lua_tointeger(L, -1);
 	lua_pop(L, 1);//pop "log_dir"
 
@@ -91,11 +104,11 @@ conf_init()
 	conf_print();
 }
 
-int 
+int
 conf_destroy()
 {}
 
-void 
+void
 conf_print()
 {
 	printf("port : %d\n", cfg->port);
@@ -107,16 +120,24 @@ conf_print()
 	printf("daemon : %d\n", cfg->daemon);
 }
 
-void 
+void
 conf_free()
 {
-	if (cfg == NULL)
+	if (cfg == NULL) {
 		return;
-	if (cfg->log_file != NULL)
+	}
+
+	if (cfg->log_file != NULL) {
 		free(cfg->log_file);
-	if (cfg->log_dir != NULL)
+	}
+
+	if (cfg->log_dir != NULL) {
 		free(cfg->log_dir);
-	if (cfg->doc_root != NULL)
+	}
+
+	if (cfg->doc_root != NULL) {
 		free(cfg->doc_root);
+	}
+
 	free(cfg);
 }

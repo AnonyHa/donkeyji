@@ -5,15 +5,14 @@
 
 struct event;
 
-typedef struct _server
-{
+typedef struct _server {
 	int port;
 	int listen_sock;
 	int max_conns;
 
 	struct event* listen_ev;
 	conn_mgr* conns;
-}server;
+} server;
 
 //È«¾ÖµÄsrv
 extern server* srv;

@@ -68,14 +68,16 @@ static void _warn_helper(int log_level, int log_errno, const char* fmt, va_list 
 	char buf[1024];//log字符串的容器
 	size_t len;
 
-	if (fmt != NULL)
+	if (fmt != NULL) {
 		evutil_vsnprintf(buf, sizeof(buf), fmt, ap);
-	else
-		buf[0] = '\0';//字符串结尾
+	} else {
+		buf[0] = '\0';    //字符串结尾
+	}
 
 	// 遇到出错，在log信息的尾部加上strerror获取的错误信息
 	if (log_errno >= 0) {
 		len = strlen(buf);//字符串长度
+
 		if (len < sizeof(buf) - 3) {
 			evutil_snprintf(buf + len, sizeof(buf) - len, ": %s", strerror(log_errno));//在buf后部加上错误信息
 		}
@@ -96,10 +98,11 @@ void event_set_log_callback(event_log_cb cb)
 //打印出log信息
 static void event_log(int log_level, const char* msg)
 {
-	if (log_fn)
+	if (log_fn) {
 		log_fn(log_level, msg);
-	else {
+	} else {
 		const char* level_str;
+
 		switch (log_level) {
 		case _EVENT_LOG_DEBUG:
 			level_str = "DEBUG";
@@ -117,18 +120,23 @@ static void event_log(int log_level, const char* msg)
 			level_str = "???";
 			break;
 		}
+
 		//get current time
 		char time_buf[21];
 		time_t timep;
 		struct tm* p;
 		time(&timep);
-		p = localtime(&timep); 
-		if (p == NULL) time_buf[0] = '\0';
+		p = localtime(&timep);
+
+		if (p == NULL) {
+			time_buf[0] = '\0';
+		}
+
 		sprintf(
-			(char*)time_buf, "%d-%d-%d %d:%d:%d",
-			p->tm_year + 1900, p->tm_mon + 1,
-			p->tm_mday, p->tm_hour,
-			p->tm_min, p->tm_sec
+		    (char*)time_buf, "%d-%d-%d %d:%d:%d",
+		    p->tm_year + 1900, p->tm_mon + 1,
+		    p->tm_mday, p->tm_hour,
+		    p->tm_min, p->tm_sec
 		);
 		//time_buf[20] = '\0';//sprintf会自动加上'\0'
 		fprintf(stderr, "[%s]  [%s]  %s\n", time_buf, level_str, msg);//实际的打印输出语句

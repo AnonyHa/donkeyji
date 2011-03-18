@@ -36,6 +36,7 @@ int evutil_make_socket_nonblocking(int fd)
 		event_warn("fcntl(O_NONBLOCK)");
 		return -1;
 	}
+
 	return 0;
 }
 

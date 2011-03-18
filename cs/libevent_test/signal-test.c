@@ -39,8 +39,9 @@ signal_cb(int fd, short event, void *arg)
 
 	printf("%s: got signal %d\n", __func__, EVENT_SIGNAL(signal));
 
-	if (called >= 2)
+	if (called >= 2) {
 		event_del(signal);
+	}
 
 	called++;
 }
@@ -64,7 +65,7 @@ main (int argc, char **argv)
 
 	/* Initalize one event */
 	event_set(&signal_int, SIGINT, EV_SIGNAL|EV_PERSIST, signal_cb,
-	    &signal_int);
+	          &signal_int);
 
 	event_add(&signal_int, NULL);
 

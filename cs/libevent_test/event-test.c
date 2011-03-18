@@ -37,7 +37,7 @@ fifo_read(int fd, short event, void *arg)
 	event_add(ev, NULL);
 
 	fprintf(stderr, "fifo_read called with fd: %d, event: %d, arg: %p\n",
-		fd, event, arg);
+	        fd, event, arg);
 #ifdef WIN32
 	len = ReadFile((HANDLE)fd, buf, sizeof(buf) - 1, &dwBytesRead, NULL);
 
@@ -73,15 +73,16 @@ main (int argc, char **argv)
 	HANDLE socket;
 	/* Open a file. */
 	socket = CreateFile("test.txt",               /* open File */
-			GENERIC_READ,                 /* open for reading */
-			0,                            /* do not share */
-			NULL,                         /* no security */
-			OPEN_EXISTING,                /* existing file only */
-			FILE_ATTRIBUTE_NORMAL,        /* normal file */
-			NULL);                        /* no attr. template */
+	                    GENERIC_READ,                 /* open for reading */
+	                    0,                            /* do not share */
+	                    NULL,                         /* no security */
+	                    OPEN_EXISTING,                /* existing file only */
+	                    FILE_ATTRIBUTE_NORMAL,        /* normal file */
+	                    NULL);                        /* no attr. template */
 
-	if(socket == INVALID_HANDLE_VALUE)
+	if(socket == INVALID_HANDLE_VALUE) {
 		return 1;
+	}
 
 #else
 	struct stat st;
@@ -97,6 +98,7 @@ main (int argc, char **argv)
 	}
 
 	unlink (fifo);
+
 	if (mkfifo (fifo, 0600) == -1) {
 		perror("mkfifo");
 		exit (1);

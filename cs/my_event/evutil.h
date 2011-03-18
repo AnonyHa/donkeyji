@@ -15,12 +15,12 @@ extern "C" {
 #define EVUTIL_SET_SOCKET_ERROR(errcode)	\
 	do {errno = (errcode);} while (0)
 
-int evutil_socketpair(int family, int type, int protocol, int fd[2]);
+	int evutil_socketpair(int family, int type, int protocol, int fd[2]);
 
-int evutil_vsnprintf(char* buf, size_t buflen, const char* fmt, va_list ap);
+	int evutil_vsnprintf(char* buf, size_t buflen, const char* fmt, va_list ap);
 
 
-int evutil_snprintf(char* buf, size_t buflen, const char* fmt, ...);
+	int evutil_snprintf(char* buf, size_t buflen, const char* fmt, ...);
 
 //void evutil_timeradd(&now, tv, &ev->ev_timeout);
 
@@ -30,4 +30,4 @@ int evutil_snprintf(char* buf, size_t buflen, const char* fmt, ...);
 }
 #endif
 
-#endif 
+#endif

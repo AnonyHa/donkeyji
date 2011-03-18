@@ -5,8 +5,10 @@ int main()
 {
 	int ret;
 	ret = db_init();
-	if (ret < 0)
+
+	if (ret < 0) {
 		exit(-1);
+	}
 
 	db_run();
 

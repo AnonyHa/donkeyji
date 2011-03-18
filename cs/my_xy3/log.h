@@ -8,8 +8,7 @@ using namespace std;
 
 #define LOG_MAX_BUFF_SIZE 1024*60
 
-enum WriterType
-{
+enum WriterType {
 	LOGFILE,
 	UNKNOWN
 };
@@ -19,17 +18,20 @@ class LogWriter
 protected:
 	WriterType _type;
 public:
-	LogWriter()
-	{ _type = UNKNOWN; }
+	LogWriter() {
+		_type = UNKNOWN;
+	}
 
 	virtual ~LogWriter()
 	{}
 
-	virtual int Write(const char* data, unsigned int len)
-	{ return 0; }
+	virtual int Write(const char* data, unsigned int len) {
+		return 0;
+	}
 
-	WriterType getType()
-	{ return _type; }
+	WriterType getType() {
+		return _type;
+	}
 };
 
 class FileWriter : public LogWriter
@@ -43,8 +45,7 @@ public:
 	virtual int Write(const char* data, unsigned int len);
 };
 
-enum Level
-{
+enum Level {
 	LOG_ERROR = 0x01,
 	LOG_WARNING = 0x02,
 	LOG_MESSAGE = 0x04,
@@ -70,6 +71,6 @@ public:
 	void logError(const char* fmt, ...);
 	void logDebug(const char* fmt, ...);
 	void logWarning(const char* fmt, ...);
-	void logMessage(const char* fmt, ...); 
+	void logMessage(const char* fmt, ...);
 	void logPrint(unsigned int level, const char* fmt, ...);
 };

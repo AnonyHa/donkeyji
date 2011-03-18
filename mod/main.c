@@ -10,34 +10,46 @@ int main()
 	//init
 	//---------------------
 	ret = dep_init();
-	if (ret < 0)
+
+	if (ret < 0) {
 		goto deal_error;
+	}
 
 	ret = load_all_mods();
-	if (ret < 0)
+
+	if (ret < 0) {
 		goto deal_error;
+	}
 
 	//---------------------
 	//run
 	//---------------------
 	ret = dep_run();
-	if (ret < 0)
+
+	if (ret < 0) {
 		goto deal_error;
+	}
 
 	ret = run_all_mods();
-	if (ret < 0)
+
+	if (ret < 0) {
 		goto deal_error;
+	}
 
 	//---------------------
 	//exit
 	//---------------------
 	ret = dep_exit();
-	if (ret < 0)
+
+	if (ret < 0) {
 		goto deal_error;
+	}
 
 	ret = exit_all_mods();
-	if (ret < 0)
+
+	if (ret < 0) {
 		goto deal_error;
+	}
 
 	return 0;
 	//---------------------

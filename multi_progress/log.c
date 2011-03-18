@@ -10,11 +10,11 @@ static int _log_vsnprintf(char* buf, size_t buflen, const char* fmt, va_list ap)
 static int _log_snprintf(char* buf, size_t buflen, const char* fmt, ...);
 
 LOG_LEVEL log_level = LOG_MSG;
-char* log_file = NULL; 
+char* log_file = NULL;
 char* log_dir = NULL;
 int log_fd = -1;
 
-void 
+void
 log_init()
 {
 	log_level = cfg->log_level;
@@ -28,17 +28,18 @@ log_init()
 	strcpy(log_dir, cfg->log_dir);
 
 	log_fd = open(log_file, O_APPEND|O_WRONLY|O_CREAT, 0644);
+
 	if (log_fd == -1) {
 		perror("open log fd");
 		exit(1);
 	}
 }
 
-void 
+void
 log_destroy()
 {}
 
-static int 
+static int
 _log_vsnprintf(char* buf, size_t buflen, const char* fmt, va_list ap)
 {
 	int r = vsnprintf(buf, buflen, fmt, ap);
@@ -46,7 +47,7 @@ _log_vsnprintf(char* buf, size_t buflen, const char* fmt, va_list ap)
 	return r;
 }
 
-static int 
+static int
 _log_snprintf(char* buf, size_t buflen, const char* fmt, ...)
 {
 	int r;
@@ -58,7 +59,7 @@ _log_snprintf(char* buf, size_t buflen, const char* fmt, ...)
 }
 
 
-static void 
+static void
 _log_warn_helper(int log_level, int log_errno, const char* filename, unsigned int line, const char* fmt, va_list ap)
 {
 	char buf[1024];
@@ -84,7 +85,7 @@ _log_warn_helper(int log_level, int log_errno, const char* filename, unsigned in
 	_log_output(log_level, buf);
 }
 //打印出log信息
-static void 
+static void
 _log_output(int log_level, const char* msg)
 {
 	char time_buf[21];
@@ -92,6 +93,7 @@ _log_output(int log_level, const char* msg)
 	time_t timep;
 	struct tm* p;
 	const char* level_str;
+
 	switch (log_level) {
 	case LOG_DEBUG:
 		level_str = "DEBUG";
@@ -109,15 +111,20 @@ _log_output(int log_level, const char* msg)
 		level_str = "???";
 		break;
 	}
+
 	//get current time
 	time(&timep);
-	p = localtime(&timep); 
-	if (p == NULL) time_buf[0] = '\0';
+	p = localtime(&timep);
+
+	if (p == NULL) {
+		time_buf[0] = '\0';
+	}
+
 	sprintf(
-		(char*)time_buf, "%d-%d-%d %d:%d:%d",
-		p->tm_year + 1900, p->tm_mon + 1,
-		p->tm_mday, p->tm_hour,
-		p->tm_min, p->tm_sec
+	    (char*)time_buf, "%d-%d-%d %d:%d:%d",
+	    p->tm_year + 1900, p->tm_mon + 1,
+	    p->tm_mday, p->tm_hour,
+	    p->tm_min, p->tm_sec
 	);
 	//time_buf[20] = '\0';//sprintf会自动加上'\0'
 	//fprintf(stderr, "[%s]  [%s]  %s\n", time_buf, level_str, msg);//实际的打印输出语句
@@ -129,7 +136,7 @@ _log_output(int log_level, const char* msg)
 
 
 
-void 
+void
 log_msg(const char* filename, unsigned int line, const char* fmt, ...)
 {
 	va_list ap;
@@ -138,14 +145,14 @@ log_msg(const char* filename, unsigned int line, const char* fmt, ...)
 	va_end(ap);
 }
 
-void 
+void
 log_warn()
 {}
 
-void 
+void
 log_debug()
 {}
 
-void 
+void
 log_err()
 {}

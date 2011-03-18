@@ -1,8 +1,10 @@
 #include <stdio.h>
 #include <string.h>
-#include "lua.h" 
+extern "C" {
+#include "lua.h"
 #include "lualib.h"
 #include "lauxlib.h"
+}
 
 #define PRELOAD "preload.lua"
 
@@ -50,6 +52,7 @@ int docall (lua_State *L, int narg, int nresults, int)
 }
 */
 
+int luaopen_hujilib(lua_State*);
 //-----------------------------------------
 int main()
 {
@@ -57,26 +60,13 @@ int main()
 	luaL_openlibs(L);
 	luaopen_hujilib(L);
 	int error = luaL_loadfile(L, PRELOAD) || lua_pcall(L, 0, LUA_MULTRET, 0);
-	if (error){//此时lua会把错误信息string放在栈顶
+
+	if (error) { //此时lua会把错误信息string放在栈顶
 		printf("[error]");
 		fprintf(stderr, "%s\n", lua_tostring(L, -1));//取栈顶的错误信息
 		lua_pop(L, 1);
 	}
 
-	lua_getglobal(L, "f");
-	int ret = lua_pcall(L, 0, 1, 0);
-	//int ret = docall(L, 0, 0, 0);
-	if (ret != 0) {
-		printf("=========\n");
-		fprintf(stderr, "%s\n", lua_tostring(L, -1));//取栈顶的错误信息
-	}
-	/*
-	ret = lua_isstring(L, -1);
-	printf("ret = %d\n", ret);
-	const char* s = lua_tostring(L, -1);
-	printf("%s, %d\n", s, strlen(s));
-	*/
-	
 	lua_close(L);
 
 	return 0;

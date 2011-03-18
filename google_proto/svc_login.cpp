@@ -2,17 +2,16 @@
 class LoginServiceImpl : public LoginService
 {
 public:
-	LoginServiceImpl() : LoginService()
-	{
+	LoginServiceImpl() : LoginService() {
 		//在构造函数里进行注册，然后生成一个全局变量，实现静态初始化
 		register_service(this);
 	}
 
 	virtual void Echo(
-		RpcController* controller,
-		TestRequest* req,
-		TestResponse* rsp,
-		Closure* done
+	    RpcController* controller,
+	    TestRequest* req,
+	    TestResponse* rsp,
+	    Closure* done
 	)
 	{}
 };

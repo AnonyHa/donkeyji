@@ -3,16 +3,17 @@
 
 //static config_t* g_cfg = NULL;
 
-struct db_cfg* conf_new() 
-{
+struct db_cfg* conf_new() {
 	struct db_cfg* conf = (struct db_cfg*)malloc(sizeof(struct db_cfg));
 	return conf;
 }
 
 void conf_free(struct db_cfg* conf)
 {
-	if (conf == NULL)
+	if (conf == NULL) {
 		return;
+	}
+
 	free(conf);
 }
 
@@ -44,7 +45,7 @@ int conf_init(struct db_cfg* conf)
 	cfgData.WorkDir = config_lookup_string(g_cfg, "work_dir");
 	cfgData.Port = config_lookup_int(g_cfg, "port");
 	cfgData.MaxEvalCost = config_lookup_int(g_cfg, "max_eval_cost");
-	} 
+	}
 	*/
 
 	return 1;

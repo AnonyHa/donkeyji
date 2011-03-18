@@ -42,35 +42,46 @@
 
 static const char *filetype(mode_t m)
 {
-	if (S_ISREG(m))		return "regular";
-	else if (S_ISLNK(m))	return "link";
-	else if (S_ISDIR(m))	return "directory";
-	else if (S_ISCHR(m))	return "character device";
-	else if (S_ISBLK(m))	return "block device";
-	else if (S_ISFIFO(m))	return "fifo";
-	else if (S_ISSOCK(m))	return "socket";
-	else			return "?";
+	if (S_ISREG(m)) {
+		return "regular";
+	} else if (S_ISLNK(m))	{
+		return "link";
+	} else if (S_ISDIR(m))	{
+		return "directory";
+	} else if (S_ISCHR(m))	{
+		return "character device";
+	} else if (S_ISBLK(m))	{
+		return "block device";
+	} else if (S_ISFIFO(m))	{
+		return "fifo";
+	} else if (S_ISSOCK(m))	{
+		return "socket";
+	} else {
+		return "?";
+	}
 }
 
 typedef int (*Selector)(lua_State *L, int i, const void *data);
 
 static int doselection(lua_State *L, int i, const char *const S[], Selector F, const void *data)
 {
-	if (lua_isnone(L, i))
-	{
+	if (lua_isnone(L, i)) {
 		lua_newtable(L);
-		for (i=0; S[i]!=NULL; i++)
-		{
+
+		for (i=0; S[i]!=NULL; i++) {
 			lua_pushstring(L, S[i]);
 			F(L, i, data);
 			lua_settable(L, -3);
 		}
+
 		return 1;
-	}
-	else
-	{
+	} else {
 		int j=luaL_checkoption(L, i, NULL, S);
-		if (j==-1) luaL_argerror(L, i, "unknown selector");
+
+		if (j==-1) {
+			luaL_argerror(L, i, "unknown selector");
+		}
+
 		return F(L, j, data);
 	}
 }
@@ -98,59 +109,59 @@ static void storenumber(lua_State *L, const char *name, lua_Number value)
 static int pusherror(lua_State *L, const char *info)
 {
 	lua_pushnil(L);
-	if (info==NULL)
+
+	if (info==NULL) {
 		lua_pushstring(L, strerror(errno));
-	else
+	} else {
 		lua_pushfstring(L, "%s: %s", info, strerror(errno));
+	}
+
 	lua_pushnumber(L, errno);
 	return 3;
 }
 
 static int pushresult(lua_State *L, int i, const char *info)
 {
-	if (i != -1)
-	{
+	if (i != -1) {
 		lua_pushnumber(L, i);
 		return 1;
-	}
-	else
+	} else {
 		return pusherror(L, info);
+	}
 }
 
 static void badoption(lua_State *L, int i, const char *what, int option)
 {
 	luaL_argerror(L, 2,
-		lua_pushfstring(L, "unknown %s option `%c'", what, option));
+	              lua_pushfstring(L, "unknown %s option `%c'", what, option));
 }
 
 static uid_t mygetuid(lua_State *L, int i)
 {
-	if (lua_isnone(L, i))
+	if (lua_isnone(L, i)) {
 		return -1;
-	else if (lua_isnumber(L, i))
+	} else if (lua_isnumber(L, i)) {
 		return (uid_t) lua_tonumber(L, i);
-	else if (lua_isstring(L, i))
-	{
+	} else if (lua_isstring(L, i)) {
 		struct passwd *p=getpwnam(lua_tostring(L, i));
 		return (p==NULL) ? -1 : p->pw_uid;
-	}
-	else
+	} else {
 		return luaL_typerror(L, i, "string or number");
+	}
 }
 
 static gid_t mygetgid(lua_State *L, int i)
 {
-	if (lua_isnone(L, i))
+	if (lua_isnone(L, i)) {
 		return -1;
-	else if (lua_isnumber(L, i))
+	} else if (lua_isnumber(L, i)) {
 		return (gid_t) lua_tonumber(L, i);
-	else if (lua_isstring(L, i))
-	{
+	} else if (lua_isstring(L, i)) {
 		struct group *g=getgrnam(lua_tostring(L, i));
 		return (g==NULL) ? -1 : g->gr_gid;
-	}
-	else
+	} else {
 		return luaL_typerror(L, i, "string or number");
+	}
 }
 
 
@@ -167,15 +178,18 @@ static int Pdir(lua_State *L)			/** dir([path]) */
 {
 	const char *path = luaL_optstring(L, 1, ".");
 	DIR *d = opendir(path);
-	if (d == NULL)
+
+	if (d == NULL) {
 		return pusherror(L, path);
-	else
-	{
+	} else {
 		int i;
 		struct dirent *entry;
 		lua_newtable(L);
-		for (i=1; (entry = readdir(d)) != NULL; i++)
+
+		for (i=1; (entry = readdir(d)) != NULL; i++) {
 			storeindex(L, i, entry->d_name);
+		}
+
 		closedir(d);
 		return 1;
 	}
@@ -186,17 +200,19 @@ static int aux_files(lua_State *L)
 {
 	DIR *d = lua_touserdata(L, lua_upvalueindex(1));
 	struct dirent *entry;
-	if (d == NULL) luaL_error(L, "attempt to use closed dir");
+
+	if (d == NULL) {
+		luaL_error(L, "attempt to use closed dir");
+	}
+
 	entry = readdir(d);
-	if (entry == NULL)
-	{
+
+	if (entry == NULL) {
 		closedir(d);
 		lua_pushnil(L);
 		lua_replace(L, lua_upvalueindex(1));
 		lua_pushnil(L);
-	}
-	else
-	{
+	} else {
 		lua_pushstring(L, entry->d_name);
 #if 0
 #ifdef _DIRENT_HAVE_D_TYPE
@@ -205,6 +221,7 @@ static int aux_files(lua_State *L)
 #endif
 #endif
 	}
+
 	return 1;
 }
 
@@ -212,10 +229,10 @@ static int Pfiles(lua_State *L)			/** files([path]) */
 {
 	const char *path = luaL_optstring(L, 1, ".");
 	DIR *d = opendir(path);
-	if (d == NULL)
+
+	if (d == NULL) {
 		return pusherror(L, path);
-	else
-	{
+	} else {
 		lua_pushlightuserdata(L, d);
 		lua_pushcclosure(L, aux_files, 1);
 		return 1;
@@ -226,10 +243,10 @@ static int Pfiles(lua_State *L)			/** files([path]) */
 static int Pgetcwd(lua_State *L)		/** getcwd() */
 {
 	char buf[MYBUFSIZ];
-	if (getcwd(buf, sizeof(buf)) == NULL)
+
+	if (getcwd(buf, sizeof(buf)) == NULL) {
 		return pusherror(L, ".");
-	else
-	{
+	} else {
 		lua_pushstring(L, buf);
 		return 1;
 	}
@@ -285,7 +302,11 @@ static int Preadlink(lua_State *L)		/** readlink(path) */
 	char buf[MYBUFSIZ];
 	const char *path = luaL_checkstring(L, 1);
 	int n = readlink(path, buf, sizeof(buf));
-	if (n==-1) return pusherror(L, path);
+
+	if (n==-1) {
+		return pusherror(L, path);
+	}
+
 	lua_pushlstring(L, buf, n);
 	return 1;
 }
@@ -296,16 +317,28 @@ static int Paccess(lua_State *L)		/** access(path,[mode]) */
 	int mode=F_OK;
 	const char *path=luaL_checkstring(L, 1);
 	const char *s;
+
 	for (s=luaL_optstring(L, 2, "f"); *s!=0 ; s++)
-		switch (*s)
-		{
-			case ' ': break;
-			case 'r': mode |= R_OK; break;
-			case 'w': mode |= W_OK; break;
-			case 'x': mode |= X_OK; break;
-			case 'f': mode |= F_OK; break;
-			default: badoption(L, 2, "mode", *s); break;
+		switch (*s) {
+		case ' ':
+			break;
+		case 'r':
+			mode |= R_OK;
+			break;
+		case 'w':
+			mode |= W_OK;
+			break;
+		case 'x':
+			mode |= X_OK;
+			break;
+		case 'f':
+			mode |= F_OK;
+			break;
+		default:
+			badoption(L, 2, "mode", *s);
+			break;
 		}
+
 	return pushresult(L, access(path, mode), path);
 }
 
@@ -322,9 +355,17 @@ static int Pexec(lua_State *L)			/** exec(path,[args]) */
 	const char *path = luaL_checkstring(L, 1);
 	int i,n=lua_gettop(L);
 	char **argv = malloc((n+1)*sizeof(char*));
-	if (argv==NULL) luaL_error(L,"not enough memory");
+
+	if (argv==NULL) {
+		luaL_error(L,"not enough memory");
+	}
+
 	argv[0] = (char*)path;
-	for (i=1; i<n; i++) argv[i] = (char*)luaL_checkstring(L, i+1);
+
+	for (i=1; i<n; i++) {
+		argv[i] = (char*)luaL_checkstring(L, i+1);
+	}
+
 	argv[i] = NULL;
 	execvp(path,argv);
 	return pusherror(L, path);
@@ -390,30 +431,34 @@ static int Punsetenv(lua_State *L)		/** unsetenv(name) */
 
 static int Pgetenv(lua_State *L)		/** getenv([name]) */
 {
-	if (lua_isnone(L, 1))
-	{
+	if (lua_isnone(L, 1)) {
 		extern char **environ;
 		char **e;
-		if (*environ==NULL) lua_pushnil(L); else lua_newtable(L);
-		for (e=environ; *e!=NULL; e++)
-		{
+
+		if (*environ==NULL) {
+			lua_pushnil(L);
+		} else {
+			lua_newtable(L);
+		}
+
+		for (e=environ; *e!=NULL; e++) {
 			char *s=*e;
 			char *eq=strchr(s, '=');
-			if (eq==NULL)		/* will this ever happen? */
-			{
+
+			if (eq==NULL) {	/* will this ever happen? */
 				lua_pushstring(L,s);
 				lua_pushboolean(L,0);
-			}
-			else
-			{
+			} else {
 				lua_pushlstring(L,s,eq-s);
 				lua_pushstring(L,eq+1);
 			}
+
 			lua_settable(L,-3);
 		}
-	}
-	else
+	} else {
 		lua_pushstring(L, getenv(luaL_checkstring(L, 1)));
+	}
+
 	return 1;
 }
 
@@ -424,16 +469,17 @@ static int Pumask(lua_State *L)			/** umask([mode]) */
 	mode_t mode;
 	umask(mode=umask(0));
 	mode=(~mode)&0777;
-	if (!lua_isnone(L, 1))
-	{
-		if (mode_munch(&mode, luaL_checkstring(L, 1)))
-		{
+
+	if (!lua_isnone(L, 1)) {
+		if (mode_munch(&mode, luaL_checkstring(L, 1))) {
 			lua_pushnil(L);
 			return 1;
 		}
+
 		mode&=0777;
 		umask(~mode);
 	}
+
 	modechopper(mode, m);
 	lua_pushstring(L, m);
 	return 1;
@@ -446,9 +492,17 @@ static int Pchmod(lua_State *L)			/** chmod(path,mode) */
 	struct stat s;
 	const char *path = luaL_checkstring(L, 1);
 	const char *modestr = luaL_checkstring(L, 2);
-	if (stat(path, &s)) return pusherror(L, path);
+
+	if (stat(path, &s)) {
+		return pusherror(L, path);
+	}
+
 	mode = s.st_mode;
-	if (mode_munch(&mode, modestr)) luaL_argerror(L, 2, "bad mode");
+
+	if (mode_munch(&mode, modestr)) {
+		luaL_argerror(L, 2, "bad mode");
+	}
+
 	return pushresult(L, chmod(path, mode), path);
 }
 
@@ -475,21 +529,34 @@ static int Putime(lua_State *L)			/** utime(path,[mtime,atime]) */
 
 static int FgetID(lua_State *L, int i, const void *data)
 {
-	switch (i)
-	{
-		case 0:	lua_pushnumber(L, getegid());	break;
-		case 1:	lua_pushnumber(L, geteuid());	break;
-		case 2:	lua_pushnumber(L, getgid());	break;
-		case 3:	lua_pushnumber(L, getuid());	break;
-		case 4:	lua_pushnumber(L, getpgrp());	break;
-		case 5:	lua_pushnumber(L, getpid());	break;
-		case 6:	lua_pushnumber(L, getppid());	break;
+	switch (i) {
+	case 0:
+		lua_pushnumber(L, getegid());
+		break;
+	case 1:
+		lua_pushnumber(L, geteuid());
+		break;
+	case 2:
+		lua_pushnumber(L, getgid());
+		break;
+	case 3:
+		lua_pushnumber(L, getuid());
+		break;
+	case 4:
+		lua_pushnumber(L, getpgrp());
+		break;
+	case 5:
+		lua_pushnumber(L, getpid());
+		break;
+	case 6:
+		lua_pushnumber(L, getppid());
+		break;
 	}
+
 	return 1;
 }
 
-static const char *const SgetID[] =
-{
+static const char *const SgetID[] = {
 	"egid", "euid", "gid", "uid", "pgrp", "pid", "ppid", NULL
 };
 
@@ -524,22 +591,36 @@ static int Pgetlogin(lua_State *L)		/** getlogin() */
 static int Fgetpasswd(lua_State *L, int i, const void *data)
 {
 	const struct passwd *p=data;
-	switch (i)
-	{
-		case 0: lua_pushstring(L, p->pw_name); break;
-		case 1: lua_pushnumber(L, p->pw_uid); break;
-		case 2: lua_pushnumber(L, p->pw_gid); break;
-		case 3: lua_pushstring(L, p->pw_dir); break;
-		case 4: lua_pushstring(L, p->pw_shell); break;
-/* not strictly POSIX */
-		case 5: lua_pushstring(L, p->pw_gecos); break;
-		case 6: lua_pushstring(L, p->pw_passwd); break;
+
+	switch (i) {
+	case 0:
+		lua_pushstring(L, p->pw_name);
+		break;
+	case 1:
+		lua_pushnumber(L, p->pw_uid);
+		break;
+	case 2:
+		lua_pushnumber(L, p->pw_gid);
+		break;
+	case 3:
+		lua_pushstring(L, p->pw_dir);
+		break;
+	case 4:
+		lua_pushstring(L, p->pw_shell);
+		break;
+		/* not strictly POSIX */
+	case 5:
+		lua_pushstring(L, p->pw_gecos);
+		break;
+	case 6:
+		lua_pushstring(L, p->pw_passwd);
+		break;
 	}
+
 	return 1;
 }
 
-static const char *const Sgetpasswd[] =
-{
+static const char *const Sgetpasswd[] = {
 	"name", "uid", "gid", "dir", "shell", "gecos", "passwd", NULL
 };
 
@@ -547,18 +628,23 @@ static const char *const Sgetpasswd[] =
 static int Pgetpasswd(lua_State *L)		/** getpasswd(name or id) */
 {
 	struct passwd *p=NULL;
-	if (lua_isnoneornil(L, 1))
+
+	if (lua_isnoneornil(L, 1)) {
 		p = getpwuid(geteuid());
-	else if (lua_isnumber(L, 1))
+	} else if (lua_isnumber(L, 1)) {
 		p = getpwuid((uid_t)lua_tonumber(L, 1));
-	else if (lua_isstring(L, 1))
+	} else if (lua_isstring(L, 1)) {
 		p = getpwnam(lua_tostring(L, 1));
-	else
+	} else {
 		luaL_typerror(L, 1, "string or number");
-	if (p==NULL)
+	}
+
+	if (p==NULL) {
 		lua_pushnil(L);
-	else
+	} else {
 		doselection(L, 2, Sgetpasswd, Fgetpasswd, p);
+	}
+
 	return 1;
 }
 
@@ -566,23 +652,28 @@ static int Pgetpasswd(lua_State *L)		/** getpasswd(name or id) */
 static int Pgetgroup(lua_State *L)		/** getgroup(name or id) */
 {
 	struct group *g=NULL;
-	if (lua_isnumber(L, 1))
+
+	if (lua_isnumber(L, 1)) {
 		g = getgrgid((gid_t)lua_tonumber(L, 1));
-	else if (lua_isstring(L, 1))
+	} else if (lua_isstring(L, 1)) {
 		g = getgrnam(lua_tostring(L, 1));
-	else
+	} else {
 		luaL_typerror(L, 1, "string or number");
-	if (g==NULL)
+	}
+
+	if (g==NULL) {
 		lua_pushnil(L);
-	else
-	{
+	} else {
 		int i;
 		lua_newtable(L);
 		storestring(L, "name", g->gr_name);
 		storenumber(L, "gid", g->gr_gid);
-		for (i=0; g->gr_mem[i] != NULL; i++)
+
+		for (i=0; g->gr_mem[i] != NULL; i++) {
 			storeindex(L, i+1, g->gr_mem[i]);
+		}
 	}
+
 	return 1;
 }
 
@@ -598,10 +689,9 @@ static int Psetgid(lua_State *L)		/** setgid(name or id) */
 	return pushresult(L, setgid(mygetgid(L, 1)), NULL);
 }
 
-struct mytimes
-{
- struct tms t;
- clock_t elapsed;
+struct mytimes {
+	struct tms t;
+	clock_t elapsed;
 };
 
 #define pushtime(L,x)		lua_pushnumber(L,((lua_Number)x)/CLK_TCK)
@@ -609,19 +699,29 @@ struct mytimes
 static int Ftimes(lua_State *L, int i, const void *data)
 {
 	const struct mytimes *t=data;
-	switch (i)
-	{
-		case 0: pushtime(L, t->t.tms_utime); break;
-		case 1: pushtime(L, t->t.tms_stime); break;
-		case 2: pushtime(L, t->t.tms_cutime); break;
-		case 3: pushtime(L, t->t.tms_cstime); break;
-		case 4: pushtime(L, t->elapsed); break;
+
+	switch (i) {
+	case 0:
+		pushtime(L, t->t.tms_utime);
+		break;
+	case 1:
+		pushtime(L, t->t.tms_stime);
+		break;
+	case 2:
+		pushtime(L, t->t.tms_cutime);
+		break;
+	case 3:
+		pushtime(L, t->t.tms_cstime);
+		break;
+	case 4:
+		pushtime(L, t->elapsed);
+		break;
 	}
+
 	return 1;
 }
 
-static const char *const Stimes[] =
-{
+static const char *const Stimes[] = {
 	"utime", "stime", "cutime", "cstime", "elapsed", NULL
 };
 
@@ -635,8 +735,7 @@ static int Ptimes(lua_State *L)			/** times() */
 }
 
 
-struct mystat
-{
+struct mystat {
 	struct stat s;
 	char mode[10];
 	const char *type;
@@ -645,26 +744,50 @@ struct mystat
 static int Fstat(lua_State *L, int i, const void *data)
 {
 	const struct mystat *s=data;
-	switch (i)
-	{
-		case 0: lua_pushstring(L, s->mode); break;
-		case 1: lua_pushnumber(L, s->s.st_ino); break;
-		case 2: lua_pushnumber(L, s->s.st_dev); break;
-		case 3: lua_pushnumber(L, s->s.st_nlink); break;
-		case 4: lua_pushnumber(L, s->s.st_uid); break;
-		case 5: lua_pushnumber(L, s->s.st_gid); break;
-		case 6: lua_pushnumber(L, s->s.st_size); break;
-		case 7: lua_pushnumber(L, s->s.st_atime); break;
-		case 8: lua_pushnumber(L, s->s.st_mtime); break;
-		case 9: lua_pushnumber(L, s->s.st_ctime); break;
-		case 10:lua_pushstring(L, s->type); break;
-		case 11:lua_pushnumber(L, s->s.st_mode); break;
+
+	switch (i) {
+	case 0:
+		lua_pushstring(L, s->mode);
+		break;
+	case 1:
+		lua_pushnumber(L, s->s.st_ino);
+		break;
+	case 2:
+		lua_pushnumber(L, s->s.st_dev);
+		break;
+	case 3:
+		lua_pushnumber(L, s->s.st_nlink);
+		break;
+	case 4:
+		lua_pushnumber(L, s->s.st_uid);
+		break;
+	case 5:
+		lua_pushnumber(L, s->s.st_gid);
+		break;
+	case 6:
+		lua_pushnumber(L, s->s.st_size);
+		break;
+	case 7:
+		lua_pushnumber(L, s->s.st_atime);
+		break;
+	case 8:
+		lua_pushnumber(L, s->s.st_mtime);
+		break;
+	case 9:
+		lua_pushnumber(L, s->s.st_ctime);
+		break;
+	case 10:
+		lua_pushstring(L, s->type);
+		break;
+	case 11:
+		lua_pushnumber(L, s->s.st_mode);
+		break;
 	}
+
 	return 1;
 }
 
-static const char *const Sstat[] =
-{
+static const char *const Sstat[] = {
 	"mode", "ino", "dev", "nlink", "uid", "gid",
 	"size", "atime", "mtime", "ctime", "type", "_mode",
 	NULL
@@ -674,7 +797,11 @@ static int Pstat(lua_State *L)			/** stat(path,[selector]) */
 {
 	struct mystat s;
 	const char *path=luaL_checkstring(L, 1);
-	if (lstat(path,&s.s)==-1) return pusherror(L, path);
+
+	if (lstat(path,&s.s)==-1) {
+		return pusherror(L, path);
+	}
+
 	s.type=filetype(s.s.st_mode);
 	modechopper(s.s.st_mode, s.mode);
 	return doselection(L, 2, Sstat, Fstat, &s);
@@ -686,28 +813,46 @@ static int Puname(lua_State *L)			/** uname([string]) */
 	struct utsname u;
 	luaL_Buffer b;
 	const char *s;
-	if (uname(&u) == -1) return pusherror(L, NULL);
+
+	if (uname(&u) == -1) {
+		return pusherror(L, NULL);
+	}
+
 	luaL_buffinit(L, &b);
+
 	for (s=luaL_optstring(L, 1, "%s %n %r %v %m"); *s; s++)
-		if (*s!='%')
+		if (*s!='%') {
 			luaL_putchar(&b, *s);
-		else switch (*++s)
-		{
-			case '%': luaL_putchar(&b, *s); break;
-			case 'm': luaL_addstring(&b,u.machine); break;
-			case 'n': luaL_addstring(&b,u.nodename); break;
-			case 'r': luaL_addstring(&b,u.release); break;
-			case 's': luaL_addstring(&b,u.sysname); break;
-			case 'v': luaL_addstring(&b,u.version); break;
-			default: badoption(L, 2, "format", *s); break;
-		}
+		} else switch (*++s) {
+			case '%':
+				luaL_putchar(&b, *s);
+				break;
+			case 'm':
+				luaL_addstring(&b,u.machine);
+				break;
+			case 'n':
+				luaL_addstring(&b,u.nodename);
+				break;
+			case 'r':
+				luaL_addstring(&b,u.release);
+				break;
+			case 's':
+				luaL_addstring(&b,u.sysname);
+				break;
+			case 'v':
+				luaL_addstring(&b,u.version);
+				break;
+			default:
+				badoption(L, 2, "format", *s);
+				break;
+			}
+
 	luaL_pushresult(&b);
 	return 1;
 }
 
 
-static const int Kpathconf[] =
-{
+static const int Kpathconf[] = {
 	_PC_LINK_MAX, _PC_MAX_CANON, _PC_MAX_INPUT, _PC_NAME_MAX, _PC_PATH_MAX,
 	_PC_PIPE_BUF, _PC_CHOWN_RESTRICTED, _PC_NO_TRUNC, _PC_VDISABLE,
 	-1
@@ -720,8 +865,7 @@ static int Fpathconf(lua_State *L, int i, const void *data)
 	return 1;
 }
 
-static const char *const Spathconf[] =
-{
+static const char *const Spathconf[] = {
 	"link_max", "max_canon", "max_input", "name_max", "path_max",
 	"pipe_buf", "chown_restricted", "no_trunc", "vdisable",
 	NULL
@@ -734,8 +878,7 @@ static int Ppathconf(lua_State *L)		/** pathconf(path,[selector]) */
 }
 
 
-static const int Ksysconf[] =
-{
+static const int Ksysconf[] = {
 	_SC_ARG_MAX, _SC_CHILD_MAX, _SC_CLK_TCK, _SC_NGROUPS_MAX, _SC_STREAM_MAX,
 	_SC_TZNAME_MAX, _SC_OPEN_MAX, _SC_JOB_CONTROL, _SC_SAVED_IDS, _SC_VERSION,
 	-1
@@ -747,8 +890,7 @@ static int Fsysconf(lua_State *L, int i, const void *data)
 	return 1;
 }
 
-static const char *const Ssysconf[] =
-{
+static const char *const Ssysconf[] = {
 	"arg_max", "child_max", "clk_tck", "ngroups_max", "stream_max",
 	"tzname_max", "open_max", "job_control", "saved_ids", "version",
 	NULL
@@ -760,8 +902,7 @@ static int Psysconf(lua_State *L)		/** sysconf([selector]) */
 }
 
 
-static const luaL_reg R[] =
-{
+static const luaL_reg R[] = {
 	{"access",		Paccess},
 	{"chdir",		Pchdir},
 	{"chmod",		Pchmod},

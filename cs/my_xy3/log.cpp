@@ -7,7 +7,9 @@ FileWriter::FileWriter(const char* path)
 }
 
 FileWriter::~FileWriter()
-{ cout<<"~~~~"<<endl; }
+{
+	cout<<"~~~~"<<endl;
+}
 
 int FileWriter::Write(const char* data, unsigned int len)
 {
@@ -20,13 +22,19 @@ int FileWriter::Write(const char* data, unsigned int len)
 }
 
 void Log::setWriter(LogWriter* lw)
-{ _writer = lw; }
+{
+	_writer = lw;
+}
 
 void Log::setLevel(unsigned int level)
-{ _level = level; }
+{
+	_level = level;
+}
 
 void Log::setFormat(const char* fmt)
-{ _format = fmt; }
+{
+	_format = fmt;
+}
 
 void Log::logError(const char* fmt, ...)
 {
@@ -81,8 +89,10 @@ void Log::logPrint(unsigned int level, const char* fmt, ...)
 void Log::printString(unsigned int level, const char* data)
 {
 	char* levelName;
-	if (!(level & _level))
+
+	if (!(level & _level)) {
 		return;
+	}
 
 	switch (level) {
 	case LOG_ERROR:
@@ -101,8 +111,9 @@ void Log::printString(unsigned int level, const char* data)
 		return;
 	}
 
-	if (_format == "")
+	if (_format == "") {
 		return;
+	}
 
 	std::string format;
 	char* mark;
@@ -114,20 +125,29 @@ void Log::printString(unsigned int level, const char* data)
 	// 将"<TIME>\t<LEVEL>\t<MESSAGE>\n"中的对应段替换掉
 	mark = "<TIME>";
 	len = strlen(mark);
-	if (occur = (char*)strstr(format.c_str(), (const char*)mark))
+
+	if (occur = (char*)strstr(format.c_str(), (const char*)mark)) {
 		format.replace(occur-format.c_str(), len, getTime());
+	}
+
 	std::cout<<"11111"<<endl;
 
 	mark = "<LEVEL>";
 	len = strlen(mark);
-	if (occur = (char*)strstr(format.c_str(), (const char*)mark))
+
+	if (occur = (char*)strstr(format.c_str(), (const char*)mark)) {
 		format.replace(occur-format.c_str(), len, levelName);
+	}
+
 	std::cout<<"22222"<<endl;
 
 	mark = "<MESSAGE>";
 	len = strlen(mark);
-	if (occur = (char*)strstr(format.c_str(), mark))
+
+	if (occur = (char*)strstr(format.c_str(), mark)) {
 		format.replace(occur-format.c_str(), len, data);
+	}
+
 	std::cout<<"333333"<<endl;
 
 	_writer->Write(format.c_str(), format.size());
@@ -135,17 +155,20 @@ void Log::printString(unsigned int level, const char* data)
 
 const char* Log::getTime()
 {
-	time_t timep;  
+	time_t timep;
 	struct tm *p;
 	time(&timep);
 	p = localtime(&timep);
-	if(p == NULL)
+
+	if(p == NULL) {
 		return NULL;
+	}
+
 	sprintf(
-			(char*)_time.c_str(), "%d-%d-%d %d:%d:%d", 
-			p->tm_year+1900, p->tm_mon+1, 
-			p->tm_mday, p->tm_hour,
-			p->tm_min, p->tm_sec
+	    (char*)_time.c_str(), "%d-%d-%d %d:%d:%d",
+	    p->tm_year+1900, p->tm_mon+1,
+	    p->tm_mday, p->tm_hour,
+	    p->tm_min, p->tm_sec
 	);
 	return _time.c_str();//_time为类成员，该内存地址不会无效
 }

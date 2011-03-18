@@ -16,13 +16,15 @@ void client_errorcb(struct bufferevent* bufev, short what, void* arg)
 	event_debugx("client_errorcb  what = %d", what);
 
 	int len = bufev->output->off;
+
 	//event_debugx("left len = %d", len);
 	if (len > 0) {//若len为0，调用send会导致错误
 		if (evbuffer_write(bufev->output, bufev->ev_write.ev_fd) != len) {
 			event_err(1, "lost data");
 		}
 	}
-	int fd = bufev->ev_write.ev_fd; 
+
+	int fd = bufev->ev_write.ev_fd;
 	//event_debugx("close fd = %d", fd);
 	bufferevent_free(bufev);//删除event，从epoll中删除 fd
 	close(fd);//将没有发送的发送出去
@@ -38,7 +40,11 @@ void new_client(int fd, short event, void* arg)
 	bzero(ip_address, sizeof(ip_address));
 
 	int user_fd = accept(fd, (struct sockaddr*)&addr, (socklen_t*)&len);
-	if ( user_fd < 0 ) return;
+
+	if ( user_fd < 0 ) {
+		return;
+	}
+
 	event_debugx("new_client: user_fd = %d", user_fd);
 
 	int flags = fcntl(user_fd, F_GETFL, 0);
@@ -72,6 +78,7 @@ int set_noblocking(int sock)
 		perror("fcntl");
 		return -1;
 	}
+
 	return 0;
 }
 
@@ -79,8 +86,15 @@ int create_listen_sock()
 {
 	int listen_sock;
 	listen_sock = socket(PF_INET, SOCK_STREAM, 0);
-	if (listen_sock == -1) return -1;
-	if (set_noblocking(listen_sock) == -1) return -1;
+
+	if (listen_sock == -1) {
+		return -1;
+	}
+
+	if (set_noblocking(listen_sock) == -1) {
+		return -1;
+	}
+
 	int opt = 1;//非零表示启用该选项, 0 表示不启用
 	unsigned int size = sizeof(opt);
 	setsockopt(listen_sock, SOL_SOCKET, SO_REUSEADDR, &opt, size);
@@ -90,12 +104,16 @@ int create_listen_sock()
 	saddr.sin_port = htons(1300);
 	saddr.sin_family = AF_INET;
 	saddr.sin_addr.s_addr = htons(INADDR_ANY);
-	if ( bind(listen_sock, (struct sockaddr*)&saddr, sizeof(struct sockaddr)) == -1 ) return -1;
+
+	if ( bind(listen_sock, (struct sockaddr*)&saddr, sizeof(struct sockaddr)) == -1 ) {
+		return -1;
+	}
 
 	if (listen(listen_sock, 5) == -1) {
 		perror("listen");
 		return -1;
 	}
+
 	return listen_sock;
 }
 
@@ -108,13 +126,16 @@ int main()
 	struct ev_timeval tv;
 
 	listen_sock = create_listen_sock();
-	if (listen_sock == -1) event_err(1, "fail to create listen sock");
+
+	if (listen_sock == -1) {
+		event_err(1, "fail to create listen sock");
+	}
 
 	event_init();
 
 	//socket类型 event
 	event_set(&listen_event, listen_sock, EV_READ|EV_PERSIST, new_client, NULL);
-	event_add(&listen_event, NULL);	
+	event_add(&listen_event, NULL);
 
 	//信号event
 	signal_set(&sig_event, SIGINT, sig_cb, &sig_event);

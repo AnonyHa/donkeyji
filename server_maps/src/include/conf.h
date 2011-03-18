@@ -1,8 +1,7 @@
 #ifndef _CONF_H
 #define _CONF_H
 
-typedef struct _config
-{
+typedef struct _config {
 	int server_mode;
 
 	int login_client_port;
@@ -13,9 +12,9 @@ typedef struct _config
 	char* log_file;
 
 	int is_daemon;
-}config;
+} config;
 
-extern config* cfg; 
+extern config* cfg;
 
 void conf_init();
 void conf_print();

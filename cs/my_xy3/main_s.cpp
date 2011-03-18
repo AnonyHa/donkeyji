@@ -66,8 +66,10 @@ int predo()
 	start_lua();
 
 	int err =( luaL_loadfile(L, PRELOAD) || lua_pcall(L, 0, LUA_MULTRET, 0) );
-	if (err)
+
+	if (err) {
 		return -1;
+	}
 
 	ss.startUp();
 	return 0;
@@ -84,13 +86,14 @@ int postdo()
 int main_loop()
 {
 	Event* e;
+
 	while (1) {
 		//ss.process();
 		ss.dispatch();
 		e = ss.doRead();
+
 		if (e != NULL) {//完整的协议数据包
-			switch (e->_event)
-			{
+			switch (e->_event) {
 			case NET_NEW:
 				on_new(e);
 				break;
@@ -104,20 +107,25 @@ int main_loop()
 				on_leave(e);
 				break;
 			}
+
 			delete e;// 消耗掉该event, e始终位于_queue中
 		}
+
 		lua_gc(L, LUA_GCSTEP, 0);
 		//usleep(500000);
 		//usleep(1000000);
 	}
+
 	return 0;
 }
 
 int main()
 {
 	int ret = predo();
-	if (ret == -1)
+
+	if (ret == -1) {
 		return -1;
+	}
 
 	main_loop();
 
