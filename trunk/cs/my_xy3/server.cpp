@@ -1,6 +1,6 @@
 // c++ header
 #include <iostream>
-#include <queue> 
+#include <queue>
 #include <map>
 using namespace std;
 
@@ -45,16 +45,17 @@ Server::Server(short port)
 
 Server::~Server()
 {
-	if (_listenSock != -1)
+	if (_listenSock != -1) {
 		close(_listenSock);
+	}
 
 	// 清空容器
 	for (int i=0; i<_max; i++)
-		if (_clients[i] != NULL)
+		if (_clients[i] != NULL) {
 			delete _clients[i];
+		}
 
-	while (!_queue.empty())
-	{
+	while (!_queue.empty()) {
 		Event* p = _queue.front();
 		_queue.pop();
 		delete p;
@@ -71,13 +72,20 @@ void Server::setNoBlocking(int sock)
 
 void Server::shutDown()
 {
-	if (_listenSock != -1)
+	if (_listenSock != -1) {
 		close(_listenSock);
+	}
+
 	_listenSock = -1;
-	for (int i=0; i<_max; i++)
+
+	for (int i=0; i<_max; i++) {
 		_clients[i] = NULL;
-	while (_queue.empty())
+	}
+
+	while (_queue.empty()) {
 		_queue.pop();
+	}
+
 	_state = 0;
 	_count = 0;
 }
@@ -92,8 +100,11 @@ void Server::startUp()
 {
 	shutDown();
 	_listenSock = socket(PF_INET, SOCK_STREAM, 0);
-	if (_listenSock == -1)
+
+	if (_listenSock == -1) {
 		out(1, "socket");
+	}
+
 	setNoBlocking(_listenSock);
 	int opt = 1;//非零表示启用该选项, 0 表示不启用
 	unsigned int size = sizeof(opt);
@@ -104,8 +115,10 @@ void Server::startUp()
 	saddr.sin_port = htons(_port);
 	saddr.sin_family = AF_INET;
 	saddr.sin_addr.s_addr = htons(INADDR_ANY);
-	if ( bind(_listenSock, (struct sockaddr*)&saddr, sizeof(struct sockaddr)) == -1 ) 
+
+	if ( bind(_listenSock, (struct sockaddr*)&saddr, sizeof(struct sockaddr)) == -1 ) {
 		out(1, "bind");
+	}
 
 	if (listen(_listenSock, 5) == -1) {
 		perror("listen");
@@ -121,27 +134,33 @@ void Server::startUp()
 void Server::process()
 {
 	time_t current = time(0);
-	if (_state != 1)
+
+	if (_state != 1) {
 		return;
+	}
 
 	int fd = accept(_listenSock, NULL, NULL);
-	if (fd < 0)
+
+	if (fd < 0) {
 		perror("accept");
-	else {
+	} else {
 		setNoBlocking(fd);
-		if (_count > 1024)
+
+		if (_count > 1024) {
 			close(fd);
-		else {
+		} else {
 			int pos = -1;
+
 			for (int i=0; i<_max; i++) {
 				if (_clients[i] == NULL) {
 					pos = i;
 					break;
 				}
 			}
-			if (pos == -1)
+
+			if (pos == -1) {
 				close(fd);
-			else {
+			} else {
 				// 用栈，不用堆
 				Client* cc = new Client();
 				cc->assign(fd);
@@ -162,8 +181,9 @@ void Server::process()
 
 	//遍历所有保存的client
 	for (int i=0; i<_max; i++) {
-		if (_clients[i] == NULL)
+		if (_clients[i] == NULL) {
 			continue;
+		}
 
 		// client的发送和接收处理
 		_clients[i]->process();
@@ -173,8 +193,11 @@ void Server::process()
 			short packSize;
 			// packData指向堆，用掉之后要delete
 			char* packData = _clients[i]->doRecv(packSize);//获取一个完整数据包
-			if (packData == NULL || packSize == 0)
+
+			if (packData == NULL || packSize == 0) {
 				break;
+			}
+
 			Event* node = new Event();
 			node->_event = NET_DATA;
 			node->_hid = _clients[i]->_hid;
@@ -186,6 +209,7 @@ void Server::process()
 		}
 
 		time_t timeout = current - _clients[i]->_active;//当前current与从client上一次接收数据时候的时间
+
 		if (timeout > _timeout || _clients[i]->getState() == 0) {//判断是否超时 timeout > 0.07
 			cout<<"leave"<<endl;
 			Event* node = new Event();
@@ -198,13 +222,16 @@ void Server::process()
 				_clients[i] = NULL;
 				_count--;
 			}
+
 			close(_clients[i]->getSock());// close socket
 		}
 	}
 
 	current = long(time(0) * 1000);
-	if (current - _timeslap > 100000)// 
+
+	if (current - _timeslap > 100000) { //
 		_timeslap = current;
+	}
 
 	if (_period > 0) {
 		while (_timeslap < current) { //保证每隔period时间有一个NET_TIMER事件
@@ -229,18 +256,23 @@ void Server::setTimer(int millisec)
 
 int Server::doSend(int hid, byte* data, int len)
 {
-	if (hid <0 or hid > 1024)	
+	if (hid <0 or hid > 1024) {
 		return -1;
-	if (_clients[hid] == NULL)
+	}
+
+	if (_clients[hid] == NULL) {
 		return -1;
+	}
 
 	_clients[hid]->doSend(data, len);
 }
 
 Event* Server::doRead()
 {
-	if (_queue.empty())
+	if (_queue.empty()) {
 		return NULL;
+	}
+
 	Event* p = _queue.front();
 	_queue.pop();
 	return p;
@@ -249,8 +281,9 @@ Event* Server::doRead()
 int Server::doBroadcast(byte* data, int len)
 {
 	for (int i=0; i<_max; i++) {
-		if (_clients[i] != NULL)
+		if (_clients[i] != NULL) {
 			_clients[i]->doSend(data, len);
+		}
 	}
 }
 
@@ -259,33 +292,41 @@ int Server::dispatch()
 	time_t current = time(0);
 	std::cout<<"_count = "<<_count<<std::endl;
 	int ret = _op->doDispatch();// epoll_wait
+
 	if (ret == -1) {
 		perror("epoll_wait");
 		return -1;
 	}
+
 	//有客户端连接断开都会使epoll_wait返回，
 	//不能在while循环里sleep，否则会导致有连接断开时正好处在sleep期间，导致下一次epoll_wait时出错
 	for (int i=0; i<ret; i++) {
 		if (_op->_events[i].data.fd == _listenSock) {
 			int new_fd = accept(_listenSock, NULL, NULL);
 			cout<<"new_fd = "<<new_fd<<endl;
+
 			if (new_fd < 0) {
 				perror("accept");
 				continue;
 			} else {
-				if (_count >= _max) close(new_fd);
-				else {
+				if (_count >= _max) {
+					close(new_fd);
+				} else {
 					setNoBlocking(new_fd);
 					int pos = -1;
+
 					for (int i=0; i<_max; i++) {
 						if (_clients[i] == NULL) {
 							pos = i;
 							break;
 						}
 					}
-					if (pos == -1) close(new_fd);
-					else {
+
+					if (pos == -1) {
+						close(new_fd);
+					} else {
 						int ret = _op->addFd(new_fd, EV_READ);
+
 						if (ret < 0) {
 							close(new_fd);
 							continue;
@@ -311,13 +352,22 @@ int Server::dispatch()
 			cout<<"old_fd = "<<old_fd<<endl;
 			int pos = _fpos[old_fd];
 			Client* ct = _clients[pos];
-			if (!ct) continue;
+
+			if (!ct) {
+				continue;
+			}
+
 			ct->tryRecv();
 			ct->trySend();
+
 			while (1) {
 				short packSize;
 				char* packData = ct->doRecv(packSize);//packData指向堆，用掉之后要delete
-				if (packData == NULL || packSize == 0) break;
+
+				if (packData == NULL || packSize == 0) {
+					break;
+				}
+
 				Event* node = new Event();
 				node->_event = NET_DATA;
 				node->_hid = ct->_hid;
@@ -327,8 +377,10 @@ int Server::dispatch()
 				cout<<"[data]"<<endl;
 				ct->_active = current;
 			}
+
 			if (ct->getState() == 0) {//有断开
 				int ret = _op->rmFd(old_fd, NULL);
+
 				if (ret == 0) {
 					//close(old_fd);
 					cout<<"[leave]"<<endl;

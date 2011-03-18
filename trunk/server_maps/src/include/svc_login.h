@@ -7,10 +7,10 @@ public:
 	LoginServiceImpl();
 
 	virtual void Echo(
-		gpb::RpcController* controller,
-		TestRequest* req,
-		TestResponse* rsp,
-		Closure* done
+	    gpb::RpcController* controller,
+	    TestRequest* req,
+	    TestResponse* rsp,
+	    Closure* done
 	);
 };
 

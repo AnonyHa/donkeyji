@@ -15,17 +15,21 @@ long file_size(FILE *stream)
 }
 
 int read_file(const char* fpath, char* buf, int buf_len)
-{	
+{
 	FILE* f = fopen(fpath, "r");
+
 	if (f) {
 		int len = file_size(f);
+
 		if (len > buf_len) {
 			return 0;
 		}
+
 		len = static_cast<int>(fread(buf, 1, len, f));
 		fclose(f);
 		return len;
 	}
+
 	return 0;
 }
 
@@ -39,37 +43,35 @@ int fcall_number_arg::pack(lua_State*L, int data_in, byte* buf, int buf_len)
 	int used_len = 0;
 	luaL_checktype(L, data_in, LUA_TNUMBER);
 	lua_number2int(num, lua_tonumber(L, data_in));
+
 	if (num < 0) { // 处理数字的符号
 		data = -num;
 		data_t.is_negative = true;
-	}
-	else {
+	} else {
 		data = num;
 		data_t.is_negative = false;
 	}
+
 	// 决定传输数字所用buf长度
 	if (data <= 0xff) {
 		data_t.len = 1;
 		used_len = (sizeof(data_t) + 1);
-	}
-	else if (data<= 0xffff) {
+	} else if (data<= 0xffff) {
 		data_t.len = 2;
 		used_len = (sizeof(data_t) + 2);
-	}
-	else if (data<= 0xffffff) {
+	} else if (data<= 0xffffff) {
 		data_t.len = 3;
 		used_len = (sizeof(data_t) + 3);
-	}
-	else if (data<= 0xffffffff) {
+	} else if (data<= 0xffffffff) {
 		data_t.len = 4;
 		used_len = (sizeof(data_t) + 4);
-	}
-	else {
+	} else {
 		// number最大支持0xffffffff;
 		data_t.len = 0;
 		raise_error(L, "[pack error]: accpept invalid number!");
 		return 0;
 	}
+
 	check_buf(used_len, buf_len);
 	memcpy(buf, &data_t, sizeof(data_t));
 	memcpy(buf+sizeof(data_t), &data, data_t.len);
@@ -82,17 +84,21 @@ int fcall_number_arg::unpack(lua_State*L, const byte* buf, int buf_len)
 	int readed_len = 1;
 	check_buf(readed_len, buf_len);
 	memcpy(&data_t, buf, sizeof(data_t));
+
 	if ((data_t.len <= 0) || (data_t.len >= 5)) {
 		print_error(L, "[unpack error]: invalid number data!");
 		return 0;
 	}
+
 	int data = 0;
 	readed_len += data_t.len;
 	check_buf(readed_len, buf_len);
 	memcpy(&data, buf+sizeof(data_t), data_t.len);
+
 	if (data_t.is_negative) {
 		data = -data;
 	}
+
 	lua_pushnumber(L, data);
 	return readed_len;
 }
@@ -167,15 +173,15 @@ int fcall_string_arg::pack(lua_State*L, int data_in, byte* buf, int buf_len)
 	size_t str_len;
 	const char* data = luaL_checklstring(L, data_in, &str_len);
 	int str_id = static_cast<int>(str_len) + 1;
+
 	if (str_id <= 0xff) {
-	// string 长度小于256
+		// string 长度小于256
 		used_len = static_cast<int>(str_len+1); // str_lenò??ó1
 		check_buf(used_len, buf_len);
 		memcpy(buf, &str_id, 1);
 		memcpy(buf+1, data, str_len);
 		return used_len;
-	}
-	else if (str_id <= 0xffff ) {
+	} else if (str_id <= 0xffff ) {
 		// string  长度大于256
 		used_len = static_cast<int>(str_len+3);// str_lenò??ó1
 		check_buf(used_len, buf_len);
@@ -183,8 +189,7 @@ int fcall_string_arg::pack(lua_State*L, int data_in, byte* buf, int buf_len)
 		memcpy(buf+1, &str_id, 2);
 		memcpy(buf+3, data, str_len);
 		return used_len;
-	}
-	else {
+	} else {
 		// string最大长度支持0xffff;
 		raise_error(L, "[pack error]string too long:%d\n", str_id);
 		return 0;
@@ -196,32 +201,34 @@ int fcall_string_arg::unpack(lua_State*L, const byte* buf, int buf_len)
 	int readed_len = 1;
 	check_buf(readed_len, buf_len);
 	int str_id = static_cast<int>(*static_cast<const byte*>(buf));
+
 	if (str_id > 0) {
 		int str_len = str_id - 1;
+
 		if (str_len == 0) {
 			lua_pushstring(L, "");
-		}
-		else {
+		} else {
 			readed_len += str_len;
 			check_buf(readed_len, buf_len);
 			lua_pushlstring(L, (const char*)(buf+1), str_len);
 		}
-	}
-	else {
+	} else {
 		assert(str_id == 0);
 		readed_len = 3;
 		check_buf(readed_len, buf_len);
 		memcpy(&str_id, buf+1, 2);
 		int str_len = str_id - 1;
-		
+
 		if (str_len < 0 ) {//zero len is ok.
 			print_error(L, "unpack string length error: str_len=%d", str_len);
 			return 0;
 		}
+
 		readed_len += str_len;
 		check_buf(readed_len, buf_len);
 		lua_pushlstring(L, (const char*)(buf+3), str_len);
 	}
+
 	return readed_len;
 }
 
@@ -250,37 +257,46 @@ int fcall_table_arg::_read_format(lua_State*L)
 	const int buf_len = 100 * 1024;
 	char read_buf[buf_len];
 	int len = read_file(luaL_checkstring(L, -1), read_buf, buf_len);
+
 	if (len== 0) {
 		raise_error(L, "[init table error]: read table_desc file failed!");
 		return PROTO_ERROR;
 	}
+
 	int status = luaL_loadbuffer(L, read_buf, len, 0);
+
 	if (!status && lua_isfunction(L, -1)) {
 		lua_newtable(L); //置空加载环境，确保安全加载
+
 		if (lua_setfenv(L, -2) != 1) {
 			lua_settop(L, top);
 			return PROTO_ERROR;
 		}
+
 		int status = lua_pcall(L, 0, 2, 0);
+
 		if (status) {
 			lua_settop(L, top);
 			return PROTO_ERROR;
 		}
+
 		_type = luaL_checkstring(L, -2);
 		_hashstr = luaL_checkstring(L, -2);
 		_cur_table_deep = 0;
+
 		if (lua_istable(L, -1)) {
 			_travel_table(L, -1); // 遍历样本table，构建op_code序列
 			//_opcodes.pop_back();  // 忽略最后一个table结束操作
-		}
-		else {
+		} else {
 			lua_settop(L, top);
 			raise_error(L, "[init table error]: invalid table format data!");
 			return PROTO_ERROR;
 		}
+
 		lua_settop(L, top);
 		return PROTO_OK;
 	}
+
 	lua_settop(L, top);
 	return PROTO_ERROR;
 }
@@ -288,12 +304,14 @@ int fcall_table_arg::_read_format(lua_State*L)
 void fcall_table_arg::_travel_table(lua_State*L, int table_i)
 {
 	int top = lua_gettop(L);
+
 	// 防止递归导致的栈溢出
 	if (++_cur_table_deep > max_table_deep) {
 		lua_settop(L, top);
 		raise_error(L, "table is too deep!") ;
 		return;
 	}
+
 	if (table_i < 0) {
 		//将栈内数据的相对索引转为绝对索引
 		int top = lua_gettop(L);
@@ -306,23 +324,23 @@ void fcall_table_arg::_travel_table(lua_State*L, int table_i)
 	// 遍历指定table构建opcode序列
 	///* table is in the stack at index 't' */
 	lua_pushnil(L);  /* first key */
+
 	while (lua_next(L, table_i) != 0) {
 		value_arg = 0;
 		key_ref = LUA_NOREF;
+
 		// key
 		if (lua_isnumber(L, -2)) {
 			_hashstr += "number";
 			lua_pushvalue(L, -2);
 			key_ref = lua_ref(L, true); // 保存key的ref，提高解析速度
 			assert(key_ref != LUA_NOREF);
-		}
-		else if (lua_isstring(L, -2)) {
+		} else if (lua_isstring(L, -2)) {
 			_hashstr += luaL_checkstring(L, -2);
 			lua_pushvalue(L, -2);
 			key_ref = lua_ref(L, true); // 保存key的ref，提高解析速度
 			assert(key_ref != LUA_NOREF);
-		}
-		else {
+		} else {
 			lua_unref(L, key_ref);
 			raise_error(L, "[travl_table error]: read invalid key!");
 		}
@@ -331,37 +349,36 @@ void fcall_table_arg::_travel_table(lua_State*L, int table_i)
 		if (lua_isnumber(L, -1)) {
 			_hashstr += "number";
 			value_arg = fcall_arg_manager::get_arg("number");
+
 			if (!value_arg) {
 				lua_unref(L, key_ref);
 				raise_error(L, "[travl_table error]: invalid table value type!");
-			}
-			else {
+			} else {
 				assert(key_ref != LUA_NOREF);
 				_opcodes.push_back(table_opcode(push_value, key_ref, value_arg));
 			}
-		}
-		else if (lua_isstring(L, -1)) {
+		} else if (lua_isstring(L, -1)) {
 			_hashstr += luaL_checkstring(L, -1);
 			value_arg = fcall_arg_manager::get_arg(luaL_checkstring(L, -1));
+
 			if (!value_arg) {
 				lua_unref(L, key_ref);
 				raise_error(L, "[travl_table error]: invalid table value type!");
-			}
-			else {
+			} else {
 				assert(key_ref != LUA_NOREF);
 				_opcodes.push_back(table_opcode(push_value, key_ref, value_arg));
 			}
-		}
-		else if (lua_istable(L, -1)) {
+		} else if (lua_istable(L, -1)) {
 			_opcodes.push_back(table_opcode(tb_begin, key_ref, 0));
 			_travel_table(L, -1); // 遍历子table
-		} 
-		else {
+		} else {
 			lua_unref(L, key_ref);
 			raise_error(L, "[travl_table error]: read invalid value!");
 		}
+
 		lua_pop(L, 1);  /* removes 'value'; keeps 'key' for next iteration */
 	}
+
 	_opcodes.push_back(table_opcode(tb_end, key_ref, value_arg));
 	lua_settop(L, top);
 }
@@ -370,56 +387,61 @@ int fcall_table_arg::pack(lua_State*L, int data_in, byte* buf, int buf_len)
 {
 	int top = lua_gettop(L);
 	int used_len = 0;
+
 	if (lua_istable(L, data_in)) {
 		lua_pushvalue(L, data_in);
+
 		// 忽略第一条tb_begin操作
-		for (size_t i=0; i<_opcodes.size(); ++i) { 
+		for (size_t i=0; i<_opcodes.size(); ++i) {
 			table_opcode& opcode = _opcodes[i];
+
 			if (opcode.op == tb_begin) {
 				// 创建子table
 				assert(opcode.key_ref > 0);
 				lua_getref(L, opcode.key_ref);	// push key
 				lua_rawget(L, -2);
+
 				if (!lua_istable(L, -1)) {
 					lua_settop(L, top);
 					print_error(L, "[pack error]: invalid source table!");
 					luaL_typerror(L, -1, "table") ;
 					return 0;
 				}
-			}
-			else if (opcode.op == push_value) {	
+			} else if (opcode.op == push_value) {
 				// 打包数据
 				assert(opcode.key_ref != LUA_NOREF);
 				lua_getref(L, opcode.key_ref);	// push key
 				lua_rawget(L, -2);
+
 				if (!opcode.value_arg) {
 					lua_settop(L, top);
 					raise_error(L, "[pack error]: invalid table value_arg!");
 					return 0;
 				}
+
 				int cur_used = opcode.value_arg->pack(L, lua_gettop(L), buf+used_len, buf_len-used_len);
+
 				if (cur_used == 0) {
 					lua_settop(L, top);
 					return 0;
 				}
+
 				used_len += cur_used;
 				lua_pop(L, 1);
-			}
-			else if (opcode.op == tb_end) {
+			} else if (opcode.op == tb_end) {
 				// 弹出当前子table
-				lua_pop(L, 1); 
-			}
-			else {
+				lua_pop(L, 1);
+			} else {
 				lua_settop(L, top);
 				raise_error(L, "[pack error]: invalid table opcode!");
 				return 0;
 			}
 		}
-	}
-	else {
+	} else {
 		print_error(L, "[pack error]: the target packed must be a table!");
 		return luaL_typerror(L, data_in, "table") ;
 	}
+
 	lua_settop(L, top);
 	return used_len;
 }
@@ -429,34 +451,36 @@ int fcall_table_arg::unpack(lua_State*L, const byte* buf, int buf_len)
 	int top = lua_gettop(L);
 	int readed_len = 0;
 	lua_newtable(L); // 创建欲还原的table
+
 	for (size_t i=0; i<_opcodes.size()-1; ++i) { // 忽略最后一个tb_end
 		table_opcode& opcode = _opcodes[i];
+
 		if (opcode.op == tb_begin) {
 			assert(opcode.key_ref != LUA_NOREF);
 			lua_getref(L, opcode.key_ref);	// push key
 			lua_newtable(L);
-		}
-		else if (opcode.op == push_value) {	// value只可能是num或str
+		} else if (opcode.op == push_value) {	// value只可能是num或str
 			assert((opcode.key_ref != LUA_NOREF) && opcode.value_arg);
 			lua_getref(L, opcode.key_ref);	// push key
 			int cur_readed = opcode.value_arg->unpack(L, buf+readed_len, buf_len-readed_len);
+
 			if (cur_readed == 0) {
 				lua_settop(L, top);
 				return 0;
 			}
+
 			readed_len += cur_readed;
 			lua_settable(L, -3);
-		}
-		else if (opcode.op == tb_end) {
-			// 完成当前子table的添加			
+		} else if (opcode.op == tb_end) {
+			// 完成当前子table的添加
 			lua_settable(L, -3);
-		}
-		else {
+		} else {
 			print_error(L, "[unpack error]: invalid table opcode!");
 			lua_settop(L, top);
 			return readed_len;
 		}
 	}
+
 	return readed_len;
 }
 
@@ -478,35 +502,43 @@ fcall_array_arg::fcall_array_arg(const char* base_type, int size)
 int fcall_array_arg::pack(lua_State*L, int data_in, byte* buf, int buf_len)
 {
 	int top = lua_gettop(L);
+
 	if (lua_istable(L, data_in)) {
 		int used_len = 0;
 		int array_len = _size;
+
 		if (array_len == 0) {
 			array_len = static_cast<int>(lua_objlen(L, data_in));
+
 			if (array_len > 255) {
 				// 数组最大长度为255
 				raise_error(L, "[pack error]: array is too big!");
 				return 0;
 			}
+
 			used_len = 1;
 			check_buf(used_len, buf_len);
 			*buf = static_cast<byte>(array_len);
 		}
+
 		assert(_base_packer);
+
 		for (int i=1; i<= array_len; ++i) {
 			// 遍历table数组中的元素
 			lua_rawgeti(L, data_in, i);
 			int cur_used = _base_packer->pack(L, -1, buf+used_len, buf_len-used_len);
+
 			if (cur_used == 0) {
 				lua_settop(L, top);
 				return 0;
 			}
+
 			used_len += cur_used;
 			lua_pop(L, 1);
 		}
+
 		return used_len;
-	}
-	else {
+	} else {
 		print_error(L, "[pack error]: accpept invalid array, must be a valid table!");
 		//return PROTO_OK;
 		return luaL_typerror(L, data_in, "table") ;
@@ -521,22 +553,27 @@ int fcall_array_arg::unpack(lua_State*L, const byte* buf, int buf_len)
 	assert(_base_packer);
 	int array_len = _size;
 	int readed_len = 0;
+
 	if (array_len == 0) {
 		readed_len = 1;
 		check_buf(readed_len, buf_len);
 		memcpy(&array_len, buf, 1);
 	}
+
 	// assert(array_len > 0);
 	for (int i=0; i<array_len; ++i) {
 		lua_pushnumber(L, i+1);
 		int cur_readed = _base_packer->unpack(L, buf+readed_len, buf_len-readed_len);
+
 		if (cur_readed == 0) {
 			lua_settop(L, top);
 			return 0;
 		}
+
 		readed_len += cur_readed;
 		lua_rawset(L, data_i);
 	}
+
 	assert(lua_gettop(L) == data_i);
 	//lua_settop(L, data_i);
 	return readed_len;
@@ -562,6 +599,7 @@ void fcall_arg_manager::destruct()
 			delete _s_args[i];
 		}
 	}
+
 	_s_args.clear();
 }
 
@@ -576,6 +614,7 @@ fcall_base_arg* fcall_arg_manager::get_arg(int arg_id)
 	if (arg_id >=0 && arg_id < static_cast<int>(_s_args.size())) {
 		return _s_args[arg_id];
 	}
+
 	return 0;
 }
 
@@ -586,5 +625,6 @@ fcall_base_arg* fcall_arg_manager::get_arg(const char* type_name)
 			return _s_args[i];
 		}
 	}
+
 	return 0;
 }

@@ -13,12 +13,11 @@ static int data_integer_free(struct data_base* p)
 }
 
 //构造函数的同时，将纯虚函数实例化
-struct data_integer* data_integer_new()
-{
+struct data_integer* data_integer_new() {
 	struct data_integer* e = (struct data_integer*)calloc(1, sizeof(struct data_integer));
 	e->value = 0;
 
-	//纯虚函数实例化	
+	//纯虚函数实例化
 	e->free = data_integer_free;
 
 	return e;

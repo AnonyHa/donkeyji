@@ -1,1 +1,1 @@
-hujilib.test(123)
+a = {1, 2}

@@ -1,8 +1,7 @@
 #define SERVER_POOL_SIZE 8//1024//没必要这么大
 #define CONNECTOR_POOL_SIZE 8//1024//没必要这么大
 
-struct huge_server
-{
+struct huge_server {
 	int srv_id;
 	unsigned short srv_port;
 	unsigned int srv_addr;
@@ -19,8 +18,7 @@ struct huge_server* conn_tcp_server_new();
 void conn_tcp_server_free(struct huge_server* srv);
 //----------------------------------------------------
 
-struct huge_client
-{
+struct huge_client {
 	int clt_id;
 	int srv_id;
 	unsigned short clt_port;
@@ -36,8 +34,7 @@ struct huge_client* conn_client_new();
 void conn_client_free(struct huge_client* clt);
 //----------------------------------------------------
 
-struct huge_connector
-{
+struct huge_connector {
 	int conn_id;
 	unsigned short conn_port;
 	unsigned int conn_addr;
@@ -52,5 +49,5 @@ struct huge_connector
 	void (*conn_conn_callback)();
 	void (*conn_close_callback)();
 };
-struct huge_connector* conn_tcp_connector_new(); 
+struct huge_connector* conn_tcp_connector_new();
 void conn_tcp_connector_free(struct huge_connector* conn);

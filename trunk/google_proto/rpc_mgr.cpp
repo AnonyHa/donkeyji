@@ -8,8 +8,7 @@
 #include <google/protobuf/descriptor.h>
 #include <google/protobuf/stubs/common.h>
 
-struct rpc_method
-{
+struct rpc_method {
 	gpb::Service* svc;
 	gpb::Message* req;
 	gpb::Message* rsp;
@@ -35,8 +34,8 @@ uint32_t hashword(const uint32_t *k, size_t length, uint32_t initval)
 		k += 3;
 	}
 
-	switch(length) { 
-	case 3: 
+	switch(length) {
+	case 3:
 		c+=k[2];
 	case 2:
 		b+=k[1];
@@ -44,8 +43,9 @@ uint32_t hashword(const uint32_t *k, size_t length, uint32_t initval)
 		a+=k[0];
 		final(a,b,c);
 	case 0:     /* case 0: nothing left to add */
-	   break;
+		break;
 	}
+
 	return c;
 }
 
@@ -71,7 +71,7 @@ void register_service(gpb::Service* svc)
 		uint32_t method_id = hash_string(method->full_name());
 
 		//save the echo
-		rpc_method* rm = new rpc_method(svc, req, rsp, method);			
+		rpc_method* rm = new rpc_method(svc, req, rsp, method);
 		rpc_map[method_id] = rm;
 	}
 }

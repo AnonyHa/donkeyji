@@ -18,10 +18,13 @@ ENetHost* enet_host_create(const ENetAddress* address, size_t peerCount, enet_ui
 	memset(host->peers, 0, peerCount * sizeof(ENetPeer));
 
 	host->socket = enet_socket_create(ENET_SOCKET_TYPE_DATAGRAM);
+
 	//need to bind
 	if (host->socket == ENET_SOCKET_NULL || (address != NULL && enet_socket_bind(host->socket, address) < 0)) {
-		if (host->socket != ENET_SOCKET_NULL)
+		if (host->socket != ENET_SOCKET_NULL) {
 			enet_socket_destroy(host->socket);
+		}
+
 		enet_free(host->peers);
 		enet_free(host);
 		return NULL;
@@ -32,8 +35,9 @@ ENetHost* enet_host_create(const ENetAddress* address, size_t peerCount, enet_ui
 	enet_socket_set_option(host->socket, ENET_SOCKET_RCVBUF, ENET_HOST_RECEIVE_BUFFER_SIZE);
 	enet_socket_set_option(host->socket, ENET_SOCKET_SNDBUF, ENET_HOST_SEND_BUFFER_SIZE);
 
-	if (address != NULL)
+	if (address != NULL) {
 		host->address = *address;
+	}
 
 	host->incomingBandwidth = incomingBandwidth;
 	host->outgoingBandwidth = outgoingBandwidth;
@@ -45,7 +49,7 @@ ENetHost* enet_host_create(const ENetAddress* address, size_t peerCount, enet_ui
 	host->receivedAddress.port = 0;
 
 	for (currentPeer = host->peers; currentPeer < &host->peers[host->peerCount]; ++currentPeer) {
-		currentPeer->host = host;	
+		currentPeer->host = host;
 		currentPeer->incomingPeerID = currentPeer - host->peers;
 		currentPeer->data = NULL;
 		enet_list_clear(&currentPeer->acknowledgements);
@@ -71,17 +75,20 @@ ENetPeer* enet_host_connect(ENetHost* host, const ENetAddress* address, size_t c
 	if (channelCount < ENET_PROTOCOL_MINIMUM_CHANNEL_COUNT) {
 		channelCount = ENET_PROTOCOL_MINIMUM_CHANNEL_COUNT;
 	} else {
-		if (channelCount > ENET_PROTOCOL_MAXIMUM_CHANNEL_COUNT)
+		if (channelCount > ENET_PROTOCOL_MAXIMUM_CHANNEL_COUNT) {
 			channelCount = ENET_PROTOCOL_MAXIMUM_CHANNEL_COUNT;
+		}
 	}
 
 	for (currentPeer = host->peers; currentPeer < &host->peers[host->peerCount]; ++currentPeer) {
-		if (currentPeer->state == ENET_PEER_STATE_DISCONNECTED)
+		if (currentPeer->state == ENET_PEER_STATE_DISCONNECTED) {
 			break;
+		}
 	}
 
-	if (currentPeer >= &host->peers[host->peerCount])
+	if (currentPeer >= &host->peers[host->peerCount]) {
 		return NULL;
+	}
 
 	currentPeer->state = ENET_PEER_STATE_CONNECTING;
 	currentPeer->address = *address;//连接对方的地址
@@ -89,16 +96,18 @@ ENetPeer* enet_host_connect(ENetHost* host, const ENetAddress* address, size_t c
 	currentPeer->channelCount = channelCount;
 	currentPeer->sessionID = (enet_uint32)enet_rand();
 
-	if (host->outgoingBandwidth == 0)
+	if (host->outgoingBandwidth == 0) {
 		currentPeer->windowSize = ENET_PROTOCOL_MAXIMUM_WINDOW_SIZE;
-	else
+	} else {
 		currentPeer->windowSize = (host->outgoingBandwidth / ENET_PEER_WINDOW_SIZE_SCALE) * ENET_PROTOCOL_MINIMUM_WINDOW_SIZE;
-	
+	}
+
 	if (currentPeer->windowSize < ENET_PROTOCOL_MINIMUM_WINDOW_SIZE) {
 		currentPeer->windowSize = ENET_PROTOCOL_MINIMUM_WINDOW_SIZE;
 	} else {
-		if (currentPeer->windowSize > ENET_PROTOCOL_MAXIMUM_WINDOW_SIZE)
+		if (currentPeer->windowSize > ENET_PROTOCOL_MAXIMUM_WINDOW_SIZE) {
 			currentPeer->windowSize = ENET_PROTOCOL_MAXIMUM_WINDOW_SIZE;
+		}
 	}
 
 	for (channel = currentPeer->channels; channel<&currentPeer->channels[currentPeer->channelCount]; channel++) {

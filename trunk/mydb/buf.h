@@ -1,8 +1,7 @@
 #ifndef _BUF_H
 #define _BUF_H
 
-struct db_buf
-{
+struct db_buf {
 	char *h;
 	char *t;
 	size_t total;

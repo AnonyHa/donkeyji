@@ -3,14 +3,12 @@
 
 struct timer;
 
-struct list
-{
+struct list {
 	struct timer* head;
 	int len;
 };
 
-struct m_list
-{
+struct m_list {
 	struct timer_wrapper* head;
 	int len;
 };

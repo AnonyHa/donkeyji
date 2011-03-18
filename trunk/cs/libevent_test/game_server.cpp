@@ -1,6 +1,6 @@
 // c++ header
 #include <iostream>
-#include <queue> 
+#include <queue>
 using namespace std;
 
 // system header
@@ -25,24 +25,21 @@ void waitChild(int sig)
 }
 
 // -----------------------------------------------------------------
-// message 
+// message
 // -----------------------------------------------------------------
 #define MSG_COMMON	0
 #define MSG_HUGE	1
 #define MSG_QIAN	2
-struct Msg
-{
+struct Msg {
 	int _type;
 };
 
-struct Client
-{
+struct Client {
 	int _sock;
 	time_t _active;
 };
 
-struct Event
-{
+struct Event {
 	int _event;
 	int _hid;
 	char _data[10];
@@ -63,8 +60,8 @@ private:
 	struct sockaddr_in _saddr;
 	short _port;
 	int _listenLen;
-	//vector<Client> _clients;	
-	Client _clients[1024];	
+	//vector<Client> _clients;
+	Client _clients[1024];
 	queue<Event> _queue;
 	int _count;
 	float _timeout;
@@ -73,8 +70,7 @@ private:
 
 	char _recvbuf[100];
 public:
-	Server(short port, int listenLen)
-	{
+	Server(short port, int listenLen) {
 		_timeout = 70.0;
 		_timeslap = long(time(0) * 1000);
 		_period = 1000;
@@ -83,90 +79,86 @@ public:
 		_port = port;
 		_listenLen = listenLen;
 		_listensock = socket(PF_INET, SOCK_STREAM, 0);
-		if (_listensock == -1) 
-		{
+
+		if (_listensock == -1) {
 			perror("socket");
 			exit(1);
 		}
+
 		int opt = SO_REUSEADDR;
-		if (setsockopt(_listensock, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)
-		{
+
+		if (setsockopt(_listensock, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0) {
 			perror("setsockopt");
 			exit(1);
 		}
+
 		setNoBlocking(_listensock);
 		cout<<_listensock<<endl;
-		for (int i=0; i<1024; i++)
+
+		for (int i=0; i<1024; i++) {
 			_clients[i]._sock = -1;
+		}
 	}
 
-	~Server()
-	{
+	~Server() {
 		close(_listensock);
 	}
 
 private:
-	void setNoBlocking(int sock)
-	{
-		if (fcntl(sock, F_SETFL, O_NONBLOCK) == -1) 
-		{
+	void setNoBlocking(int sock) {
+		if (fcntl(sock, F_SETFL, O_NONBLOCK) == -1) {
 			perror("fcntl");
 			exit(1);
 		}
 	}
 
-	void doBind()
-	{
+	void doBind() {
 		bzero(&_saddr, sizeof(struct sockaddr_in));
 		_saddr.sin_port = htons(_port);
 		_saddr.sin_family = AF_INET;
 		_saddr.sin_addr.s_addr = htons(INADDR_ANY);
-		if ( bind(_listensock, (struct sockaddr*)&_saddr, sizeof(struct sockaddr)) == -1 ) 
-		{
+
+		if ( bind(_listensock, (struct sockaddr*)&_saddr, sizeof(struct sockaddr)) == -1 ) {
 			perror("bind");
 			exit(1);
 		}
 	}
 
-	void doListen()
-	{
-		if (listen(_listensock, _listenLen) == -1) 
-		{
+	void doListen() {
+		if (listen(_listensock, _listenLen) == -1) {
 			perror("listen");
 			exit(1);
 		}
 	}
 
 public:
-	void process()
-	{
+	void process() {
 		time_t current = time(0);
 		int fd = accept(_listensock, NULL, NULL);
 		cout<<"fd = "<<fd<<endl;
-		if (fd < 0)
+
+		if (fd < 0) {
 			perror("accept");
-		else
-		{
+		} else {
 			cout<<"new connect"<<endl;
 			setNoBlocking(fd);
 			cout<<"after set"<<endl;
-			if (_count > 1024)
+
+			if (_count > 1024) {
 				close(fd);
-			else
-			{
+			} else {
 				int pos = -1;
-				for (int i=0; i<1024; i++)
-				{
-					if (_clients[i]._sock == -1)
-					{
+
+				for (int i=0; i<1024; i++) {
+					if (_clients[i]._sock == -1) {
 						pos = i;
 						break;
 					}
 				}
-				if (pos == -1)
+
+				if (pos == -1) {
 					close(fd);
-				else
-				{
+				} else {
 					Client cc;
 					cc._sock = fd;
 					cc._active = current;
@@ -181,23 +173,27 @@ public:
 			}
 		}
 
-		for (int i=0; i<1024; i++)
-		{
-			if (_clients[i]._sock == -1)
+		for (int i=0; i<1024; i++) {
+			if (_clients[i]._sock == -1) {
 				continue;
-			while (1)
-			{
+			}
+
+			while (1) {
 				int nread = recv(_clients[i]._sock, _recvbuf, 100, 0);//no blocked socket
-				if (nread == 0)
+
+				if (nread == 0) {
 					break;
+				}
+
 				Event node;
 				//memcpy(node._data, _recvbuf, nread);
 				_queue.push(node);
 				_clients[i]._active = current;
 			}
+
 			time_t timeout = current - _clients[i]._active;
-			if (timeout > _timeout)//ÅÐ¶ÏÊÇ·ñ³¬Ê±
-			{
+
+			if (timeout > _timeout) { //ÅÐ¶ÏÊÇ·ñ³¬Ê±
 				_clients[i]._sock = -1;
 				Event node;
 				node._event = NET_LEAVE;
@@ -208,10 +204,12 @@ public:
 		}
 
 		current = long(time(0) * 1000);
-		if (current - _timeslap > 100000)// ????
+
+		if (current - _timeslap > 100000) { // ????
 			_timeslap = current;
-		while (_timeslap < current)
-		{
+		}
+
+		while (_timeslap < current) {
 			//cout<<"while"<<endl;
 			Event node;
 			node._event = NET_TIMER;
@@ -222,22 +220,22 @@ public:
 		}
 	}
 
-	int doSend(int hid, char* data, int len)
-	{
-		if (hid <0 or hid > 1024)	
+	int doSend(int hid, char* data, int len) {
+		if (hid <0 or hid > 1024) {
 			return -1;
+		}
+
 		send(_clients[hid]._sock, data, len, 0);
 	}
 
-	Event doRead()
-	{
-		if (_queue.empty())
-		{
+	Event doRead() {
+		if (_queue.empty()) {
 			Event ee;
 			ee._event = -1;
 			ee._hid = -1;
 			return ee;
 		}
+
 		Event node = _queue.front();
 		_queue.pop();
 		return node;
@@ -246,8 +244,7 @@ public:
 // interface
 // -----------------------------------------------------------------
 public:
-	void startUp()
-	{
+	void startUp() {
 		cout<<"start up"<<endl;
 		doBind();
 		doListen();
@@ -262,12 +259,13 @@ int main()
 {
 	Server ss = Server(2000, 5);
 	ss.startUp();
-	while (1)
-	{
+
+	while (1) {
 		sleep(1);
 		ss.process();
 		Event ee = ss.doRead();
 		cout<<"event type = "<<ee._event<<endl;
 	}
+
 	return 0;
 }

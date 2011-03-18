@@ -10,13 +10,18 @@ ENetPacket* enet_peer_receive(ENetPeer* peer, enet_uint8 channelID)
 static void enet_peer_reset_outgoing_commands(ENetList* queue)
 {
 	ENetOutgoingCommand* outgoingCommand;
+
 	while (!enet_list_empty(queue)) {
 		outgoingCommand = (ENetOutgoingCommand*)enet_list_remove(enet_list_begin(queue));
+
 		if (outgoingCommand->packet != NULL) {
 			--outgoingCommand->packet->referenceCount;
-			if (outgoingCommand->packet->referenceCount == 0)
+
+			if (outgoingCommand->packet->referenceCount == 0) {
 				enet_packet_destroy(outgoingCommand->packet);
+			}
 		}
+
 		enet_free(outgoingCommand);
 	}
 }
@@ -24,15 +29,21 @@ static void enet_peer_reset_outgoing_commands(ENetList* queue)
 static void enet_peer_reset_incoming_commands(ENetList* queue)
 {
 	ENetIncomingCommand* incomingCommand;
+
 	while (!enet_list_empty(queue)) {
 		incomingCommand = (ENetIncomingCommand*)enet_list_remove(enet_list_begin(queue));
+
 		if (incomingCommand->packet != NULL) {
 			--incomingCommand->packet->referenceCount;
-			if (incomingCommand->packet->referenceCount == 0)
+
+			if (incomingCommand->packet->referenceCount == 0) {
 				enet_packet_destroy(incomingCommand->packet);
+			}
 		}
-		if (incomingCommand->fragments != NULL)
+
+		if (incomingCommand->fragments != NULL) {
 			enet_free(incomingCommand->fragments);
+		}
 
 		enet_free(incomingCommand);
 	}
@@ -41,8 +52,10 @@ static void enet_peer_reset_incoming_commands(ENetList* queue)
 void enet_peer_reset_queues(ENetPeer* peer)
 {
 	ENetChannel* channel;
-	while (!enet_list_empty(&peer->acknowledgements))
+
+	while (!enet_list_empty(&peer->acknowledgements)) {
 		enet_free(enet_list_remove(enet_list_begin(&peer->acknowledgements)));
+	}
 
 	enet_peer_reset_outgoing_commands(&peer->sentReliableCommands);
 	enet_peer_reset_outgoing_commands(&peer->sentUnreliableCommands);
@@ -55,8 +68,10 @@ void enet_peer_reset_queues(ENetPeer* peer)
 			enet_peer_reset_incoming_commands(&channel->incomingReliableCommands);
 			enet_peer_reset_incoming_commands(&channel->incomingUnreliableCommands);
 		}
+
 		enet_free(peer->channels);
 	}
+
 	peer->channels = NULL;
 	peer->channelCount = 0;
 }
@@ -73,7 +88,7 @@ void enet_peer_reset(ENetPeer* peer)
 	peer->lastReceiveTime = 0;
 
 	peer->nextTimeout = 0;
-	peer->earliestTimeout = 0; 
+	peer->earliestTimeout = 0;
 
 	peer->packetLossEpoch = 0;
 	peer->packetSent = 0;
@@ -111,22 +126,24 @@ ENetOutgoingCommand* enet_peer_queue_outgoing_command(ENetPeer* peer, const ENet
 	} else {
 
 	}
-	
+
 	outgoingCommand->sentTime = 0;
 	outgoingCommand->roundTripTimeout = 0;
 	outgoingCommand->roundTripTimeoutLimit = 0;
 	outgoingCommand->fragmentOffset = offset;
-	outgoingCommand->fragmentLength = length; 
+	outgoingCommand->fragmentLength = length;
 	outgoingCommand->packet = packet;
 	outgoingCommand->command = *command;
 
 	outgoingCommand->command.header.reliableSequenceNumber = ENET_HOST_TO_NET_16(outgoingCommand->reliableSequenceNumber);
 
-	if (packet != NULL)
+	if (packet != NULL) {
 		++packet->referenceCount;
+	}
 
-	if (command->header.command & ENET_PROTOCOL_COMMAND_FLAG_ACKNOWLEDGE)
+	if (command->header.command & ENET_PROTOCOL_COMMAND_FLAG_ACKNOWLEDGE) {
 		enet_list_insert(enet_list_end(&peer->outgoingReliableCommands), outgoingCommand);
-	else
+	} else {
 		enet_list_insert(enet_list_end(&peer->outgoingUnreliableCommands), outgoingCommand);
+	}
 }

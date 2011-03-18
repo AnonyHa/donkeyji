@@ -21,7 +21,7 @@ public:
 	int load(lua_State* L);
 	int procType(lua_State* L, const char* file_name);
 	int procFunc(lua_State* L);
-	int procArg(lua_State* L); 
+	int procArg(lua_State* L);
 	int convertPto(lua_State* L);
 	int unpack(lua_State* L, const byte* buf, int buf_len, int hid);
 	static int pack(lua_State* L);

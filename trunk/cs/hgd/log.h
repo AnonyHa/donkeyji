@@ -1,5 +1,4 @@
-struct huge_log
-{
+struct huge_log {
 	int log_fd;
 };
 

@@ -2,12 +2,14 @@
 #include <stdlib.h>
 #include "list.h"
 
-struct list_t* list_new()
-{
+struct list_t* list_new() {
 	printf("list new\n");
 	struct list_t* list = (struct list_t*)malloc(sizeof(struct list_t));
-	if (list == NULL)
+
+	if (list == NULL) {
 		return NULL;
+	}
+
 	list->head = list->tail = NULL;
 	list->len = 0;
 	return list;

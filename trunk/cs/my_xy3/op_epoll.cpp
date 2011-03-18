@@ -1,5 +1,5 @@
 #include "op_epoll.h"
-#include <stdio.h> 
+#include <stdio.h>
 #include <iostream>
 #include <errno.h>
 
@@ -20,15 +20,19 @@ int EpollOp::addFd(int fd, int event)
 {
 	struct epoll_event ev;
 	ev.data.fd = fd;
-	if (event == EV_READ)
+
+	if (event == EV_READ) {
 		ev.events = EPOLLIN | EPOLLET;
-	else if (event == EV_WRITE)
+	} else if (event == EV_WRITE) {
 		ev.events = EPOLLOUT | EPOLLET;
-	else if (event == EV_RW)
+	} else if (event == EV_RW) {
 		ev.events = EPOLLOUT | EPOLLIN | EPOLLET;
-	else// 其他的不处理
+	} else { // 其他的不处理
 		return -1;
+	}
+
 	int ret = epoll_ctl(_epfd, EPOLL_CTL_ADD, fd, &ev);
+
 	if (ret == -1) {
 		perror("epoll_ctl");
 		return -1;
@@ -41,6 +45,7 @@ int EpollOp::addFd(int fd, int event)
 int EpollOp::rmFd(int fd, void* ev)
 {
 	int ret = epoll_ctl(_epfd, EPOLL_CTL_DEL, fd, (struct epoll_event*)ev);
+
 	if (ret == -1) {
 		std::cout<<"errno = "<<errno<<std::endl;
 		perror("epoll_ctl");

@@ -1,8 +1,7 @@
 #ifndef _PROTOCOL_H
 #define  _PROTOCOL_H
 
-enum
-{
+enum {
 	ENET_PROTOCOL_MAXIMUM_PACKET_COMMANDS = 32,
 	ENET_PROTOCOL_MAXIMUM_PEER_ID = 0X7FFF,
 	ENET_PROTOCOL_MINIMUM_CHANNEL_COUNT = 1,
@@ -11,37 +10,32 @@ enum
 	ENET_PROTOCOL_MINIMUM_WINDOW_SIZE = 4096
 };
 
-typedef enum
-{
+typedef enum {
 	ENET_PROTOCOL_COMMAND_CONNECT = 2,
 	ENET_PROTOCOL_COMMAND_COUNT = 12,
 	ENET_PROTOCOL_COMMAND_MASK = 0x0f
-}ENetProtocolCommand;
+} ENetProtocolCommand;
 
-typedef enum
-{
+typedef enum {
 	ENET_PROTOCOL_COMMAND_FLAG_ACKNOWLEDGE = (1<<7)
-}ENetProtocolFlag;
+} ENetProtocolFlag;
 
-typedef struct _ENetProtocolCommandHeader
-{
+typedef struct _ENetProtocolCommandHeader {
 	enet_uint8 command;
 	enet_uint8 channelID;
 	enet_uint16 reliableSequenceNumber;
-}ENetProtocolCommandHeader;
+} ENetProtocolCommandHeader;
 
-typedef struct _ENetProtocolConnect
-{
+typedef struct _ENetProtocolConnect {
 	ENetProtocolCommandHeader header;
 	enet_uint32 windowSize;
 	enet_uint32 channelCount;
 	enet_uint32 sessionID;
-}ENetProtocolConnect;
+} ENetProtocolConnect;
 
-typedef union
-{
+typedef union {
 	ENetProtocolCommandHeader header;
 	ENetProtocolConnect connect;
-}ENetProtocol;
+} ENetProtocol;
 
 #endif

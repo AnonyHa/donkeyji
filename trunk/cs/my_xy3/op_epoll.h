@@ -35,7 +35,7 @@ public:
 
 	virtual int addFd(int fd, int event);
 	virtual int rmFd(int fd, void* ev);
-	virtual int doDispatch(); 
+	virtual int doDispatch();
 };
 
 class OpEpoll

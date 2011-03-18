@@ -16,6 +16,7 @@ void l_multi_cb(void* arg)
 {
 	int ref = (int)arg;
 	lua_getref(gL, ref);
+
 	if (!lua_isfunction(gL, -1)) {
 		return;
 	}
@@ -25,6 +26,7 @@ void l_multi_cb(void* arg)
 		printf("lua_pcall failed\n");
 		return;
 	}
+
 	//lua_call(gL, 0, 0);
 }
 
@@ -32,10 +34,14 @@ void l_once_cb(void* arg)
 {
 	int ref = (int)arg;
 	lua_getref(gL, ref);
-	if (!lua_isfunction(gL, -1))
+
+	if (!lua_isfunction(gL, -1)) {
 		return;
-	if (lua_pcall(gL, 0, 0, 0))
+	}
+
+	if (lua_pcall(gL, 0, 0, 0)) {
 		return;
+	}
 }
 
 static int l_multi_call(lua_State* L)
@@ -44,6 +50,7 @@ static int l_multi_call(lua_State* L)
 		luaL_error(L, "not a function");
 		return 0;
 	}
+
 	double timeout = (double)luaL_checknumber(L, 2);
 	lua_pop(L, 1);
 	int ref = luaL_ref(L, LUA_REGISTRYINDEX);//为function创建一个ref，保存为将来使用
@@ -56,6 +63,7 @@ static int l_once_call(lua_State* L)
 		luaL_error(L, "not a function");
 		return 0;
 	}
+
 	double timeout = (double)luaL_checknumber(L, 2);
 	lua_pop(L, 1);
 	int ref = luaL_ref(L, LUA_REGISTRYINDEX);//为function创建一个ref，保存为将来使用

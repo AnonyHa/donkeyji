@@ -22,8 +22,11 @@ static int mod_a_init()
 {
 	printf("mod a init\n");
 	list = list_new();
-	if (list == NULL)
+
+	if (list == NULL) {
 		return -1;
+	}
+
 	return 0;
 }
 

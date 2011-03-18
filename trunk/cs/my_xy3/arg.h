@@ -17,18 +17,26 @@ class ArgBase
 protected:
 	std::string _type;
 public:
-	ArgBase() {_type = "base";}
+	ArgBase() {
+		_type = "base";
+	}
 	virtual ~ArgBase() {};
 	virtual int pack(lua_State* L, int data_in, byte* buf, int buf_len) = 0;
 	virtual int unpack(lua_State* L, const byte* buf, int buf_len) = 0;
-	const char* getType() {return _type.c_str();}
-	bool checkType(const char* type_name) {return _type == type_name;}
+	const char* getType() {
+		return _type.c_str();
+	}
+	bool checkType(const char* type_name) {
+		return _type == type_name;
+	}
 };
 
 class ArgDword : public ArgBase
 {
 public:
-	ArgDword() {_type = "dword";}
+	ArgDword() {
+		_type = "dword";
+	}
 	virtual int pack(lua_State* L, int data_in, byte* buf, int buf_len);
 	virtual int unpack(lua_State* L, const byte* buf, int buf_len);
 };
@@ -36,7 +44,9 @@ public:
 class ArgNumber : public ArgBase
 {
 public:
-	ArgNumber() {_type = "number";}
+	ArgNumber() {
+		_type = "number";
+	}
 	virtual int pack(lua_State* L, int data_in, byte* buf, int buf_len);
 	virtual int unpack(lua_State* L, const byte* buf, int buf_len);
 };
@@ -44,7 +54,9 @@ public:
 class ArgString : public ArgBase
 {
 public:
-	ArgString() {_type = "string";}
+	ArgString() {
+		_type = "string";
+	}
 	virtual int pack(lua_State* L, int data_in, byte* buf, int buf_len);
 	virtual int unpack(lua_State* L, const byte* buf, int buf_len);
 };
@@ -72,9 +84,13 @@ class ArgMgr
 private:
 	static std::vector<ArgBase*> _args;
 	static ArgMgr* _argMgr;
-	ArgMgr() {init();}
+	ArgMgr() {
+		init();
+	}
 public:
-	~ArgMgr() { destruct(); }
+	~ArgMgr() {
+		destruct();
+	}
 
 public:
 	static ArgMgr* instance();

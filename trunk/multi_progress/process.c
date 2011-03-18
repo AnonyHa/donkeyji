@@ -26,7 +26,7 @@ static void _worker_exit();
 int is_child = 0;
 
 //-------------------------------------------------------
-void 
+void
 daemon_run()
 {
 	if (cfg->daemon == 1) {
@@ -35,18 +35,19 @@ daemon_run()
 	}
 }
 
-void 
+void
 create_pidfile()
 {}
 
 //-------------------------------------------------------
 //fork出子进程之前注册信号
-void 
+void
 signal_init()
 {
 	int i;
 	struct event* se;
 	int SIG[] = {SIGINT, SIGTERM, SIGCHLD, SIGHUP};
+
 	for (i=0; i<sizeof(SIG)/sizeof(int); i++) {
 		se = (struct event*)calloc(1, sizeof(struct event));
 		assert(se);
@@ -56,7 +57,7 @@ signal_init()
 }
 
 //父子进程处理信号逻辑不一样
-static void 
+static void
 _sig_callback(int sig, short event, void* arg)
 {
 	if (is_child == 1) {
@@ -66,17 +67,19 @@ _sig_callback(int sig, short event, void* arg)
 	}
 }
 
-static void 
+static void
 _sig_callback_master(int sig, short event, void* arg)
 {
 	int stat;
 	int ret;
 	pid_t pid;
 	log_msg(__FILE__, __LINE__, "master sig %d callback", getpid());
+
 	switch (sig) {
 	case SIGCHLD:
 		log_msg(__FILE__, __LINE__, "SIGCHLD caught");
 		ret = wait(&stat);//等待子进程退出
+
 		if (ret == -1) {//不处理wait时的出错
 			log_msg(__FILE__, __LINE__, "wait error: %s", strerror(errno));
 		} else {
@@ -84,6 +87,7 @@ _sig_callback_master(int sig, short event, void* arg)
 			pid = _master_spawn_worker();
 			log_msg(__FILE__, __LINE__, "spawn one more worker: pid = %d", pid);
 		}
+
 		break;
 	case SIGINT:
 	case SIGTERM:
@@ -100,10 +104,11 @@ _sig_callback_master(int sig, short event, void* arg)
 	}
 }
 
-static void 
+static void
 _sig_callback_worker(int sig, short event, void* arg)
 {
 	log_msg(__FILE__, __LINE__, "worker sig %d callback", getpid());
+
 	switch (sig) {
 	case SIGCHLD:
 		log_msg(__FILE__, __LINE__, "SIGCHLD caught");
@@ -125,20 +130,20 @@ _sig_callback_worker(int sig, short event, void* arg)
 
 //-----------------------------------------------------------
 
-static void 
+static void
 _master_init()
 {
 	log_msg(__FILE__, __LINE__, "master init succeed");
 	_master_set_proctitle("masterd");
 }
 
-static void 
+static void
 _master_set_proctitle(const char* title)
 {
 
 }
 
-void 
+void
 master_cycle()
 {
 	//master init
@@ -151,7 +156,7 @@ master_cycle()
 	event_dispatch();
 }
 
-static void 
+static void
 _master_exit()
 {
 	//清理资源的代码需要修改
@@ -165,23 +170,26 @@ _master_exit()
 	exit(0);
 }
 
-static void 
+static void
 _master_start_worker()
 {
 	int i = 0;
 	pid_t pid;
+
 	//for (i=0; i<3; i++) {
 	for (i=0; i<2; i++) {
 		pid = _master_spawn_worker();
 		log_msg(__FILE__, __LINE__, "master start the %d worker: pid=%d", i, pid);
 	}
+
 	log_msg(__FILE__, __LINE__, "master start worker succeed");
 }
 
-static pid_t 
+static pid_t
 _master_spawn_worker()
 {
 	pid_t ret = fork();
+
 	switch (ret) {
 	case -1:
 		return -1;
@@ -192,13 +200,13 @@ _master_spawn_worker()
 		break;//不会执行到这里
 	default:
 		return ret;
-	}	
+	}
 }
 
 
 //----------------------------------------------------------
 
-static void 
+static void
 _worker_init()
 {
 	//init libevent, and add listen socket event
@@ -207,11 +215,11 @@ _worker_init()
 	log_msg(__FILE__, __LINE__, "worker init succeed");
 }
 
-static 
+static
 _worker_set_proctitle(const char* title)
 {}
 
-static void 
+static void
 _worker_cycle()
 {
 	_worker_init();
@@ -220,7 +228,7 @@ _worker_cycle()
 	event_dispatch();
 }
 
-static void 
+static void
 _worker_exit()
 {
 	//这里要修改

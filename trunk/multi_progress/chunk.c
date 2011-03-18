@@ -6,33 +6,38 @@
 static chunk* chunkqueue_get_unused_chunk(chunkqueue* cq);
 static void chunkqueue_append_chunk(chunkqueue* cq, chunk* c);
 
-chunk* 
+chunk*
 chunk_new()
 {
 	chunk* c = (chunk*)malloc(sizeof(chunk));
-	if (c == NULL)
+
+	if (c == NULL) {
 		return NULL;
+	}
 
 	c->mem = buffer_new();
 	c->next = NULL;
 	c->offset = 0;//没有被读过
 }
 
-void 
+void
 chunk_free(chunk* c)
 {
-	if (c == NULL)
+	if (c == NULL) {
 		return;
+	}
+
 	buffer_free(c->mem);
 	//不free c->next
 	free(c);
 }
 
-void 
+void
 chunk_reset(chunk* c)
 {
-	if (c == NULL)
+	if (c == NULL) {
 		return;
+	}
 
 	c->offset = 0;//标示为一个字节也没有读取过
 
@@ -42,26 +47,30 @@ chunk_reset(chunk* c)
 }
 
 //---------------------------------------
-chunkqueue* 
+chunkqueue*
 chunkqueue_new()
 {
 	chunkqueue* cq = (chunkqueue*)malloc(sizeof(chunkqueue));
-	if (cq == NULL)
+
+	if (cq == NULL) {
 		return NULL;
+	}
+
 	cq->head = NULL;
 	cq->tail = NULL;
 	cq->unused = NULL;
 	cq->unused_chunks = 0;
 }
 
-void 
+void
 chunkqueue_free(chunkqueue* cq)
 {
 	chunk* c;
 	chunk* tmp;
 
-	if (cq == NULL)
+	if (cq == NULL) {
 		return;
+	}
 
 	for (c=cq->head; c!=NULL; ) {
 		tmp = c->next;
@@ -78,22 +87,23 @@ chunkqueue_free(chunkqueue* cq)
 	free(cq);
 }
 
-void 
+void
 chunkqueue_reset(chunkqueue* cq)
 {
-	if (cq == NULL)
+	if (cq == NULL) {
 		return;
+	}
 
 	chunk* c;
 	chunk* tmp;
 
-	
+
 	/*
 	 * 标示为全部已经读取过了 c->offset = c->mem->used-1
 	 * 以便在chunkqueue_remove_finished_chunks中把处理完了的chunk放入unused链表
 	 */
 	for (c=cq->head; c!=NULL;) {
-		c->offset = c->mem->used-1;	
+		c->offset = c->mem->used-1;
 		c = c->next;
 	}
 
@@ -101,19 +111,22 @@ chunkqueue_reset(chunkqueue* cq)
 }
 
 //对外接口
-chunk* 
+chunk*
 chunkqueue_get_append_chunk(chunkqueue* cq)
 {
 	//从unused链表中找到一个chunk
 	chunk* c = chunkqueue_get_unused_chunk(cq);
-	if (c == NULL)
+
+	if (c == NULL) {
 		return NULL;
+	}
+
 	//append放入使用链表中
 	chunkqueue_append_chunk(cq, c);//append 到queue中
-	return c; 
+	return c;
 }
 
-static chunk* 
+static chunk*
 chunkqueue_get_unused_chunk(chunkqueue* cq)
 {
 	chunk* c;
@@ -131,22 +144,26 @@ chunkqueue_get_unused_chunk(chunkqueue* cq)
 }
 
 //只管append，不管unused变化
-static void 
+static void
 chunkqueue_append_chunk(chunkqueue* cq, chunk* c)
 {
 	/* 无需做这种检查，相信调用者
 	if (cq == NULL)
 		return;
 	*/
-	if (cq->tail != NULL)
+	if (cq->tail != NULL) {
 		cq->tail->next = c;
+	}
+
 	cq->tail = c;
-	if (cq->head == NULL)
+
+	if (cq->head == NULL) {
 		cq->head = c;
+	}
 }
 
 //把已经处理完了的chunk放入unused链表
-void 
+void
 chunkqueue_remove_finished_chunks(chunkqueue* cq)
 {
 	chunk* c;
@@ -154,17 +171,21 @@ chunkqueue_remove_finished_chunks(chunkqueue* cq)
 
 	for (c=cq->head; c!=NULL; c=cq->head) {
 		//chunk为空，或者chunk已经读取完了
-		if (c->mem->used == 0 || c->offset == c->mem->used-1)
+		if (c->mem->used == 0 || c->offset == c->mem->used-1) {
 			is_finished = 1;
+		}
 
-		if (is_finished == 0)
+		if (is_finished == 0) {
 			break;
+		}
 
 		chunk_reset(c);//c->offset = 0
 
 		cq->head = c->next;
-		if (c == cq->tail)
+
+		if (c == cq->tail) {
 			cq->tail = NULL;
+		}
 
 		if (cq->unused_chunks >= 4) {
 			chunk_free(c);

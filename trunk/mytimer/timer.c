@@ -35,58 +35,82 @@ int timer_init()
 	if (mh != NULL) {
 		min_heap_dtor(mh);
 	}
+
 	mh = (min_heap_t*)malloc(sizeof(min_heap_t));
-	if (mh == NULL)
+
+	if (mh == NULL) {
 		goto error;
+	}
 
 	min_heap_ctor(mh);
 
-	if (tl != NULL)
+	if (tl != NULL) {
 		list_free(tl);
-	tl = list_new();
-	if (tl == NULL)
-		goto error;
+	}
 
-	if (ml != NULL)
-		m_list_free(ml);
-	ml = m_list_new();
-	if (ml == NULL)
+	tl = list_new();
+
+	if (tl == NULL) {
 		goto error;
+	}
+
+	if (ml != NULL) {
+		m_list_free(ml);
+	}
+
+	ml = m_list_new();
+
+	if (ml == NULL) {
+		goto error;
+	}
 
 	return 0;
 error:
-	if (mh != NULL)
-		min_heap_dtor(mh);
-	if (tl != NULL)
-		list_free(tl);
 
-	if (ml != NULL)
+	if (mh != NULL) {
+		min_heap_dtor(mh);
+	}
+
+	if (tl != NULL) {
+		list_free(tl);
+	}
+
+	if (ml != NULL) {
 		m_list_free(ml);
+	}
+
 	return -1;
 }
 
 int timer_destory()
 {
-	if (mh != NULL)
+	if (mh != NULL) {
 		min_heap_dtor(mh);
-	if (tl != NULL)
+	}
+
+	if (tl != NULL) {
 		list_free(tl);
-	if (ml != NULL) 
+	}
+
+	if (ml != NULL) {
 		m_list_free(ml);
+	}
+
 	return 0;
 }
 
 //-----------------------------------------------------
-struct timer* timer_new()
-{
+struct timer* timer_new() {
 	struct timer* t = (struct timer*)malloc(sizeof(struct timer));
 	return t;
 }
 
 int timer_free(struct timer* t)
 {
-	if (t == NULL)
+	if (t == NULL) {
 		return 0;
+	}
+
 	free(t);
 	return 0;
 }
@@ -94,8 +118,10 @@ int timer_free(struct timer* t)
 //-------------------------------
 int timer_set(struct timer* t, void (*cb)(void*), void* arg)
 {
-	if (t == NULL)
+	if (t == NULL) {
 		return -1;
+	}
+
 	t->cb = cb;
 	t->arg = arg;
 	return 0;
@@ -103,10 +129,11 @@ int timer_set(struct timer* t, void (*cb)(void*), void* arg)
 
 int timer_add(struct timer* t, struct timeval* tv)
 {
-	if (t == NULL)
+	if (t == NULL) {
 		return -1;
+	}
 
-	t->timeout.tv_sec = tv->tv_sec;	
+	t->timeout.tv_sec = tv->tv_sec;
 	t->timeout.tv_usec = tv->tv_usec;
 
 	return min_heap_push(mh, t);
@@ -120,14 +147,21 @@ int timer_loop()
 	struct timeval* tv;
 	tv = &tv_p;
 	int ret;
+
 	while (1) {
 		timer_get_next_timeout(mh, &tv);
-		if (tv != NULL)
+
+		if (tv != NULL) {
 			printf("min: %d, %d\n", tv->tv_sec, tv->tv_usec);
+		}
+
 		timer_get_time(&t1);
 		ret = (tm->timer_dispath)(tv);
-		if (ret == -1)
+
+		if (ret == -1) {
 			return -1;
+		}
+
 		timer_get_time(&t2);
 		timer_update(&t1, &t2);
 		timer_process_timeout();
@@ -140,10 +174,12 @@ static int timer_get_next_timeout(struct min_heap* h, struct timeval** tv)
 	struct timer* t;
 	struct timeval* tv_p = *tv;
 	t = min_heap_top(mh);
+
 	if (t == NULL) {
 		*tv = NULL;
 		return 0;
 	}
+
 	(tv_p)->tv_sec = t->timeout.tv_sec;
 	(tv_p)->tv_usec = t->timeout.tv_usec;
 	return 0;
@@ -151,13 +187,14 @@ static int timer_get_next_timeout(struct min_heap* h, struct timeval** tv)
 
 static int timer_get_time(struct timeval* tv)
 {
-	struct timespec ts;                                            
+	struct timespec ts;
 
-	if (clock_gettime(CLOCK_MONOTONIC, &ts) == -1)
+	if (clock_gettime(CLOCK_MONOTONIC, &ts) == -1) {
 		return (-1);
+	}
 
 	tv->tv_sec = ts.tv_sec;
-	tv->tv_usec = ts.tv_nsec / 1000;                               
+	tv->tv_usec = ts.tv_nsec / 1000;
 
 	return 0;
 }
@@ -186,6 +223,7 @@ static int timer_update(struct timeval* s, struct timeval* e)
 		ev_tv->tv_usec = res.tv_usec;
 		//printf("----res: %d, %d, %d\n", res.tv_sec, res.tv_usec, tmp++);
 	}
+
 	return 0;
 }
 
@@ -193,6 +231,7 @@ static int timer_process_timeout()
 {
 	struct timer* ev;
 	struct timeval tv = {0, 0};//0
+
 	while ((ev = min_heap_top(mh))) {
 		if (util_timersmaller(&tv, &ev->timeout)) {
 			break;
@@ -202,6 +241,7 @@ static int timer_process_timeout()
 
 		list_insert(tl, ev);
 	}
+
 	return 0;
 }
 
@@ -210,33 +250,39 @@ static int timer_process_actived()
 	//printf("---timer_process_actived---\n");
 	struct timer* p;
 	struct timer* n;
+
 	//printf("----len= %d\n", tl->len);
-	if (tl->len == 0)
+	if (tl->len == 0) {
 		return 0;
+	}
+
 	p = tl->head;
+
 	while (p != NULL) {
 		n = p->next;
 		(p->cb)(p->arg);
 		list_remove(tl, p);
 		p = n;
 	}
+
 	return 0;
 }
 
 //------------------------------------------
 // multi-call
 //------------------------------------------
-struct timer_wrapper* timer_wrapper_new()
-{
+struct timer_wrapper* timer_wrapper_new() {
 	struct timer_wrapper* mt = (struct timer_wrapper*)malloc(sizeof(struct timer_wrapper));
 	return mt;
 }
 
 int timer_wrapper_free(struct timer_wrapper* mt)
 {
-	if (mt == NULL)
+	if (mt == NULL) {
 		return 0;
-	free(mt);	
+	}
+
+	free(mt);
 	return 0;
 }
 
@@ -266,7 +312,7 @@ static void once_cb(void* arg)
 	cb(cb_arg);
 
 	m_list_remove(ml, mt);
-	timer_wrapper_free(mt);	
+	timer_wrapper_free(mt);
 }
 
 //---------------
@@ -275,8 +321,11 @@ static void once_cb(void* arg)
 int multi_call(double timeout, void (*func)(void*), void* arg)
 {
 	struct timer_wrapper* mt = timer_wrapper_new();
-	if (mt == NULL)
+
+	if (mt == NULL) {
 		return -1;
+	}
+
 	mt->cb = func;
 	mt->arg = arg;
 	mt->timeout = timeout;
@@ -295,8 +344,11 @@ int multi_call(double timeout, void (*func)(void*), void* arg)
 int once_call(double timeout, void (*func)(void*), void* arg)
 {
 	struct timer_wrapper* mt = timer_wrapper_new();
-	if (mt == NULL)
+
+	if (mt == NULL) {
 		return -1;
+	}
+
 	mt->cb = func;
 	mt->arg = arg;
 	mt->timeout = timeout;

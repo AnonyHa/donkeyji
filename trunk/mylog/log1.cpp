@@ -1,5 +1,5 @@
 /*
-短小的日志类 
+短小的日志类
 本人一直使用的日志类，支持3种输出方式(windows窗体，udp，常规文件),并格式化输出：
 */
 
@@ -7,7 +7,7 @@
 nvlog.h
 ----------------
 application logger
-2003.10     created        scott    
+2003.10     created        scott
 2005.09.10    rebuild        scott
 created RegFileWriter,UdpWriter,WindowWriter to distinguish log data type
 2005.09.22    modified RegFileWriter::RegFileWriter()    scott
@@ -47,33 +47,37 @@ created RegFileWriter,UdpWriter,WindowWriter to distinguish log data type
 #include "nvcalendar.h"
 */
 
-enum WriterType
-{
-	UDP,    
+enum WriterType {
+	UDP,
 	REGFILE,
 	WINDOW,
 	UNKNOWN
 };
 
-class LogWriter {
+class LogWriter
+{
 public:
-	LogWriter()
-	{ _type = UNKNOWN; }
+	LogWriter() {
+		_type = UNKNOWN;
+	}
 
 	virtual ~LogWriter()
 	{ }
 
-	virtual int Write(const char * data,unsigned int len)
-	{ return 0; }
+	virtual int Write(const char * data,unsigned int len) {
+		return 0;
+	}
 
-	virtual bool Open()
-	{ return true; }
+	virtual bool Open() {
+		return true;
+	}
 
 	virtual void Close()
 	{ }
 
-	WriterType GetType()
-	{ return _type; }
+	WriterType GetType() {
+		return _type;
+	}
 protected:
 	WriterType _type;
 };
@@ -91,7 +95,7 @@ public:
 	}
 
 	int Write2(const char * wintitle,const char * data,unsigned int len)
-	{            
+	{
 		HWND hwnd = FindWindow(0,wintitle);
 		len = SendMessageToWindow(hwnd,data,len);
 		//CloseHandle(hwnd);
@@ -100,7 +104,7 @@ public:
 
 	virtual bool Open()
 	{
-		if( _refind)//需要发送时发现 
+		if( _refind)//需要发送时发现
 			return true;
 		_hwnd = FindWindow(0,_win_title.c_str());
 		if( !_hwnd)
@@ -143,16 +147,15 @@ private:
 
 class RegFileWriter : public LogWriter
 {
-	private:
+private:
 	unsigned int _cur_size,_max_size;
 	OnReachedMaxFileSizeCB _cb_maxsize;
 	FILE* _fp;
 	std::string _file;
 public:
 	typedef void (*OnReachedMaxFileSizeCB)(std::string &file);
-	
-	RegFileWriter(const char * file)
-	{
+
+	RegFileWriter(const char * file) {
 		_cb_maxsize = NULL;
 		_fp = NULL ;
 		_file = file;
@@ -160,48 +163,53 @@ public:
 		_cur_size = 0;
 		SetMaxFileSize();
 	}
-	
-	virtual void OnReachedMaxFileSize()
-	{
+
+	virtual void OnReachedMaxFileSize() {
 		Close();
 		Open();
 	}
-	
-	//void SetRoundTime(unsigned int round_time);    //达到指定时间循环到文件头部        
-	void SetMaxFileSize(unsigned int max_size = 1024*1024*2,OnReachedMaxFileSizeCB cb=NULL)
-	{
+
+	//void SetRoundTime(unsigned int round_time);    //达到指定时间循环到文件头部
+	void SetMaxFileSize(unsigned int max_size = 1024*1024*2,OnReachedMaxFileSizeCB cb=NULL) {
 		_max_size = max_size;
 		_cb_maxsize = cb;
 	}
-	
-	virtual bool Open()
-	{
+
+	virtual bool Open() {
 		_fp = fopen(_file.c_str(),"w");
-		if( !_fp)
+
+		if( !_fp) {
 			return false;
+		}
+
 		//fseek(fp,0,SEEK_END);
 		_cur_size = 0;//ftell(fp);
 		return true;
 	}
 
-	virtual int Write(const char * data,unsigned int len)
-	{
+	virtual int Write(const char * data,unsigned int len) {
 		int ret;
-		if( _cur_size >= _max_size)
+
+		if( _cur_size >= _max_size) {
 			OnReachedMaxFileSize();
-		if( _fp == NULL)
+		}
+
+		if( _fp == NULL) {
 			return -1;
+		}
+
 		ret = fwrite(data,len,1,_fp);
 		fflush(_fp);
 		_cur_size += len;
 		return len;
 	}
 
-	void Close()
-	{
-		if( _fp )
+	void Close() {
+		if( _fp ) {
 			fclose(_fp);
-		_fp = NULL;            
+		}
+
+		_fp = NULL;
 	}
 
 };
@@ -239,11 +247,11 @@ public:
 
 	virtual bool Open()
 	{
-		sockaddr_in sa;    
+		sockaddr_in sa;
 #ifdef WIN32
 		WORD wVersionRequested;
 		WSADATA wsaData;
-		int err; 
+		int err;
 		wVersionRequested = MAKEWORD( 2, 2 );
 		err = WSAStartup( wVersionRequested, &wsaData );
 		if ( err != 0 )
@@ -251,7 +259,7 @@ public:
 #endif
 		sa.sin_family = AF_INET;
 		sa.sin_port = htons(_port);
-		sa.sin_addr.s_addr = inet_addr(_host.c_str());                    
+		sa.sin_addr.s_addr = inet_addr(_host.c_str());
 		_sock = socket(AF_INET,SOCK_DGRAM,0);
 		if( _sock <0  )
 			return false;
@@ -274,78 +282,75 @@ public:
 };
 */
 
-class NVLog{
+class NVLog
+{
 private:
 	std::vector<LogWriter* > _writer_list;
 	NVLock _writer_lock;
 	std::string _format;    // "<LOGLEVEL><LINENO><TIME><MESSAGE>\n"
 	unsigned int _level;
 public:
-	enum LEVEL
-	{
+	enum LEVEL {
 		LOG_ERROR = 0x01,
 		LOG_WARNING = 0x02,
 		LOG_MESSAGE = 0x04,
 		LOG_DEBUG = 0x08,
 		LOG_ALL = LOG_ERROR|LOG_WARNING|LOG_MESSAGE|LOG_DEBUG
-	};        
+	};
 
-	NVLog()
-	{
+	NVLog() {
 		SetFormat();
 		SetLevel();
 	}
-	
+
 	~NVLog()
 	{ }
 
-	bool SetWriter(LogWriter * w)
-	{
+	bool SetWriter(LogWriter * w) {
 		_writer_lock.Lock();
 		_writer_list.push_back(w);
 		_writer_lock.Unlock();
 		return true;
 	}
 
-	void RemoveWriter(LogWriter*w)
-	{
+	void RemoveWriter(LogWriter*w) {
 		std::vector<LogWriter* >::iterator itr;
 		_writer_lock.Lock();
 		itr = std::find(_writer_list.begin(),_writer_list.end(),w);
-		if(itr != _writer_list.end()){
+
+		if(itr != _writer_list.end()) {
 			_writer_list.erase(itr);
 		}
+
 		_writer_lock.Unlock();
 	}
 
 
-	void SetLevel(int level = LOG_ERROR|LOG_WARNING|LOG_MESSAGE|LOG_DEBUG)
-	{ _level = level; }
+	void SetLevel(int level = LOG_ERROR|LOG_WARNING|LOG_MESSAGE|LOG_DEBUG) {
+		_level = level;
+	}
 
 #define LOG_MAX_BUFF_SIZE 1024*60
-	void Error(const char * fmt)
-	{
-		va_list marker;        
+	void Error(const char * fmt) {
+		va_list marker;
 		char buff[LOG_MAX_BUFF_SIZE];
-		va_start(marker,fmt);    
+		va_start(marker,fmt);
 		vsprintf(buff,fmt,marker);
-		va_end(marker); 
+		va_end(marker);
 		PrintString(LOG_ERROR,buff);
 	}
 
-	void Debug(const char * fmt)
-	{
-		va_list marker;        
+	void Debug(const char * fmt) {
+		va_list marker;
 		char buff[LOG_MAX_BUFF_SIZE];
-		va_start(marker,fmt);    
+		va_start(marker,fmt);
 		vsprintf(buff,fmt,marker);
-		va_end(marker); 
+		va_end(marker);
 		PrintString(LOG_DEBUG,buff);
 	}
 
-	void Warning(const char * fmt)
-	{
-		va_list marker;        
+	void Warning(const char * fmt) {
+		va_list marker;
 		char buff[LOG_MAX_BUFF_SIZE];
 		va_start(marker,fmt);
 		vsprintf(buff,fmt,marker);
@@ -353,28 +358,25 @@ public:
 		PrintString(LOG_WARNING,buff);
 	}
 
-	void Message(const char * fmt)
-	{
-		va_list marker;        
+	void Message(const char * fmt) {
+		va_list marker;
 		char buff[LOG_MAX_BUFF_SIZE];
-		va_start(marker,fmt);    
+		va_start(marker,fmt);
 		vsprintf(buff,fmt,marker);
-		va_end(marker); 
+		va_end(marker);
 		PrintString(LOG_MESSAGE,buff);
 	}
 
-	void Print(int level,const char * fmt)
-	{
-		va_list marker;        
+	void Print(int level,const char * fmt) {
+		va_list marker;
 		char buff[LOG_MAX_BUFF_SIZE];
-		va_start(marker,fmt);    
+		va_start(marker,fmt);
 		vsprintf(buff,fmt,marker);
-		va_end(marker); 
+		va_end(marker);
 		PrintString(level,buff);
 	}
 
-	void SetFormat(const char *format="<TIME>\t<LEVEL>\t<MESSAGE>\n")
-	{
+	void SetFormat(const char *format="<TIME>\t<LEVEL>\t<MESSAGE>\n") {
 		_format = format;
 	}
 private:
@@ -383,9 +385,11 @@ private:
 
 inline void NVLog::PrintString(int level,const char * data)
 {
-	char *levelname;    
-	if( !(level & _level) )
-		return;    
+	char *levelname;
+
+	if( !(level & _level) ) {
+		return;
+	}
 
 	switch(level) {
 	case LOG_ERROR:
@@ -403,8 +407,10 @@ inline void NVLog::PrintString(int level,const char * data)
 	default:
 		return;
 	}
-	if( _format == "" )
+
+	if( _format == "" ) {
 		return ;
+	}
 
 	std::string format;
 	char * mark;
@@ -413,20 +419,32 @@ inline void NVLog::PrintString(int level,const char * data)
 	mark = "<LEVEL>";
 	int len;
 	len = strlen(mark);
-	if( occur = (char*)strstr( format.c_str(),(const char*)mark) )
+
+	if( occur = (char*)strstr( format.c_str(),(const char*)mark) ) {
 		format.replace( occur-format.c_str(),len,levelname);
+	}
+
 	mark = "<TIME>";
 	len = strlen(mark);
-	if( occur = (char*)strstr( format.c_str(),(const char*)mark) )
+
+	if( occur = (char*)strstr( format.c_str(),(const char*)mark) ) {
 		format.replace( occur-format.c_str(),len,NVCalendar::GetCurTimeStr().c_str());
+	}
+
 	mark = "<MESSAGE>";
 	len = strlen(mark);
-	if( occur = (char*)strstr( format.c_str(),mark) )
+
+	if( occur = (char*)strstr( format.c_str(),mark) ) {
 		format.replace( occur-format.c_str(),len,data);
+	}
+
 	std::vector<LogWriter* >::iterator itr;
 	_writer_lock.Lock();
-	for( itr= _writer_list.begin();itr!=_writer_list.end();itr++)
+
+	for( itr= _writer_list.begin(); itr!=_writer_list.end(); itr++) {
 		(*itr)->Write(format.c_str(),format.size());
+	}
+
 	_writer_lock.Unlock();
 }
 

@@ -15,8 +15,9 @@ static int bufferevent_add(struct event* ev, int timeout)
 		event_debugx("bufferevent_add timeout");
 		evutil_timerclear(&tv);
 		tv.tv_sec = timeout;
-		ptv = &tv; 
+		ptv = &tv;
 	}
+
 	return event_add(ev, ptv);//设置超时
 }
 
@@ -38,6 +39,7 @@ static void bufferevent_readcb(int fd, short event, void* arg)
 	//howmuch表示该缓冲区最多还能容纳的数据大小
 	if (bufev->wm_read.high != 0) {
 		howmuch = bufev->wm_read.high - EVBUFFER_LENGTH(bufev->input);
+
 		if (howmuch <= 0) {
 			struct evbuffer* buf = bufev->input;
 			event_del(&bufev->ev_read);//为何要del呢????
@@ -50,8 +52,12 @@ static void bufferevent_readcb(int fd, short event, void* arg)
 	}
 
 	res = evbuffer_read(bufev->input, fd, howmuch);
+
 	if (res == -1) {//1.缓冲区expand错误，2.recv错误
-		if (errno == EAGAIN || errno == EINTR) goto reschedule;//由于信号或者
+		if (errno == EAGAIN || errno == EINTR) {
+			goto reschedule;    //由于信号或者
+		}
+
 		what |= EVBUFFER_ERROR;
 	} else if (res == 0) {//recv返回0
 		what |= EVBUFFER_EOF;
@@ -69,14 +75,21 @@ static void bufferevent_readcb(int fd, short event, void* arg)
 	 *  缓冲区处理 ??????
 	 */
 	len = EVBUFFER_LENGTH(bufev->input);//当前的有效数据长度
-	if (bufev->wm_read.low != 0 && len < bufev->wm_read.low) return;//不调用回调
+
+	if (bufev->wm_read.low != 0 && len < bufev->wm_read.low) {
+		return;    //不调用回调
+	}
+
 	if (bufev->wm_read.high !=0 && len >= bufev->wm_write.high) {//仍会调用回调
 		struct evbuffer* buf = bufev->input;
 		event_del(&bufev->ev_read);//不再处理该read的event
 		evbuffer_setcb(buf, bufferevent_read_pressure_cb, bufev);//????
 	}
 
-	if (bufev->readcb != NULL) (*bufev->readcb)(bufev, bufev->cbarg);//cbarg: client连接的index，不是必须的
+	if (bufev->readcb != NULL) {
+		(*bufev->readcb)(bufev, bufev->cbarg);    //cbarg: client连接的index，不是必须的
+	}
+
 	return;
 
 reschedule:
@@ -84,8 +97,10 @@ reschedule:
 	return;
 error:
 	event_debugx("bufferevent_readcb goto error");
-	if (bufev->errorcb != NULL)
-		(*bufev->errorcb)(bufev, what, bufev->cbarg);//cbarg: vfd 调用bufferevent_free
+
+	if (bufev->errorcb != NULL) {
+		(*bufev->errorcb)(bufev, what, bufev->cbarg);    //cbarg: vfd 调用bufferevent_free
+	}
 }
 
 //对于连接fd，如何触发EPOLLOUT的????
@@ -104,21 +119,36 @@ static void bufferevent_writecb(int fd, short event, void* arg)
 	//通过evbuffer_write写到bufev->output中
 	if (EVBUFFER_LENGTH(bufev->output)) {//有数据?????为何加此判断
 		res = evbuffer_write(bufev->output, fd);
+
 		if (res == -1) {
-			if (errno == EAGAIN || errno == EINTR || errno == EINPROGRESS) goto reschedule;
+			if (errno == EAGAIN || errno == EINTR || errno == EINPROGRESS) {
+				goto reschedule;
+			}
 		} else if (res == 0) {
 			what |= EVBUFFER_EOF;
 		}
-		if (res <= 0) goto error;//0为何也处理成错误?????
+
+		if (res <= 0) {
+			goto error;    //0为何也处理成错误?????
+		}
 	}
 
-	if (EVBUFFER_LENGTH(bufev->output) != 0) bufferevent_add(&bufev->ev_write, bufev->timeout_write);
+	if (EVBUFFER_LENGTH(bufev->output) != 0) {
+		bufferevent_add(&bufev->ev_write, bufev->timeout_write);
+	}
 
-	if (bufev->writecb != NULL) (*bufev->writecb)(bufev, bufev->cbarg);
+	if (bufev->writecb != NULL) {
+		(*bufev->writecb)(bufev, bufev->cbarg);
+	}
+
 	return;
 
 reschedule:
-	if (EVBUFFER_LENGTH(bufev->output) != 0) bufferevent_add(&bufev->ev_write, bufev->timeout_write);
+
+	if (EVBUFFER_LENGTH(bufev->output) != 0) {
+		bufferevent_add(&bufev->ev_write, bufev->timeout_write);
+	}
+
 	return;
 error:
 	//event_debugx("bufferevent_writecb goto error");
@@ -130,14 +160,17 @@ error:
 //--------------------------------
 
 // cbarg: client连接的index，即vfd
-struct bufferevent* bufferevent_new(int fd, evbuffercb readcb, evbuffercb writecb, everrorcb errorcb, void* cbarg)
-{
+struct bufferevent* bufferevent_new(int fd, evbuffercb readcb, evbuffercb writecb, everrorcb errorcb, void* cbarg) {
 	struct bufferevent* bufev;
 
 	bufev = calloc(1, sizeof(struct bufferevent));
-	if (bufev == NULL) return NULL;
+
+	if (bufev == NULL) {
+		return NULL;
+	}
 
 	bufev->input = evbuffer_new();
+
 	if (bufev->input == NULL) {
 		event_warn("evbuffer_new failed");
 		free(bufev);
@@ -145,6 +178,7 @@ struct bufferevent* bufferevent_new(int fd, evbuffercb readcb, evbuffercb writec
 	}
 
 	bufev->output = evbuffer_new();
+
 	if (bufev->output == NULL) {
 		event_warn("evbuffer_new failed");
 		free(bufev);
@@ -193,11 +227,15 @@ void bufferevent_setcb(struct bufferevent* bufev, evbuffercb readcb, evbuffercb 
 int bufferevent_enable(struct bufferevent* bufev, short event)
 {
 	if (event & EV_READ) {
-		if (bufferevent_add(&bufev->ev_read, bufev->timeout_read) == -1) return -1;
+		if (bufferevent_add(&bufev->ev_read, bufev->timeout_read) == -1) {
+			return -1;
+		}
 	}
 
 	if (event & EV_WRITE) {
-		if (bufferevent_add(&bufev->ev_write, bufev->timeout_read) == -1) return -1;
+		if (bufferevent_add(&bufev->ev_write, bufev->timeout_read) == -1) {
+			return -1;
+		}
 	}
 
 	bufev->enabled |= event;//修改激活标志位
@@ -210,9 +248,10 @@ void bufferevent_setwatermark(struct bufferevent* bufev, short events, size_t lo
 		bufev->wm_read.low = lowmark;
 		bufev->wm_read.high = highmark;
 	}
+
 	if (events & EV_WRITE) {
 		bufev->wm_write.low = lowmark;
-		bufev->wm_write.high = highmark; 
+		bufev->wm_write.high = highmark;
 	}
 
 	//??????
@@ -224,9 +263,13 @@ void bufferevent_read_pressure_cb(struct evbuffer* buf, size_t old, size_t now, 
 {
 	event_debugx("bufferevent_read_pressure_cb");
 	struct bufferevent* bufev = arg;
+
 	if (bufev->wm_read.high == 0 || now < bufev->wm_read.high) {
 		evbuffer_setcb(buf, NULL, NULL);
-		if (bufev->enabled & EV_READ) bufferevent_add(&bufev->ev_read, bufev->timeout_read);
+
+		if (bufev->enabled & EV_READ) {
+			bufferevent_add(&bufev->ev_read, bufev->timeout_read);
+		}
 	}
 }
 
@@ -234,12 +277,16 @@ int bufferevent_write(struct bufferevent* bufev, const void* data, size_t size)
 {
 	int res;
 	res = evbuffer_add(bufev->output, data, size);
-	if (res == -1) return res;
+
+	if (res == -1) {
+		return res;
+	}
 
 	//为何此处需要再次bufferevent_add呢????
 	if (size > 0 && (bufev->enabled & EV_WRITE)) {
 		bufferevent_add(&bufev->ev_write, bufev->timeout_write);
 	}
+
 	return res;
 }
 
@@ -247,8 +294,9 @@ int bufferevent_read(struct bufferevent* bufev, void* data, size_t size)
 {
 	struct evbuffer* buf = bufev->input;
 
-	if (buf->off < size)
+	if (buf->off < size) {
 		size = buf->off;
+	}
 
 	memcpy(data, buf->buffer, size);
 	return size;

@@ -50,6 +50,7 @@ int enet_socket_bind(ENetSocket socket, const ENetAddress* address)
 	memset(&sin, 0, sizeof(struct sockaddr_in));
 
 	sin.sin_family = AF_INET;
+
 	if (address != NULL) {
 		sin.sin_port = ENET_HOST_TO_NET_16(address->port);
 		sin.sin_addr.s_addr = address->host;
@@ -57,6 +58,7 @@ int enet_socket_bind(ENetSocket socket, const ENetAddress* address)
 		sin.sin_port = 0;
 		sin.sin_addr.s_addr = INADDR_ANY;
 	}
+
 	return bind(socket, (struct sockaddr*)&sin, sizeof(struct sockaddr_in));
 }
 
@@ -87,10 +89,13 @@ int enet_socket_send(ENetSocket socket, const ENetAddress* address, const ENetBu
 	sentLength = sendmsg(socket, &msgHdr, MSG_NOSIGNAL);
 
 	if (sentLength == -1) {
-		if (errno == EWOULDBLOCK)
+		if (errno == EWOULDBLOCK) {
 			return 0;
+		}
+
 		return -1;
 	}
+
 	return sentLength;
 }
 
@@ -112,18 +117,22 @@ int enet_socket_receive(ENetSocket socket, ENetAddress* address, ENetBuffer* buf
 
 	//会填充sin
 	recvLength = recvmsg(socket, &msgHdr, MSG_NOSIGNAL);
+
 	if (recvLength == -1) {
-		if (errno == EWOULDBLOCK)
+		if (errno == EWOULDBLOCK) {
 			return 0;
+		}
+
 		return -1;
 	}
 
-	if (msgHdr.msg_flags & MSG_TRUNC)//???? 
+	if (msgHdr.msg_flags & MSG_TRUNC) { //????
 		return -1;
+	}
 
 	//接收的地址填充到host->receivedAddress
 	if (address != NULL) {
-		address->host = (enet_uint32)sin.sin_addr.s_addr; 
+		address->host = (enet_uint32)sin.sin_addr.s_addr;
 		address->port = ENET_NET_TO_HOST_16(sin.sin_port);
 	}
 }
@@ -135,32 +144,39 @@ int enet_socket_wait(ENetSocket socket, enet_uint32* condition, enet_uint32 time
 	struct timeval timeVal;
 	int selectCount;
 
-	timeVal.tv_sec = timeout / 1000; 
+	timeVal.tv_sec = timeout / 1000;
 	timeVal.tv_usec = (timeout % 1000) * 1000;
 
 	FD_ZERO(&readSet);
 	FD_ZERO(&writeSet);
 
-	if (*condition & ENET_SOCKET_WAIT_SEND)
+	if (*condition & ENET_SOCKET_WAIT_SEND) {
 		FD_SET(socket, &writeSet);
-	if (*condition & ENET_SOCKET_WAIT_RECEIVE)
+	}
+
+	if (*condition & ENET_SOCKET_WAIT_RECEIVE) {
 		FD_SET(socket, &readSet);
+	}
 
 	selectCount = select(socket + 1, &readSet, &writeSet, NULL, &timeVal);
 
-	if (selectCount < 0)
+	if (selectCount < 0) {
 		return -1;
+	}
 
 	*condition = ENET_SOCKET_WAIT_NONE;
 
-	if (selectCount == 0)
+	if (selectCount == 0) {
 		return 0;
+	}
 
-	if (FD_ISSET(socket, &writeSet))
+	if (FD_ISSET(socket, &writeSet)) {
 		*condition |= ENET_SOCKET_WAIT_SEND;
+	}
 
-	if (FD_ISSET(socket, &readSet))
+	if (FD_ISSET(socket, &readSet)) {
 		*condition |= ENET_SOCKET_WAIT_RECEIVE;
+	}
 
 	return 0;
 }
@@ -168,25 +184,27 @@ int enet_socket_wait(ENetSocket socket, enet_uint32* condition, enet_uint32 time
 int enet_socket_set_option(ENetSocket socket, ENetSocketOption option, int value)
 {
 	int result = -1;
+
 	switch (option) {
-		case ENET_SOCKET_NONBLOCK:	
-			result = fcntl(socket, F_SETFL, O_NONBLOCK | fcntl(socket, F_GETFL));
-			break;
-		case ENET_SOCKET_BROADCAST:
-			result = setsockopt(socket, SOL_SOCKET, SO_BROADCAST, (char*)&value, sizeof(int));
-			break;
-		case ENET_SOCKET_RCVBUF:
-			result = setsockopt(socket, SOL_SOCKET, SO_RCVBUF, (char*)&value, sizeof(int));
-			break;
-		case ENET_SOCKET_SNDBUF:
-			result = setsockopt(socket, SOL_SOCKET, SO_SNDBUF, (char*)&value, sizeof(int));
-			break;
-		case ENET_SOCKET_REUSEADDR:
-			result = setsockopt(socket, SOL_SOCKET, SO_REUSEADDR, (char*)&value, sizeof(int));
-			break;
-		default:
-			break;
+	case ENET_SOCKET_NONBLOCK:
+		result = fcntl(socket, F_SETFL, O_NONBLOCK | fcntl(socket, F_GETFL));
+		break;
+	case ENET_SOCKET_BROADCAST:
+		result = setsockopt(socket, SOL_SOCKET, SO_BROADCAST, (char*)&value, sizeof(int));
+		break;
+	case ENET_SOCKET_RCVBUF:
+		result = setsockopt(socket, SOL_SOCKET, SO_RCVBUF, (char*)&value, sizeof(int));
+		break;
+	case ENET_SOCKET_SNDBUF:
+		result = setsockopt(socket, SOL_SOCKET, SO_SNDBUF, (char*)&value, sizeof(int));
+		break;
+	case ENET_SOCKET_REUSEADDR:
+		result = setsockopt(socket, SOL_SOCKET, SO_REUSEADDR, (char*)&value, sizeof(int));
+		break;
+	default:
+		break;
 	}
+
 	return result == -1 ? -1 : 0;
 }
 
@@ -204,8 +222,10 @@ int enet_address_set_host(ENetAddress* address, const char* name, enet_uint16 po
 	hostEntry = gethostbyname(name);
 
 	if (hostEntry == NULL || hostEntry->h_addrtype != AF_INET) {
-		if (!inet_aton(name, (struct in_addr*)&address->host))
+		if (!inet_aton(name, (struct in_addr*)&address->host)) {
 			return -1;
+		}
+
 		return 0;
 	}
 
@@ -219,7 +239,9 @@ int enet_address_set_host(ENetAddress* address, const char* name, enet_uint16 po
 //ip地址转换成字符串
 int enet_address_get_host_ip(const ENetAddress* address, char* name, size_t nameLength)
 {
-	if (inet_ntop(AF_INET, &address->host, name, nameLength) == NULL)
+	if (inet_ntop(AF_INET, &address->host, name, nameLength) == NULL) {
 		return -1;
+	}
+
 	return 0;
 }

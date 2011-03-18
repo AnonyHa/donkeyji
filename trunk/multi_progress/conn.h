@@ -6,25 +6,23 @@
 #include "chunk.h"
 
 struct buffer;
-typedef struct _conn
-{
+typedef struct _conn {
 	int fd;
 	int ndx;//记录在conn_mgr中的下标
 	struct bufferevent* bev;
 	chunkqueue* read_q;
 	chunkqueue* write_q;
-}conn;
+} conn;
 
 //--------------------------------------------------
 //数组容器
 //用完的conn归还入conn_mgr，reset conn，以备下次再用
 //--------------------------------------------------
-typedef struct _conn_mgr
-{
+typedef struct _conn_mgr {
 	conn** ptr;
 	size_t size;
 	size_t used;
-}conn_mgr;
+} conn_mgr;
 
 conn_mgr* conn_mgr_new();
 void conn_mgr_free(conn_mgr* cm);

@@ -1,8 +1,7 @@
 #ifndef _CONF_H
 #define _CONF_H
 
-typedef struct _config
-{
+typedef struct _config {
 	int port;
 	int max_conns;
 
@@ -12,9 +11,9 @@ typedef struct _config
 
 	char* doc_root;
 	int daemon;
-}config;
+} config;
 
-extern config* cfg; 
+extern config* cfg;
 
 void conf_init();
 void conf_print();

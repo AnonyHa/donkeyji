@@ -4,32 +4,29 @@
 #include <sys/time.h>
 
 struct min_heap;
-struct timer
-{
+struct timer {
 	unsigned int min_heap_idx;
 	struct timeval timeout;
 	void (*cb) (void* arg);
-	void* arg; 
+	void* arg;
 
 	// for list
 	struct timer* next;
 	struct timer* prev;
 };
 
-struct timer_model
-{
+struct timer_model {
 	int (*timer_dispath)(struct timeval*);
 };
 
-struct timer_wrapper
-{
+struct timer_wrapper {
 	struct timer st;
 	void (*cb)(void*);
 	void* arg;
 	double timeout;
 
 	//for list
-	struct timer_wrapper* next;	
+	struct timer_wrapper* next;
 	struct timer_wrapper* prev;
 };
 

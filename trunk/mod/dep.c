@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "dep.h"
 
-static int dep_stat; 
+static int dep_stat;
 
 int dep_init()
 {
@@ -11,7 +11,7 @@ int dep_init()
 
 int dep_run()
 {
-	printf("dep run\n"); 
+	printf("dep run\n");
 	return 0;
 }
 

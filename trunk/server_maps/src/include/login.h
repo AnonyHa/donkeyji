@@ -3,15 +3,14 @@
 
 #include "buffer.h"
 
-typedef struct _session
-{
+typedef struct _session {
 	long uid;
 	buffer* skey;//session key
-}session;
+} session;
 
 //hash table, save session
 typedef struct _session_tbl
-{}session_tbl;
+	{} session_tbl;
 
 
 //---------------------------

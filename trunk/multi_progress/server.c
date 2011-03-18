@@ -11,7 +11,7 @@ static int _server_create_listen_sock(int port);
 //----------------------------------------
 server* srv = NULL;
 
-void 
+void
 server_init()
 {
 	log_msg(__FILE__, __LINE__, "server init");
@@ -33,12 +33,12 @@ server_init()
 	log_msg(__FILE__, __LINE__, "server obj created");
 }
 
-void 
+void
 server_destroy()
 {}
 
-int 
-server_network_register() 
+int
+server_network_register()
 {
 	log_msg(__FILE__, __LINE__, "begin to init libevent");
 	event_set(srv->listen_ev, srv->listen_sock, EV_READ|EV_PERSIST, _server_handle_listen, srv->listen_ev);
@@ -48,11 +48,12 @@ server_network_register()
 }
 
 
-static void 
+static void
 _server_handle_listen(int fd, short ev, void* arg)
 {
 	log_msg(__FILE__, __LINE__, "a connection comes, pid=%d", getpid());
 	log_msg(__FILE__, __LINE__, "used = %d, max = %d, pid=%d", srv->conns->used, srv->max_conns, getpid());
+
 	//如何保证??
 	if (srv->conns->used > srv->max_conns) {
 		log_msg(__FILE__, __LINE__, "connections full%d");
@@ -60,8 +61,11 @@ _server_handle_listen(int fd, short ev, void* arg)
 	}
 
 	struct sockaddr_in addr;
+
 	int len = sizeof(addr);
+
 	int sock = accept(fd, (struct sockaddr*)&addr, (socklen_t*)&len);
+
 	if (sock < 0) {
 		log_msg(__FILE__, __LINE__, strerror(errno));
 		return;
@@ -77,27 +81,32 @@ _server_handle_listen(int fd, short ev, void* arg)
 	log_msg(__FILE__, __LINE__, "add connection succeed");
 }
 
-static int 
+static int
 _server_create_listen_sock(int port)
 {
 	int sock;
 	int flag;
 	struct sockaddr_in addr;
+
 	if (port < 0) {
 		log_msg(__FILE__, __LINE__, "wrong port");
 		exit(1);
-	} 
+	}
+
 	sock = socket(AF_INET, SOCK_STREAM, 0);
+
 	if (sock < 0) {
 		log_msg(__FILE__, __LINE__, strerror(errno));
 		exit(1);
 	}
 
 	flag = fcntl(sock, F_GETFL, 0);
+
 	if (flag == -1) {
 		log_msg(__FILE__, __LINE__, strerror(errno));
 		exit(1);
 	}
+
 	if (fcntl(sock, F_SETFL, flag | O_NONBLOCK) < 0) {
 		log_msg(__FILE__, __LINE__, strerror(errno));
 		exit(1);
@@ -108,14 +117,17 @@ _server_create_listen_sock(int port)
 	addr.sin_addr.s_addr = htonl(INADDR_ANY);
 	addr.sin_port = htons(port);
 	int optval = 1;
+
 	if (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)) == -1) {
 		log_msg(__FILE__, __LINE__, strerror(errno));
 		exit(1);
-	} 
+	}
+
 	if (bind(sock, (struct sockaddr* )&addr, sizeof(addr))<0) {
 		log_msg(__FILE__, __LINE__, strerror(errno));
 		exit(1);
-	} 
+	}
+
 	if (listen(sock, 128) < 0) {
 		log_msg(__FILE__, __LINE__, strerror(errno));
 		exit(1);

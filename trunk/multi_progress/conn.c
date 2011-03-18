@@ -17,7 +17,7 @@ static void _cgi_handle_read(struct bufferevent* bev, void* arg);
 static void _cgi_handle_err(struct bufferevent* bev, short what, void* arg);
 //---------------------------------------------------
 
-static conn* 
+static conn*
 conn_new()
 {
 	conn* c = (conn*)calloc(1, sizeof(conn));
@@ -36,17 +36,21 @@ conn_new()
 static void
 conn_free(conn* c)
 {
-	if (c == NULL)
+	if (c == NULL) {
 		return;
+	}
 
-	if (c->bev != NULL)
+	if (c->bev != NULL) {
 		bufferevent_free(c->bev);
+	}
 
-	if (c->read_q != NULL)
+	if (c->read_q != NULL) {
 		chunkqueue_free(c->read_q);
+	}
 
-	if (c->write_q != NULL)
+	if (c->write_q != NULL) {
 		chunkqueue_free(c->write_q);
+	}
 
 	close(c->fd);
 
@@ -59,16 +63,18 @@ conn_register_event(conn* c)
 {
 	//只能重新生成bufferevent
 	c->bev = bufferevent_new(c->fd, _conn_handle_read, NULL, _conn_handle_err, (void*)c);
+
 	if (c->bev == NULL) {
 		log_msg(__FILE__, __LINE__, "bufferevent_new failed");
 		return;
 	}
+
 	bufferevent_enable(c->bev, EV_READ|EV_WRITE);
 	//bufferevent_settimeout(c->bev, 5, 5);//设置超时
 }
 
 //删除为conn注册的事件
-static void 
+static void
 conn_unregister_event(conn* c)
 {
 	bufferevent_free(c->bev);
@@ -80,27 +86,30 @@ conn_unregister_event(conn* c)
 static void
 conn_reset(conn* c)
 {
-	if (c == NULL)
+	if (c == NULL) {
 		return;
+	}
 
 
 	//buffervern对象不能reset，只好free掉，注册的时候再malloc了，悲剧...
 	conn_unregister_event(c);
 
-	if (c->read_q != NULL)
+	if (c->read_q != NULL) {
 		chunkqueue_reset(c->read_q);
+	}
 
-	if (c->write_q != NULL)
+	if (c->write_q != NULL) {
 		chunkqueue_reset(c->write_q);
+	}
 
 	close(c->fd);
 
-	c->fd = -1;		
+	c->fd = -1;
 	c->ndx = -1;
 }
 
 //---------------------------------------------------
-conn_mgr* 
+conn_mgr*
 conn_mgr_new()
 {
 	conn_mgr* cm = (conn_mgr*)calloc(1, sizeof(conn_mgr));
@@ -111,17 +120,20 @@ conn_mgr_new()
 	return cm;
 }
 
-void 
+void
 conn_mgr_free(conn_mgr* cm)
 {
 	int i;
-	if (cm == NULL)
+
+	if (cm == NULL) {
 		return;
+	}
 
 	if (cm->ptr != NULL) {
 		for (i=0; i<cm->used; i++) {
 			conn_free(cm->ptr[i]);
 		}
+
 		free(cm->ptr);
 	}
 
@@ -129,21 +141,24 @@ conn_mgr_free(conn_mgr* cm)
 }
 
 //会预先分配，以128的速度增长
-void 
+void
 conn_mgr_add_conn(conn_mgr* cm, int sock)
 {
 	conn* c;
 	int i;
+
 	if (cm->size == 0) {//第一次分配
 		cm->size = 128;
 		cm->ptr = (conn**)calloc(cm->size, sizeof(conn*));
+
 		for (i=0; i<cm->size; i++) {
 			cm->ptr[i] = conn_new();
 		}
 	} else if (cm->size == cm->used) {//之前分配的用完了
 		log_msg(__FILE__, __LINE__, "to alloc more conn");
-		cm->size += 128;	
+		cm->size += 128;
 		cm->ptr = (conn**)realloc(cm->ptr, cm->size * (sizeof(conn*)));
+
 		for (i=cm->used; i<cm->size; i++) {
 			cm->ptr[i] = conn_new();
 			assert(cm->ptr[i]);
@@ -163,18 +178,22 @@ conn_mgr_add_conn(conn_mgr* cm, int sock)
 }
 
 //
-static void 
+static void
 conn_mgr_del_conn(conn_mgr* cm, conn* c)
 {
 	log_msg(__FILE__, __LINE__, "try to delete conn: fd = %d", c->fd);
 	int ndx;
 	conn* tmp;
-	if (c == NULL)
+
+	if (c == NULL) {
 		return;
+	}
 
 	ndx = c->ndx;
-	if (ndx == -1)//不在数组里
+
+	if (ndx == -1) { //不在数组里
 		return;
+	}
 
 	if (ndx == cm->used - 1) {//数组最尾的
 		c->ndx = -1;
@@ -200,16 +219,18 @@ conn_mgr_del_conn(conn_mgr* cm, conn* c)
 }
 
 //----------------------------------------------------------
-static void 
+static void
 _conn_handle_read(struct bufferevent* bev, void* arg)
 {
 	log_msg(__FILE__, __LINE__, "data from conn to read: fd = %d", ((conn*)arg)->fd);
 
 	size_t len = bev->input->off;
+
 	if (len == 0) {
 		log_msg(__FILE__, __LINE__, "no data");
 		return;
 	}
+
 	//*/
 
 	//足够大的缓冲
@@ -219,15 +240,20 @@ _conn_handle_read(struct bufferevent* bev, void* arg)
 	bzero(buf, len);
 
 	size_t read_len = bufferevent_read(bev, buf, len);
+
 	if (read_len <= 0) {
 		log_msg(__FILE__, __LINE__, "bufferevent read error: %s", strerror(errno));
 		return;
 	}
+
 	log_msg(__FILE__, __LINE__, "bufferevent read len = %d", read_len);
 
-	chunk* ck = chunkqueue_get_append_chunk(c->read_q);	
-	if (ck == NULL) 
+	chunk* ck = chunkqueue_get_append_chunk(c->read_q);
+
+	if (ck == NULL) {
 		return;
+	}
+
 	buffer_append(ck->mem, buf, read_len);
 	log_msg(__FILE__, __LINE__, "buffer used = %d, size = %d", ck->mem->used, ck->mem->size);
 
@@ -237,12 +263,13 @@ _conn_handle_read(struct bufferevent* bev, void* arg)
 
 
 //读/写出错，或者一直没有数据读，回调此函数
-static void 
+static void
 _conn_handle_err(struct bufferevent* bev, short what, void* arg)
 {
 	if (what & EVBUFFER_TIMEOUT) {
 		log_msg(__FILE__, __LINE__, "conn timeout");
 	}
+
 	conn* c = (conn*)arg;//connection对象
 	//---------------
 	//use global srv
@@ -254,7 +281,7 @@ _conn_handle_err(struct bufferevent* bev, short what, void* arg)
 //---------------------------------------
 //每次有read时，就紧接着进行一次数据处理
 //---------------------------------------
-static void 
+static void
 _conn_process_read(conn* c)
 {
 	//先把处理过的chunk放入unused链表
@@ -265,7 +292,7 @@ _conn_process_read(conn* c)
 	_conn_write_response(c);
 }
 
-static void 
+static void
 _conn_write_response(conn* c)
 {
 	chunkqueue* wcq = c->write_q;
@@ -275,19 +302,23 @@ _conn_write_response(conn* c)
 	off_t offset;
 	size_t size;
 	chunk* ck;
+
 	for (ck=wcq->head; ck!=NULL;) {
 		offset = ck->offset;
 		size = bufferevent_write(c->bev, (void*)(ck->mem->ptr + offset), (size_t)(ck->mem->used - offset));
+
 		if (size < 0) {
 			log_msg(__FILE__, __LINE__, "bufferevent_write failed");
 			return;
 		}
+
 		ck->offset += size;
 	}
+
 	bufferevent_write(c->bev, "hello", 5);
 }
 
-static void 
+static void
 _conn_parse_request(conn* c)
 {
 	char* cgi = "test.py";
@@ -305,6 +336,7 @@ _conn_parse_request(conn* c)
 	}
 
 	pid_t pid = fork();
+
 	switch (pid) {
 	case 0://child
 		close(from_cgi_fds[0]);
@@ -328,21 +360,28 @@ _cgi_handle_read(struct bufferevent* bev, void* arg)
 {
 	conn* c= (conn*)arg;
 	size_t len = bev->input->off;
+
 	if (len == 0) {
 		log_msg(__FILE__, __LINE__, "no data");
 		return;
 	}
+
 	char buf[len];
 	size_t read_len = bufferevent_read(bev, buf, len);
+
 	if (read_len <= 0) {
 		log_msg(__FILE__, __LINE__, "cgi bufferevent read error: %s", strerror(errno));
 		return;
 	}
+
 	log_msg(__FILE__, __LINE__, "cgi bufferevent read len = %d", read_len);
 
-	chunk* ck = chunkqueue_get_append_chunk(c->write_q);	
-	if (ck == NULL) 
+	chunk* ck = chunkqueue_get_append_chunk(c->write_q);
+
+	if (ck == NULL) {
 		return;
+	}
+
 	buffer_append(ck->mem, buf, read_len);
 	log_msg(__FILE__, __LINE__, "buffer used = %d, size = %d", ck->mem->used, ck->mem->size);
 }

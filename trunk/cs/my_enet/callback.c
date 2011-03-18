@@ -4,8 +4,11 @@
 void* enet_malloc(size_t size)
 {
 	void* memory = malloc(size);
-	if (memory == NULL)
+
+	if (memory == NULL) {
 		abort();
+	}
+
 	return memory;
 }
 

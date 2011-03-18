@@ -17,7 +17,7 @@ class Client;
 const int MAX_CLIENTS = 1024;
 
 // -----------
-// server 
+// server
 // -----------
 class Server
 {

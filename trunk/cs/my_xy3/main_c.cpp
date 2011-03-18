@@ -41,7 +41,7 @@ void on_data(char* data, int len)
 	pto_mgr->unpackData(L, (const byte*)data, len);
 }
 
-int predo() 
+int predo()
 {
 	start_lua();
 	cc.doConnect("127.0.0.1", 1300);
@@ -63,13 +63,14 @@ int main_loop()
 		//luaL_dofile(L, LOGIC);
 		short size;
 		char* p = cc.doRecv(size);
-		if (p != NULL && size != 0)
-		{
+
+		if (p != NULL && size != 0) {
 			on_data(p, size);
 			delete p;
 		}
+
 		lua_gc(L, LUA_GCSTEP, 0);
-		sleep(1);	
+		sleep(1);
 	}
 }
 

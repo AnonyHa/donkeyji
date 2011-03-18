@@ -6,8 +6,7 @@
 
 typedef int ENetSocket;
 
-enum
-{
+enum {
 	ENET_SOCKET_NULL = -1
 };
 
@@ -18,7 +17,7 @@ enum
 #define ENET_NET_TO_HOST_32(value) (ntohl(value))
 
 typedef struct
-{}ENetBuffer;
+	{} ENetBuffer;
 
 #define ENET_CALLBACK
 #define ENET_API extern

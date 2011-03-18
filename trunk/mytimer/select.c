@@ -11,7 +11,10 @@ static int select_dispatch(struct timeval* tv)
 {
 	//the first argument should be 0
 	int ret = select(0, NULL, NULL, NULL, tv);
-	if (ret < 0)
+
+	if (ret < 0) {
 		return -1;
+	}
+
 	return 0;
 }
