@@ -95,44 +95,56 @@ public:
 	void print_tbl();
 };
 
+my_map::my_map(const char* str)
+{
+	int r = parse_string(str, _tbl);
+	if (r != 0) {
+		throw "syntax error";
+	}
+}
+
 const char* my_map::get(const char* key)
 {
 	std::map<std::string, std::string>::iterator iter;
 	iter = _tbl.find(key);
 	if (iter == _tbl.end()) {
-		std::cout<<"no found"<<std::endl;
+		std::cout<<"not found"<<std::endl;
 		return NULL;
 	} else {
-		std::cout<<"found value="<<iter->second.c_str()<<std::endl;
+		std::cout<<"found, value="<<iter->second.c_str()<<std::endl;
 		return iter->second.c_str();
 	}
 }
 
-my_map::my_map(const char* str)
+void my_map::set(const char* key, const char* value)
 {
-	int r = parse_string(str, _tbl);
-	if (r != 0) {
-		//-------
-		//to do
-		//-------
+	if (key == NULL) {
+		return;
 	}
+	std::pair<std::map<std::string, std::string>::iterator, bool> ins_pair;
+	//ins_pair = _tbl.insert(std::pair<std::string, std::string>(key, value));
+	//if (ins_pair.second == true)
+	_tbl[key] = value;
 }
+
 
 void my_map::print_tbl()
 {
 	std::map<std::string, std::string>::iterator iter;
 	for (iter=_tbl.begin(); iter!=_tbl.end(); iter++) {
-		std::cout<<"key: "<<iter->first<<std::endl;
-		std::cout<<"value: "<<iter->second<<std::endl;
+		std::cout<<"key: "<<iter->first<<"    "<<"value: "<<iter->second<<std::endl;
 	}
 }
 
 void my_map::clear()
 {
+	/*
 	std::map<std::string, std::string>::iterator iter;
 	for (iter=_tbl.begin(); iter!=_tbl.end(); iter++) {
 		_tbl.erase(iter);
 	}
+	*/
+	_tbl.clear();
 }
 
 
@@ -155,10 +167,13 @@ int main()
 	}
 	*/
 	my_map mm(src);
-	//mm.print_tbl();
-	//mm.clear();
+	mm.print_tbl();
+	std::cout<<"\n\n";
+	mm.clear();
 	//std::cout<<"after clear"<<std::endl;
-	//mm.print_tbl();
-	mm.get("huji");
+	mm.set("huji", "donitz");
+	mm.set("mn", "4");
+	mm.print_tbl();
+	//mm.get("huji");
 	return 0;
 }
