@@ -1,5 +1,7 @@
 #include "obj_a.h"
 #include "obj_b.h"
+#include <iostream>
+using namespace std;
 
 obj_a* obj_a::_inst = NULL;
 
@@ -7,6 +9,7 @@ obj_a* obj_a::instance()
 {
 	// not thread safe
 	if (_inst == NULL) {
+		cout<<"first time to init obj_a"<<endl;
 		_inst = new obj_a;
 	}
 	return _inst;
@@ -15,7 +18,6 @@ obj_a* obj_a::instance()
 obj_a::obj_a()
 {
 	_pool.clear();
-	_used = 0;
 }
 
 obj_a::~obj_a()
@@ -26,17 +28,14 @@ obj_a::~obj_a()
 int obj_a::get_new_obj_b()
 {
 	int cnt = _pool.size();
-	if (_used >= cnt) {
-		obj_b* t = new obj_b;
-		if (t == NULL) {
-			return _used + 1;
-		}
-		t->set_id(_used);
-		_pool.push_back(t);
-	}
-	int id = _used;
-	_used++;
-	return id;
+
+	cout<<"cnt="<<cnt<<endl;
+	obj_b* t = new obj_b;
+	if (t == NULL)
+		return cnt+1;//beyond [0, cnt-1]
+	t->set_id(cnt);
+	_pool.push_back(t);
+	return cnt;//id
 }
 
 void obj_a::release()
@@ -51,7 +50,8 @@ void obj_a::release()
 
 obj_b* obj_a::get_obj_b_by_id(int id)
 {
-	if (id < _used) {
+	int cnt = _pool.size();
+	if (id < cnt && id >= 0) {
 		return _pool[id];
 	} else {
 		return NULL;
