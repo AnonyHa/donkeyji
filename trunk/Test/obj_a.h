@@ -7,16 +7,14 @@ class obj_b;
 class obj_a
 {
 public:
-	~obj_a();
 	static obj_a* instance();
 	int get_new_obj_b();
 	obj_b* get_obj_b_by_id(int id);
+	~obj_a();
 private:
 	void release();
 private:
 	std::vector<obj_b*> _pool;
-	int _used;
-private:
 	static obj_a* _inst;
 private:
 	obj_a();
