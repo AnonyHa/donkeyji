@@ -1,7 +1,5 @@
 #include "kv_parser.h"
 
-using namespace std;
-
 int parse_string (const char* str, std::map<std::string,std::string> &result)
 {
     int key_start = 0;
@@ -66,7 +64,7 @@ void kv_parser::clear()
 
 const char* kv_parser::get(const char* key)
 {
-    string k(key);
+	std::string k(key);
     if (_kv.find(k) == _kv.end() ) {
         return NULL;
     } else {
@@ -76,21 +74,21 @@ const char* kv_parser::get(const char* key)
 
 void kv_parser::set(const char* key, const char* value)
 {
-    string k(key);
-    string v(value);
+	std::string k(key);
+	std::string v(value);
 
     _kv[k] = v;
 }
 
 std::string kv_parser::make_str()
 {
-    string out;
+	std::string out;
 
-    for (map<string, string>::const_iterator it = _kv.begin(); it != _kv.end(); ++it) {
+    for (std::map<std::string, std::string>::const_iterator it = _kv.begin(); it != _kv.end(); ++it) {
         out += it->first;
-        out += string("=");
+        out += std::string("=");
         out += it->second;
-        out += string(";");
+        out += std::string(";");
     } 
 
     int len = out.size();
