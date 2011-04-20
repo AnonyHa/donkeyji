@@ -2,25 +2,26 @@
 #define _OBJ_A_H
 
 #include <vector>
-
+class obj_b;
 
 class obj_a
 {
-private:
-	obj_b();
-	~obj_b();
 public:
-	static obj_a* instance():
-public:
+	~obj_a();
+	static obj_a* instance();
 	int get_new_obj_b();
-	obj_a* get_obj_b_by_id(int id);
+	obj_b* get_obj_b_by_id(int id);
 private:
 	void release();
 private:
-	std::vector<obj_a*> _pool;
+	std::vector<obj_b*> _pool;
 	int _used;
 private:
 	static obj_a* _inst;
+private:
+	obj_a();
+	obj_a(const obj_a& other);
+	obj_a& operator=(const obj_a& other);
 };
 
 #endif
