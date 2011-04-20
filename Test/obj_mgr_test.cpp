@@ -1,7 +1,8 @@
+#include <iostream>
 #include <gtest/gtest.h>
+
 #include "obj_a.h"
 #include "obj_b.h"
-#include <iostream>
 using namespace std;
 
 TEST(ObjMgrTest, Basic)

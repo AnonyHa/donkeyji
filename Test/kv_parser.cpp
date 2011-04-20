@@ -47,24 +47,24 @@ int parse_string (const char* str, std::map<std::string,std::string> &result)
     return has_kv;
 }
 
-KVParser::KVParser(const char* str)
+kv_parser::kv_parser(const char* str)
 {
     _kv.clear();
 
     parse_string(str, _kv);
 }
 
-KVParser::~KVParser()
+kv_parser::~kv_parser()
 {
 
 }
 
-void KVParser::clear()
+void kv_parser::clear()
 {
     _kv.clear();
 }
 
-const char* KVParser::get(const char* key)
+const char* kv_parser::get(const char* key)
 {
     string k(key);
     if (_kv.find(k) == _kv.end() ) {
@@ -74,7 +74,7 @@ const char* KVParser::get(const char* key)
     }
 }
 
-void KVParser::set(const char* key, const char* value)
+void kv_parser::set(const char* key, const char* value)
 {
     string k(key);
     string v(value);
@@ -82,7 +82,7 @@ void KVParser::set(const char* key, const char* value)
     _kv[k] = v;
 }
 
-std::string KVParser::make_str()
+std::string kv_parser::make_str()
 {
     string out;
 
