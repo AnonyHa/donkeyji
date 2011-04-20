@@ -1,6 +1,5 @@
 #include <memory>
 #include <iostream>
-//using namespace std;
 #include "obj_a.h"
 #include "obj_b.h"
 
