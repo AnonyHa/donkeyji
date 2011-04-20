@@ -7,6 +7,11 @@ public:
 	obj_b();
 	~obj_b();
 public:
-	obj_b* get_obj_b_by_id(int id);
+	static obj_b* get_obj_b_by_id(int id);
+public:
+	void set_id(int id);
+	int get_id();
+private:
+	int _id;
 };
 #endif
