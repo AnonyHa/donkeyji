@@ -1,16 +1,18 @@
+#include <memory>
+#include <iostream>
+//using namespace std;
 #include "obj_a.h"
 #include "obj_b.h"
-using namespace std;
 
-obj_a* obj_a::_inst = NULL;
+std::auto_ptr<obj_a> obj_a::_inst;
 
 obj_a* obj_a::instance()
 {
 	// not thread safe
-	if (_inst == NULL) {
-		_inst = new obj_a;
-	}
-	return _inst;
+	if (!_inst.get()) {
+		_inst = std::auto_ptr<obj_a>(new obj_a);
+	}	
+	return _inst.get();
 }
 
 obj_a::obj_a()
