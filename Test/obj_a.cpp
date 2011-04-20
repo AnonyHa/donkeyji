@@ -1,6 +1,5 @@
 #include "obj_a.h"
 #include "obj_b.h"
-#include <iostream>
 using namespace std;
 
 obj_a* obj_a::_inst = NULL;
@@ -9,7 +8,6 @@ obj_a* obj_a::instance()
 {
 	// not thread safe
 	if (_inst == NULL) {
-		cout<<"first time to init obj_a"<<endl;
 		_inst = new obj_a;
 	}
 	return _inst;
@@ -29,7 +27,6 @@ int obj_a::get_new_obj_b()
 {
 	int cnt = _pool.size();
 
-	cout<<"cnt="<<cnt<<endl;
 	obj_b* t = new obj_b;
 	if (t == NULL)
 		return cnt+1;//beyond [0, cnt-1]
