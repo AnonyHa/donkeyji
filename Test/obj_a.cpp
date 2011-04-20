@@ -31,6 +31,7 @@ int obj_a::get_new_obj_b()
 		if (t == NULL) {
 			return _used + 1;
 		}
+		t->set_id(_used);
 		_pool.push_back(t);
 	}
 	int id = _used;
