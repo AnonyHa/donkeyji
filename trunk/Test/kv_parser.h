@@ -6,11 +6,11 @@
 
 int parse_string (const char* str, std::map<std::string,std::string> &result);
 
-class KVParser
+class kv_parser
 {
 public:
-    KVParser(const char* str);
-    ~KVParser();
+    kv_parser(const char* str);
+    ~kv_parser();
 
     void clear();
     const char* get(const char* key);
