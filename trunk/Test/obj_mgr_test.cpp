@@ -30,6 +30,8 @@ TEST(ObjMgrTest, Basic)
 
 	obj_b* ob99 = obj_b::get_obj_b_by_id(99);
 	ASSERT_TRUE(ob99 == NULL);
+
+	//delete oa;
 }
 
 int main(int argc, char* argv[])

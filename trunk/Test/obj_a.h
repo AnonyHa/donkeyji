@@ -2,6 +2,7 @@
 #define _OBJ_A_H
 
 #include <vector>
+#include <memory>
 class obj_b;
 
 class obj_a
@@ -15,7 +16,7 @@ private:
 	void release();
 private:
 	std::vector<obj_b*> _pool;
-	static obj_a* _inst;
+	static std::auto_ptr<obj_a> _inst;
 private:
 	obj_a();
 	obj_a(const obj_a& other);
