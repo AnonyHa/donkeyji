@@ -121,7 +121,7 @@ void my_map::set(const char* key, const char* value)
 	if (key == NULL) {
 		return;
 	}
-	std::pair<std::map<std::string, std::string>::iterator, bool> ins_pair;
+	//std::pair<std::map<std::string, std::string>::iterator, bool> ins_pair;
 	//ins_pair = _tbl.insert(std::pair<std::string, std::string>(key, value));
 	//if (ins_pair.second == true)
 	_tbl[key] = value;
@@ -177,3 +177,19 @@ int main()
 	//mm.get("huji");
 	return 0;
 }
+
+class B
+{};
+
+//mgr of B
+class A
+{
+private:
+	B* _bb;
+public:
+	A();
+public:
+	B* get_obj(int id);
+	B
+};
+
