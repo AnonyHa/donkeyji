@@ -5,7 +5,7 @@
 	int type;	\
 	char* buffer;	\
 	void (*free)(struct data_base* p)
-//注意最后一行没有:
+//注意最后一行没有;
 
 typedef struct data_base {
 	HEAD;
