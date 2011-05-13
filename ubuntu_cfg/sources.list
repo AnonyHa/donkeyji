@@ -1,0 +1,10 @@
+deb http://mirrors.163.com/ubuntu/ karmic main restricted universe multiverse
+deb http://mirrors.163.com/ubuntu/ karmic-security main restricted universe multiverse
+deb http://mirrors.163.com/ubuntu/ karmic-updates main restricted universe multiverse
+deb http://mirrors.163.com/ubuntu/ karmic-proposed main restricted universe multiverse
+deb http://mirrors.163.com/ubuntu/ karmic-backports main restricted universe multiverse
+deb-src http://mirrors.163.com/ubuntu/ karmic main restricted universe multiverse
+deb-src http://mirrors.163.com/ubuntu/ karmic-security main restricted universe multiverse
+deb-src http://mirrors.163.com/ubuntu/ karmic-updates main restricted universe multiverse
+deb-src http://mirrors.163.com/ubuntu/ karmic-proposed main restricted universe multiverse
+deb-src http://mirrors.163.com/ubuntu/ karmic-backports main restricted universe multiverse 

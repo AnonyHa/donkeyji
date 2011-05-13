@@ -1,0 +1,18 @@
+# This file describes the network interfaces available on your system
+# and how to activate them. For more information, see interfaces(5).
+
+# The loopback network interface
+auto lo
+iface lo inet loopback
+
+# The primary network interface
+auto eth0
+iface eth0 inet static
+	address 192.168.23.140
+	netmask 255.255.254.0
+	gateway 192.168.22.1
+	#network 192.168.22.1
+	#broadcast 192.168.255.255
+	# dns-* options are implemented by the resolvconf package, if installed
+	#dns-nameservers 202.114.0.242
+	#dns-search www.huge.com
