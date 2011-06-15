@@ -1,0 +1,6 @@
+alias fl = "find . -name \"*.lua\" | xargs grep --color"
+alias fpy = "find . -name \"*.py\" | xargs grep --color"
+alias xf="find . -name \"*.*\"|grep -v svn|xargs grep --color"
+alias fc="find . -name \"*.c\" -or -name \"*.h\" -or -name \"*.cpp\" -or -name \"*.hpp\" |xargs grep --color"
+alias rmpyc="find . -name \"*.pyc\" | xargs rm"
+alias svnadd="svn st | grep ? | awk '{print \$2}' | xargs svn add"
