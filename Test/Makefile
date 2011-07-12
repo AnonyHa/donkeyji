@@ -66,7 +66,7 @@ LDFLAGS   += -L $(LUA_PATH_LIB) -llua51
 ## Implict Section: change the following only when necessary. 
 ##============================================================================= 
 # The C program compiler. Uncomment it to specify yours explicitly. 
-CC      = g++
+CC      = gcc
 
 # The C++ program compiler. Uncomment it to specify yours explicitly. 
 CXX     = g++ 
