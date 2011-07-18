@@ -1,5 +1,6 @@
 --import base modules first 
 SAVE = import('logic/base/save.lua') 
+CLASS = import('logic/base/class.lua') 
 
 
 
