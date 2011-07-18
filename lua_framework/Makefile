@@ -30,7 +30,7 @@ PROGRAM   := main
 # The directories in which source files reside. 
 # At least one path should be specified. 
 # SRCDIRS   := .        # current directory 
-SRCDIRS   := . dir1
+SRCDIRS   := . lua_extend
 
 # The source file types (headers excluded). 
 # At least one type should be specified. 
