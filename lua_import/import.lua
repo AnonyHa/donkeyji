@@ -19,6 +19,11 @@ function import(file_path)
 	--call mod
 	func()
 
+	--call __init__
+	if M.__init__ and type(M.__init__) == 'function' then
+		M.__init__()
+	end
+
 	--save mod
 	imported_module[file_path] = M
 
