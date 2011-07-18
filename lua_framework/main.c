@@ -6,7 +6,7 @@ extern "C" {
 #include "lauxlib.h"
 }
 
-#define PRELOAD "./logic/base/preload.lua"
+#define PRELOAD "./script/base/preload.lua"
 
 int luaopen_hujilib(lua_State*);
 //-----------------------------------------
