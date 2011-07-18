@@ -1,5 +1,9 @@
 local preload_files = {
+	--first
 	'logic/base/import.lua',
+	'logic/base/const.lua',
+
+	--last
 	'logic/base/global.lua',
 }
 
