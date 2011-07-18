@@ -1,10 +1,10 @@
 local preload_files = {
 	--first
-	'logic/base/import.lua',
-	'logic/base/const.lua',
+	'script/base/import.lua',
+	'script/base/const.lua',
 
 	--last
-	'logic/base/global.lua',
+	'script/base/global.lua',
 }
 
 for _, path in ipairs(preload_files) do
@@ -13,7 +13,7 @@ for _, path in ipairs(preload_files) do
 end
 
 local logic_files = {
-	'logic/logic.lua'
+	'script/logic.lua'
 }
 
 for _, path in ipairs(logic_files) do
