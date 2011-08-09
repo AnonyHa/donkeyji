@@ -1,9 +1,6 @@
 #include "mempool.h"
 #include "core.h"
 #include "typedef.h"
-#include <stdlib.h>
-#include <map>
-using namespace std;
 
 #define IDX_LEN 10000
 #define BASE 1000
@@ -85,7 +82,7 @@ int rank_insert(int uid, int score)
 		sn = score_new(gia, score);
 	}
 
-	//bind score node and uid node
+	//把uid_node挂到新的score_node的头结点
 	bind_score_uid(sn, un);
 
 	return 0;
