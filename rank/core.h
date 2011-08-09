@@ -4,6 +4,15 @@
 #include <map>
 using namespace std;
 
+//-------------------------
+//declaration
+//-------------------------
+struct _uid_node;
+struct _score_node;
+
+//------------------------
+//definition
+//------------------------
 typedef struct _us {
 	int uid;
 	int score;
@@ -33,23 +42,26 @@ typedef struct _idx_array {
 	int len;
 } idx_array;
 
-//typedef _sub_hash{
-//}sub_hash;
+/* 暂时用stl的map吧
+typedef _sub_hash{
+}sub_hash;
 
-//typedef _hash_tbl{
-//}hash_tbl;
+typedef _hash_tbl{
+}hash_tbl;
+*/
 
 //暂用stl的map
 typedef map<int, uid_node*> hash_tbl;
 
 
 //---------------------------
-//外部接口
+//interface
 //---------------------------
-int rank_insert(int uid, int score);
-int rank_update(int uid, int score);
-int rank_get_rank(int uid);
-int rank_get_topn(us top[], int topn);
+int core_init();
+int core_insert(int uid, int score);
+int core_update(int uid, int score);
+int core_get_rank(int uid);
+int core_get_topn(us top[], int topn);
 
 //---------------------------
 //static interface
