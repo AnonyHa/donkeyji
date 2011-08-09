@@ -3,10 +3,10 @@
 
 #include <stdlib.h>
 
-typedef struct _mempool{
+typedef struct _mempool {
 
-}mempool;
-//global 
+} mempool;
+//global
 void* mem_alloc(size_t size);
 
 void mem_free(void* mem);

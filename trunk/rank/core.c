@@ -26,13 +26,13 @@ int rank_init()
 	gia->len = IDX_LEN;
 
 	//idx 节点初始化
-	for (int i=0; i<gia->len; i++) {
+	for (int i = 0; i < gia->len; i++) {
 		gia->array[i].cnt = 0;
 		gia->array[i].score_head = NULL;
 	}
 
 	//to do: hash初始化
-	ght = new hash_tbl();//global 
+	ght = new hash_tbl();//global
 	return 0;
 }
 
@@ -43,27 +43,36 @@ int rank_init()
 int rank_update(int uid, int score)
 {
 	uid_node* un = uid_get(ght, uid);
-	if (un == NULL)
+
+	if (un == NULL) {
 		rank_insert(uid, score);
+	}
 
 	score_node* old_sn = (score_node*)un->owner_score;
 
-	if (score == old_sn->score)
+	if (score == old_sn->score) {
 		return 0;
+	}
 
 	score_node* new_sn = score_get(gia, score);
-	if (new_sn == NULL)
-		new_sn = score_new(gia, score);
 
+	if (new_sn == NULL) {
+		new_sn = score_new(gia, score);
+	}
+
+	//把uid_node从原有的score_node移出
 	unbind_score_uid(old_sn, un);
 
+	//把uid_node挂到新的score_node的头结点
 	bind_score_uid(new_sn, un);
 
 	return 0;
 }
+
 int rank_insert(int uid, int score)
 {
 	uid_node* un = uid_get(ght, uid);
+
 	if (un != NULL) {
 		return rank_update(uid, score);
 	}
@@ -71,6 +80,7 @@ int rank_insert(int uid, int score)
 	un = uid_new(ght, uid);
 
 	score_node* sn = score_get(gia, score);
+
 	if (sn == NULL) {
 		sn = score_new(gia, score);
 	}
@@ -84,35 +94,43 @@ int rank_insert(int uid, int score)
 int rank_get_rank(int uid)
 {
 	uid_node* un = uid_get(ght, uid);
-	if (un == NULL)
+
+	if (un == NULL) {
 		return -1;
+	}
 
 	score_node* sn = un->owner_score;
 	int score = sn->score;
 
 	int idx = score / 1000;
 	int rank = 0;
-	for (int i=10000-1; i>idx; i--) {
+
+	for (int i = 10000 - 1; i > idx; i--) {
 		rank += gia->array[i].cnt;
 	}
+
 	score_node* head = gia->array[idx].score_head;
 
 	score_node* tmp = head;
+
 	while (tmp != sn) {
 		rank += tmp->cnt;
 		tmp = tmp->next_score;
 	}
+
 	return rank;
 }
 
 
 int rank_get_topn(us top[], int topn)
 {
-	int up = 0;		
+	int up = 0;
 	int cnt = 0;
+
 	// 找到上下的边界
-	for (int i=10000-1; i>=0; i--) {
+	for (int i = 10000 - 1; i >= 0; i--) {
 		cnt += gia->array[i].cnt;
+
 		if (cnt >= topn) {
 			cnt -= gia->array[i].cnt;
 			up = i;
@@ -123,8 +141,10 @@ int rank_get_topn(us top[], int topn)
 	//找到左右的边界
 	score_node* sn = gia->array[up].score_head;
 	score_node* right;
+
 	while (sn != NULL) {
 		cnt += sn->cnt;
+
 		if (cnt >= topn) {
 			right = sn;
 		}
@@ -138,7 +158,14 @@ int rank_get_topn(us top[], int topn)
 //--------------------------------------------
 uid_node* uid_new(hash_tbl* ht, int uid)
 {
-	uid_node* un = (uid_node*)mem_alloc(sizeof(uid_node));
+	uid_node* un = uid_get(ht, uid);
+
+	if (un != NULL) {
+		return un;
+	}
+
+	//uid_node初始化
+	un = (uid_node*)mem_alloc(sizeof(uid_node));
 	un->pre_uid = NULL;
 	un->next_uid = NULL;
 	un->owner_score = NULL;
@@ -163,10 +190,13 @@ uid_node* uid_get(hash_tbl* ht, int uid)
 score_node* score_new(idx_array* ia, int score)
 {
 	score_node* sn = score_get(ia, score);
+
 	if (sn != NULL) {
 		return sn;
 	}
+
 	int idx = score / BASE;
+
 	if (idx >= ia->len) {
 		idx = ia->len - 1;
 	}
@@ -183,6 +213,7 @@ score_node* score_new(idx_array* ia, int score)
 			break;
 		}
 	}
+
 	//新的score节点，初始化
 	score_node* new_sn = (score_node*)mem_alloc(sizeof(score_node));
 	new_sn->score = score;
@@ -198,7 +229,7 @@ score_node* score_new(idx_array* ia, int score)
 		new_sn->next_score = cur;
 	}
 
-	//更新idx节点
+	//更新idx节点的cnt
 	ia->array[idx].cnt += 1;
 	return new_sn;
 }
@@ -209,6 +240,7 @@ score_node* score_new(idx_array* ia, int score)
 score_node* score_get(idx_array* ia, int score)
 {
 	int idx = score / BASE;
+
 	if (idx >= ia->len) {
 		idx = ia->len - 1;
 	}
@@ -225,11 +257,12 @@ score_node* score_get(idx_array* ia, int score)
 			return NULL;
 		}
 	}
+
 	return NULL;
 }
 
 //----------------------------------------------
-//static 
+//static
 //----------------------------------------------
 void bind_score_uid(score_node* sn, uid_node* un)
 {
@@ -259,8 +292,10 @@ void unbind_score_uid(score_node* sn, uid_node* un)
 
 	if (sn->uid_head == un) {//un是链表头
 		sn->uid_head = un->next_uid;
-		if (un->next_uid != NULL)//不是尾
+
+		if (un->next_uid != NULL) { //不是尾
 			un->next_uid->pre_uid = NULL;
+		}
 
 		//清理un
 		un->pre_uid = NULL;
@@ -270,8 +305,10 @@ void unbind_score_uid(score_node* sn, uid_node* un)
 	}
 
 	un->pre_uid->next_uid = un->next_uid;
-	if (un->next_uid != NULL)//不是尾
+
+	if (un->next_uid != NULL) { //不是尾
 		un->next_uid->pre_uid = un->pre_uid;
+	}
 
 	//清理un
 	un->pre_uid = NULL;
