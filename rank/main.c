@@ -2,14 +2,6 @@
 #include "conf.h"
 #include "log.h"
 
-int set_pwd()
-{}
-
-int sig_init()
-{}
-
-int set_rlimit()
-{}
 
 int main(int argc, char** argv)
 {
@@ -56,4 +48,5 @@ int main(int argc, char** argv)
 	*/
 	return 0;
 }
+
 
