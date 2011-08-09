@@ -1,6 +1,6 @@
 #include "mempool.h"
-#include "core.h"
 #include "typedef.h"
+#include "core.h"
 
 #define IDX_LEN 10000
 #define BASE 1000
@@ -15,7 +15,7 @@ hash_tbl* ght = NULL;//uid哈希表
 //-----------------------------------------
 //数据结构初始化
 //-----------------------------------------
-int rank_init()
+int core_init()
 {
 	//idx 初始化
 	gia = (idx_array*)mem_alloc(sizeof(idx_array));
@@ -37,12 +37,12 @@ int rank_init()
 //-----------------------------------------
 //插入uid，score
 //-----------------------------------------
-int rank_update(int uid, int score)
+int core_update(int uid, int score)
 {
 	uid_node* un = uid_get(ght, uid);
 
 	if (un == NULL) {
-		rank_insert(uid, score);
+		core_insert(uid, score);
 	}
 
 	score_node* old_sn = (score_node*)un->owner_score;
@@ -66,12 +66,12 @@ int rank_update(int uid, int score)
 	return 0;
 }
 
-int rank_insert(int uid, int score)
+int core_insert(int uid, int score)
 {
 	uid_node* un = uid_get(ght, uid);
 
 	if (un != NULL) {
-		return rank_update(uid, score);
+		return core_update(uid, score);
 	}
 
 	un = uid_new(ght, uid);
@@ -88,7 +88,7 @@ int rank_insert(int uid, int score)
 	return 0;
 }
 
-int rank_get_rank(int uid)
+int core_get_rank(int uid)
 {
 	uid_node* un = uid_get(ght, uid);
 
@@ -119,7 +119,7 @@ int rank_get_rank(int uid)
 }
 
 
-int rank_get_topn(us top[], int topn)
+int core_get_topn(us top[], int topn)
 {
 	int up = 0;
 	int cnt = 0;
