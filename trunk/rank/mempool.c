@@ -1,8 +1,6 @@
+#include "mempool.h"
 #include "stdlib.h"
 
-typedef struct _mempool{
-
-}mempool;
 
 int mempool_init()
 {}
