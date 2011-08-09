@@ -1,3 +1,5 @@
+#include "mempool.h"
+#include "core.h"
 #include "typedef.h"
 #include <stdlib.h>
 #include <map>
@@ -7,88 +9,12 @@ using namespace std;
 #define BASE 1000
 
 
-struct _score_node;
-struct _uid_node;
-
-typedef struct _us{
-	int uid;
-	int score;
-}us;
-
-typedef struct _score_node{
-	int score;
-	int cnt;
-	struct _score_node* next_score;
-	struct _uid_node* uid_head;
-}score_node;
-
-typedef struct _idx_node{
-	int cnt;
-	struct _score_node* score_head;
-}idx_node;
-
-typedef struct _uid_node{
-	int uid;
-	struct _uid_node* next_uid;
-	struct _uid_node* pre_uid;
-	struct _score_node* owner_score;
-}uid_node;
-
-typedef struct _idx_array{
-	struct _idx_node* array;
-	int len;
-}idx_array;
-
-//typedef _sub_hash{
-//}sub_hash;
-
-//typedef _hash_tbl{
-//}hash_tbl;
-
-//暂用stl的map
-typedef map<int, uid_node*> hash_tbl;
-
-int rank_insert(int uid, int score);
-int rank_update(int uid, int score);
-int rank_get_rank(int uid);
-int rank_get_topn(us top[], int topn);
-void _bind_score_uid(score_node* sn, uid_node* un);
-void _unbind_score_uid(score_node* sn, uid_node* un);
-score_node* score_new(idx_array* ia, int score);
-score_node* score_get(idx_array* ia, int score);
-uid_node* uid_new(hash_tbl* ht, int uid);
-uid_node* uid_get(hash_tbl* ht, int uid);
-
-//global 
-void* mem_alloc(size_t size);
-
-void mem_free(void* mem);
-
+//--------------------------------------------
 //全局变量
+//--------------------------------------------
 idx_array* gia = NULL;//single
 hash_tbl* ght = NULL;//single
 
-//--------------------------------------------
-//--------------------------------------------
-uid_node* uid_new(hash_tbl* ht, int uid)
-{
-	uid_node* un = (uid_node*)mem_alloc(sizeof(uid_node));
-	un->pre_uid = NULL;
-	un->next_uid = NULL;
-	un->owner_score = NULL;
-	un->uid = uid;
-
-	//ht[uid] = un;
-	ht->insert(pair<int, uid_node*>(uid, un));
-	return un;
-}
-
-uid_node* uid_get(hash_tbl* ht, int uid)
-{
-	map<int, uid_node*>::const_iterator ptr;
-	ptr = ht->find(uid);
-	return ptr->second;
-}
 //-----------------------------------------
 //数据结构初始化
 //-----------------------------------------
@@ -107,6 +33,7 @@ int rank_init()
 
 	//to do: hash初始化
 	ght = new hash_tbl();//global 
+	return 0;
 }
 
 
@@ -129,9 +56,9 @@ int rank_update(int uid, int score)
 	if (new_sn == NULL)
 		new_sn = score_new(gia, score);
 
-	_unbind_score_uid(old_sn, un);
+	unbind_score_uid(old_sn, un);
 
-	_bind_score_uid(new_sn, un);
+	bind_score_uid(new_sn, un);
 
 	return 0;
 }
@@ -150,58 +77,10 @@ int rank_insert(int uid, int score)
 	}
 
 	//bind score node and uid node
-	_bind_score_uid(sn, un);
+	bind_score_uid(sn, un);
+
+	return 0;
 }
-
-void _bind_score_uid(score_node* sn, uid_node* un)
-{
-	sn->cnt += 1;
-
-	if (sn->uid_head == NULL) {//作为链表头
-		sn->uid_head = un;
-
-		un->next_uid = NULL;
-		un->pre_uid = NULL;
-		un->owner_score = sn;
-		return;
-	}
-
-	//插入作为链表头
-	un->next_uid = sn->uid_head;
-	un->pre_uid = NULL;
-
-	sn->uid_head->pre_uid = un;
-	sn->uid_head = un;
-	return;
-}
-
-void _unbind_score_uid(score_node* sn, uid_node* un)
-{
-	sn->cnt -= 1;
-
-	if (sn->uid_head == un) {//un是链表头
-		sn->uid_head = un->next_uid;
-		if (un->next_uid != NULL)//不是尾
-			un->next_uid->pre_uid = NULL;
-
-		//清理un
-		un->pre_uid = NULL;
-		un->next_uid = NULL;
-		un->owner_score = NULL;
-		return;
-	}
-
-	un->pre_uid->next_uid = un->next_uid;
-	if (un->next_uid != NULL)//不是尾
-		un->next_uid->pre_uid = un->pre_uid;
-
-	//清理un
-	un->pre_uid = NULL;
-	un->next_uid = NULL;
-	un->owner_score = NULL;
-	return;
-}
-
 
 int rank_get_rank(int uid)
 {
@@ -251,10 +130,37 @@ int rank_get_topn(us top[], int topn)
 			right = sn;
 		}
 	}
+
+	return 0;
 }
 
 //--------------------------------------------
+//封装一些std::map的操作
+//--------------------------------------------
+uid_node* uid_new(hash_tbl* ht, int uid)
+{
+	uid_node* un = (uid_node*)mem_alloc(sizeof(uid_node));
+	un->pre_uid = NULL;
+	un->next_uid = NULL;
+	un->owner_score = NULL;
+	un->uid = uid;
 
+	//ht[uid] = un;
+	ht->insert(pair<int, uid_node*>(uid, un));
+	return un;
+}
+
+uid_node* uid_get(hash_tbl* ht, int uid)
+{
+	map<int, uid_node*>::const_iterator ptr;
+	ptr = ht->find(uid);
+	return ptr->second;
+}
+
+
+//--------------------------------------------
+//score 接口
+//--------------------------------------------
 score_node* score_new(idx_array* ia, int score)
 {
 	score_node* sn = score_get(ia, score);
@@ -323,3 +229,54 @@ score_node* score_get(idx_array* ia, int score)
 	return NULL;
 }
 
+//----------------------------------------------
+//static 
+//----------------------------------------------
+void bind_score_uid(score_node* sn, uid_node* un)
+{
+	sn->cnt += 1;
+
+	if (sn->uid_head == NULL) {//作为链表头
+		sn->uid_head = un;
+
+		un->next_uid = NULL;
+		un->pre_uid = NULL;
+		un->owner_score = sn;
+		return;
+	}
+
+	//插入作为链表头
+	un->next_uid = sn->uid_head;
+	un->pre_uid = NULL;
+
+	sn->uid_head->pre_uid = un;
+	sn->uid_head = un;
+	return;
+}
+
+void unbind_score_uid(score_node* sn, uid_node* un)
+{
+	sn->cnt -= 1;
+
+	if (sn->uid_head == un) {//un是链表头
+		sn->uid_head = un->next_uid;
+		if (un->next_uid != NULL)//不是尾
+			un->next_uid->pre_uid = NULL;
+
+		//清理un
+		un->pre_uid = NULL;
+		un->next_uid = NULL;
+		un->owner_score = NULL;
+		return;
+	}
+
+	un->pre_uid->next_uid = un->next_uid;
+	if (un->next_uid != NULL)//不是尾
+		un->next_uid->pre_uid = un->pre_uid;
+
+	//清理un
+	un->pre_uid = NULL;
+	un->next_uid = NULL;
+	un->owner_score = NULL;
+	return;
+}
