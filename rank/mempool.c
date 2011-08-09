@@ -3,9 +3,11 @@
 
 
 int mempool_init()
-{}
+{
+	return 0;
+}
 
-//global 
+//global
 void* mem_alloc(size_t size)
 {
 	return malloc(size);

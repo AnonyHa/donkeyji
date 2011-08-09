@@ -4,34 +4,34 @@
 #include <map>
 using namespace std;
 
-typedef struct _us{
+typedef struct _us {
 	int uid;
 	int score;
-}us;
+} us;
 
-typedef struct _score_node{
+typedef struct _score_node {
 	int score;
 	int cnt;
 	struct _score_node* next_score;
 	struct _uid_node* uid_head;
-}score_node;
+} score_node;
 
-typedef struct _idx_node{
+typedef struct _idx_node {
 	int cnt;
 	struct _score_node* score_head;
-}idx_node;
+} idx_node;
 
-typedef struct _uid_node{
+typedef struct _uid_node {
 	int uid;
 	struct _uid_node* next_uid;
 	struct _uid_node* pre_uid;
 	struct _score_node* owner_score;
-}uid_node;
+} uid_node;
 
-typedef struct _idx_array{
+typedef struct _idx_array {
 	struct _idx_node* array;
 	int len;
-}idx_array;
+} idx_array;
 
 //typedef _sub_hash{
 //}sub_hash;

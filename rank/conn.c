@@ -1,3 +1,3 @@
-typedef struct _server{}server;
+typedef struct _server {} server;
 
-typedef struct _conn{}conn;
+typedef struct _conn {} conn;
