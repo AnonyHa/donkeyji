@@ -12,8 +12,8 @@ using namespace std;
 //--------------------------------------------
 //全局变量
 //--------------------------------------------
-idx_array* gia = NULL;//single
-hash_tbl* ght = NULL;//single
+idx_array* gia = NULL;//索引数组
+hash_tbl* ght = NULL;//uid哈希表
 
 //-----------------------------------------
 //数据结构初始化
@@ -40,7 +40,6 @@ int rank_init()
 //-----------------------------------------
 //插入uid，score
 //-----------------------------------------
-
 int rank_update(int uid, int score)
 {
 	uid_node* un = uid_get(ght, uid);
