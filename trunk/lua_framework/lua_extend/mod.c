@@ -149,29 +149,59 @@ static int new_env(lua_State* L)
 	return 0;
 }
 
+struct list_node
+{
+	struct list_node* next;
+	int id;
+};
+
+struct list
+{
+	struct list_node* head;
+};
+
+struct list* gl = NULL;
+
+static int new_list(lua_State* L)
+{
+	gl = (struct list*)malloc(sizeof(struct list));
+	if (gl == NULL) {
+		luaL_error(L, "malloc failed");
+		return 0;
+	}
+	gl->head = NULL;
+	return 0;
+}
+
+static int append_list(lua_State* L)
+{
+	int id = luaL_checkinteger(L, 1);
+	struct list_node* nn = (struct list_node*)malloc(sizeof(struct list_node));
+	if (nn == NULL) {
+		luaL_error(L, "malloc list_node failed");
+		return 0;
+	}
+
+	if (gl->head == NULL) {
+		gl->head = nn;
+		nn->next = NULL;
+	} else {
+		nn->next = gl->head;
+		gl->head = nn;
+	}
+	return 0;
+}
 // ---------------------------------------
 static const struct luaL_Reg hujilib[] = {
-	{"new_huji", new_huji},
+	{"new_list", new_list},
+	{"append_list", append_list},
 	{NULL, NULL}
 };
 
-
-// -------------
-// 面向对象访问
-// -------------
-static const struct luaL_Reg method[] = {
-	{"func", func},
-	{NULL, NULL}
-};
 
 int luaopen_hujilib(lua_State* L)
 {
 	printf("----luaopen_hujilib----\n");
-	luaL_newmetatable(L, "huji");
-	lua_pushvalue(L, -1);
-	lua_setfield(L, -2, "__index");
-
-	luaL_register(L, NULL, method);
 	luaL_register(L, "hujilib", hujilib);
 	return 1;
 }
