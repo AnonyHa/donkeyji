@@ -1,8 +1,11 @@
 
 local preload_files = {
 	--first
+	'script/base/class.lua',
 	'script/base/import.lua',
 	'script/base/const.lua',
+	'script/base/ldb.lua',
+	'script/base/traceback.lua',
 
 	--last
 	'script/base/global.lua',
