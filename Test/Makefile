@@ -47,7 +47,7 @@ CPPFLAGS  :=  -Wall -g
 # The compiling flags used only for C. 
 # If it is a C++ program, no need to set these flags. 
 # If it is a C and C++ merging program, set these flags for the C parts. 
-LUA_PATH_INC = "D:\Program Files\Lua\5.1\include" 
+LUA_PATH_INC = "D:\Program Files (x86)\Lua\5.1\include"
 CFLAGS    := -I $(LUA_PATH_INC)
 CFLAGS    += 
 
@@ -58,7 +58,7 @@ CXXFLAGS  :=
 CXXFLAGS  += 
 
 # The library and the link options ( C and C++ common). 
-LUA_PATH_LIB = "D:\Program Files\Lua\5.1\lib"
+LUA_PATH_LIB = "D:\Program Files (x86)\Lua\5.1\lib"
 
 LDFLAGS   := 
 LDFLAGS   += -L $(LUA_PATH_LIB) -llua51
@@ -66,7 +66,7 @@ LDFLAGS   += -L $(LUA_PATH_LIB) -llua51
 ## Implict Section: change the following only when necessary. 
 ##============================================================================= 
 # The C program compiler. Uncomment it to specify yours explicitly. 
-CC      = gcc
+CC      = g++
 
 # The C++ program compiler. Uncomment it to specify yours explicitly. 
 CXX     = g++ 

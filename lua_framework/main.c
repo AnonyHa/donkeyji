@@ -12,12 +12,25 @@ int luaopen_hujilib(lua_State*);
 //-----------------------------------------
 int traceback(lua_State* L)
 {
-	printf("====%s\n", lua_tostring(L, 1));
-	/*
-	lua_getglobal(L, "trace");
+	lua_getfield(L, LUA_GLOBALSINDEX, "debug");
+
+	if (!lua_istable(L, -1)) {
+		lua_pop(L, 1);
+		return 1;
+	}
+
+	lua_getfield(L, -1, "excepthook");
+
+	if (!lua_isfunction(L, -1)) {
+		lua_pop(L, 2);
+		return 1;
+	}
+
 	lua_pushvalue(L, 1);
-	lua_pcall(L, 1, 0, 0);
-	*/
+	lua_pcall(L, 1, 1, 0);
+
+	printf("=========\n");
+
 	return 1;
 }
 
