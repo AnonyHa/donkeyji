@@ -4,43 +4,52 @@ from django.http import HttpRequest
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.utils import simplejson
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, redirect
 
-def handle_register(request):
-	return render_to_response('register.html', {})
+from dwitter.util.filelog import log
+
+def handle_root(request):
+	if request.user.is_authenticated():
+		return redirect('/home/')
+	return render_to_response('home_not_logged.html', {'logged':False})
+
+def handle_home(request):
+	if not request.user.is_authenticated():
+		return redirect('/login/')
+	return render_to_response('timeline.html', {'logged':True})
+
 
 def handle_login(request):
-	return render_to_response('login.html', {})
+	if request.user.is_authenticated():
+		return redirect('/home/')
+	return render_to_response('login.html', {'logged':False})
 
-def handle_register2(request):
+def handle_signup(request):
 	if request.method == 'POST':
-		user_name = request.POST['user_name']
-		passwd = request.POST['passwd']
-		user = User.objects.create_user(user_name, passwd)
+		name = request.POST['name']
+		password = request.POST['password']
+		email = 'noemail'
+		user = User.objects.create_user(name, email, password)
 		if user is not None:
 			user.save()
-			return HttpResponse(simplejson.dumps({'msg':'ok'}))
-		else:
-			return HttpResponse(simplejson.dumps({'msg':'fail'}))
+			return redirect('/home/')
+	return redirect('/login/')
 
-def handle_login2(request):
+def handle_signin(request):
 	if request.method == 'POST':
-		user_name = request.POST['user_name']
-		passwd = request.POST['passwd']
+		name = request.POST['name']
+		password = request.POST['password']
 
-		user = authenticate(username=user_name, password=passwd)
+		user = authenticate(username=name, password=password)
 		if user is not None:
-			if user.is_active():
+			if not user.is_active:
 				user.is_active = 1
 				user.save()
-				login(request, user)
-				return HttpResponse(simplejson.dumps({'msg':'ok'}))
-		else:
-			return HttpResponse(simplejson.dumps({'msg':'no this user'}))
+			login(request, user)
+			return redirect('/home/')
+	return redirect('/login/')
 
 def handle_logout(request):
 	logout(request)
-	return HttpResponse(simplejson.dumps({'msg':'logout ok'}))
+	return
 
-def handle_home(request):
-	return render_to_response('home.html', {})

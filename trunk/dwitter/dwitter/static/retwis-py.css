@@ -84,7 +84,7 @@ ul.follow li a{display:block;padding:5px;text-decoration:none;clear:right;color:
 ul.follow li a:hover{background:rgba(255,255,255,0.5);}
 ul.follow li a span{float:right;font-weight:bold;}
 
-#login,#signup{margin:0 auto;width:250px;padding:20px;background:#FFF;float:left;}
+#signin,#signup{margin:0 auto;width:250px;padding:20px;background:#FFF;float:left;}
 
 .single .tweets p {background:#FFF;-webkit-border-radius:5px;padding:10px;}
 .follow-user,.unfollow-user{background:#eee;padding:5px;margin:0 0 10px 0;-webkit-border-radius:5px;text-align:center;}
