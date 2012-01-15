@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<!--head of html-->
+<head>
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+	{%block meta%}
+	{%endblock%}
+
+	<title>
+		{%block title%}
+		{%endblock%}
+	</title>
+
+	<script src="/static/app.js" type="text/javascript" charset="utf-8"></script>
+	{%block jsfile%}
+	{%endblock%}
+
+	<script language="javascript">
+		{%block js%}
+		{%endblock%}
+	</script>
+
+	<link rel="stylesheet" href="/static/retwis-py.css" type="text/css" media="screen" />
+	{%block cssfile%}
+	{%endblock%}
+
+	<style type="text/css">
+		{%block css%}
+		{%endblock%}
+	</style>
+</head>
+
+<!--body of html-->
+
+{%block body%}
+<body class="{{header}}">
+{%endblock%}
+	<div id="header"><a href="/"><img src="/static/retwis.png"></a>
+		{%if logged%}
+			<div id="nav"><a href="/">Home</a> <a href="/logout">Sign out</a></div>
+		{%else%}
+			<div id="nav"><a href="/">Home</a> <a href="/login">Sign in</a> <a href="/login">Sign up</a></div>
+		{%endif%}
+	</div>
+
+	{%block main%}
+	{%endblock%}
+</body>
+
+</html>
