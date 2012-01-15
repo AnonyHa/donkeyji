@@ -14,10 +14,10 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     (r'^admin/', include(admin.site.urls)),
 
-	(r'^$', 'dwitter.account.views.handle_home'),
-	(r'^/home$', 'dwitter.account.views.handle_home'),
+	(r'^$', 'dwitter.account.views.handle_root'),
+	(r'^home/$', 'dwitter.account.views.handle_home'),
 	(r'^login/$', 'dwitter.account.views.handle_login'),
 	(r'^signup/$', 'dwitter.account.views.handle_signup'),
-	(r'^signin/$', 'dwitter.account.views.handle_signi'),
+	(r'^signin/$', 'dwitter.account.views.handle_signin'),
 	(r'^logout/$', 'dwitter.account.views.handle_logout'),
 )

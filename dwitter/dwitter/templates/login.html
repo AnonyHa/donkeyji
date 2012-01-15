@@ -1,7 +1,7 @@
 {%extends "base/base.html"%}
 
 {%block main%}
-	<form method="POST" action="/login" id="login">
+	<form method="POST" action="/signin/" id="signin">
 		<h2>Login</h2>
 		{%if error_login%}
 			<p>wrong username/password</p>
@@ -11,7 +11,7 @@
 	<p><input type="submit" value="login!" /></p>
 	</form>
 
-	<form method="POST" action="/signup" id="signup">
+	<form method="POST" action="/signup/" id="signup">
 			<h2>Sign up</h2>
 		{%if error_signup%}
 			<p>username already exists</p>
