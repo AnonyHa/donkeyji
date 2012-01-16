@@ -36,6 +36,7 @@ python-django
 python-django-doc
 python-mysqldb
 
+perl
 php5
 php-doc
 zend-framework
@@ -58,8 +59,10 @@ python-memcache
 #for zeromq
 uuid-dev
 
+
 traceroute
 iperf
+convmv
 
 ipvsadm
 
@@ -138,3 +141,4 @@ update-rc.d -f rsync remove
 # apt-get purge
 # ----------------------------
 vsftpd
+enca
