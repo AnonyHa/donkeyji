@@ -1,0 +1,140 @@
+# -----------------------
+# installed by apt-get
+# -----------------------
+gcc
+gcc-doc
+make
+make-doc
+build-essential
+
+vim
+vim-doc
+vim-gtk
+
+libcurl3
+
+apache2
+apache2-doc
+libapache2-mod-python
+libapache2-mod-python-doc
+libapache2-mod-fcgid
+
+nginx
+nginx-doc
+nginx-extras
+
+lighttpd
+lighttpd-doc
+
+pure-ftpd
+
+python-setuptools
+python-dev
+python-doc
+python-flup
+python-django
+python-django-doc
+python-mysqldb
+
+php5
+php-doc
+zend-framework
+
+lua5.1
+lua5.1-doc
+liblua5.1-0-dev
+
+mysql-server
+mysql-proxy
+
+python-redis
+subversion
+squid
+redis-server
+redis-doc
+memcached
+python-memcache
+
+#for zeromq
+uuid-dev
+
+traceroute
+iperf
+
+ipvsadm
+
+kchmviewer
+unrar-free
+ack-grep
+stardict
+bleachbit
+
+flashplugin-installer
+
+openjdk-6-jre
+thunderbird
+
+openssh-server
+
+# for driver
+# ppa:mactel-support
+xf86-input-multitouch
+pommed 
+macfanctld
+nvidia-bl-dkms
+xcalib
+bcm5974-dkms 
+xserver-xorg-input-synaptics 
+
+# -----------------------
+# installed by dpkg
+# -----------------------
+chrome
+nixnote-1.1_amd64.deb
+
+
+# -----------------------
+# install by source
+# -----------------------
+zeromq
+
+# -----------------------
+# install by easy_install
+# -----------------------
+pyzmq
+
+# ----------------------
+# add config
+# ----------------------
+/etc/pm/config.d/default
+/etc/modprobe.d/blacklist
+add-apt-repository ppa:mactel-support
+/etc/rsyncd.conf
+/etc/apache2/site-available/dwitter
+
+# ------------------------
+# related to pure-ftpd
+# ------------------------
+sudo groupadd ftpgroup
+sudo useradd -g ftpgroup -d /dev/null -s /bin/false ftpuser
+sudo pure-pw useradd huji -u ftpuser -d /home/donitz/ftp/
+sudo pure-pw mkdb
+sudo ln -s ../conf/PureDB 60pdb
+
+
+# ----------------------------
+# remove init startup
+update-rc.d -f mysql remove
+update-rc.d -f mysql-proxy remove
+update-rc.d -f memcached remove
+update-rc.d -f redis-server remove
+update-rc.d -f nginx remove
+update-rc.d -f apache2 remove
+update-rc.d -f lighttpd remove
+update-rc.d -f pure-ftpd remove
+update-rc.d -f rsync remove
+
+# ----------------------------
+# apt-get purge
+# ----------------------------
+vsftpd
