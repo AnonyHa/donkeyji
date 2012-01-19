@@ -11,8 +11,6 @@ vim
 vim-doc
 vim-gtk
 
-libcurl3
-
 apache2
 apache2-doc
 libapache2-mod-python
@@ -27,6 +25,19 @@ lighttpd
 lighttpd-doc
 
 pure-ftpd
+samba
+kdenetwork-filesharing
+nfs-kernel-server
+
+mysql-server
+mysql-proxy
+
+squid
+redis-server
+redis-doc
+memcached
+openssh-server
+subversion
 
 python-setuptools
 python-dev
@@ -35,6 +46,8 @@ python-flup
 python-django
 python-django-doc
 python-mysqldb
+python-redis
+python-memcache
 
 perl
 php5
@@ -45,45 +58,29 @@ lua5.1
 lua5.1-doc
 liblua5.1-0-dev
 
-mysql-server
-mysql-proxy
-
-python-redis
-subversion
-squid
-redis-server
-redis-doc
-memcached
-python-memcache
 
 #for zeromq
 uuid-dev
 
+#
 aptitude
 dselect
-
-#
-samba
-kdenetwork-filesharing
-
 traceroute
 iperf
 convmv
-
 ipvsadm
-
-kchmviewer
 unrar-free
 ack-grep
-stardict
-bleachbit
 
 flashplugin-installer
-
 openjdk-6-jre
-thunderbird
+libcurl3
 
-openssh-server
+bleachbit
+thunderbird
+kchmviewer
+stardict
+
 
 # for driver
 # ppa:mactel-support
@@ -100,7 +97,6 @@ xserver-xorg-input-synaptics
 # -----------------------
 chrome
 nixnote-1.1_amd64.deb
-
 
 # -----------------------
 # install by source
@@ -120,6 +116,7 @@ pyzmq
 add-apt-repository ppa:mactel-support
 /etc/rsyncd.conf
 /etc/apache2/site-available/dwitter
+/etc/samba/smbusers
 
 # ------------------------
 # related to pure-ftpd
@@ -129,7 +126,6 @@ sudo useradd -g ftpgroup -d /dev/null -s /bin/false ftpuser
 sudo pure-pw useradd huji -u ftpuser -d /home/donitz/ftp/
 sudo pure-pw mkdb
 sudo ln -s ../conf/PureDB 60pdb
-
 
 # ----------------------------
 # remove init startup
