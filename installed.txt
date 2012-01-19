@@ -59,6 +59,12 @@ python-memcache
 #for zeromq
 uuid-dev
 
+aptitude
+dselect
+
+#
+samba
+kdenetwork-filesharing
 
 traceroute
 iperf
