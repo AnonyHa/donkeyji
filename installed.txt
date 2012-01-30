@@ -63,6 +63,7 @@ liblua5.1-0-dev
 uuid-dev
 
 #
+lynx
 aptitude
 dselect
 traceroute
