@@ -72,6 +72,8 @@ convmv
 ipvsadm
 unrar-free
 ack-grep
+rcconf
+sysv-rc-conf
 
 flashplugin-installer
 openjdk-6-jre
