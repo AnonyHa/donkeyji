@@ -1,88 +1,69 @@
 # -----------------------
 # installed by apt-get
 # -----------------------
-gcc
-gcc-doc
-make
-make-doc
 build-essential
-
 vim
-vim-doc
 vim-gtk
-
-apache2
-apache2-doc
-libapache2-mod-python
-libapache2-mod-python-doc
-libapache2-mod-fcgid
-
+rcconf
+sysv-rc-conf
+ack-grep
+convmv
+unrar-free
+unzip
 nginx
-nginx-doc
-nginx-extras
-
+apache2
 lighttpd
-lighttpd-doc
-
+libapache2-mod-python
+libapache2-mod-fcgid
 pure-ftpd
 samba
-kdenetwork-filesharing
-nfs-kernel-server
-
-mysql-server
-mysql-proxy
-
-squid
 redis-server
-redis-doc
 memcached
-openssh-server
-subversion
-
-python-setuptools
-python-dev
-python-doc
+squid
+mysql-server
 python-flup
 python-django
-python-django-doc
 python-mysqldb
 python-redis
+python-dev
 python-memcache
+python-setuptools
+subversion
+traceroute
+openssh-server
+thunderbird
+kchmviewer
+iperf
+valgrind
+leaktracer
+google-perftools
+mysql-proxy
+ipvsadm
+aptitude
+dselect
+stardict
+lynx
+kdenetwork-filesharing
+nfs-kernel-server
+libreadline6-dev
+libsqlite3-dev
 
-perl
-php5
-php-doc
-zend-framework
+# -----------------------
+# installed by dpkg
+# -----------------------
+chrome
+nixnote-1.2_i386.deb
 
-lua5.1
-lua5.1-doc
-liblua5.1-0-dev
+
+
+
 
 
 #for zeromq
 uuid-dev
-
 #
-lynx
-aptitude
-dselect
-traceroute
-iperf
-convmv
-ipvsadm
-unrar-free
-ack-grep
-rcconf
-sysv-rc-conf
-
 flashplugin-installer
-openjdk-6-jre
-libcurl3
-
 bleachbit
-thunderbird
-kchmviewer
-stardict
 
 
 # for driver
@@ -94,12 +75,6 @@ nvidia-bl-dkms
 xcalib
 bcm5974-dkms 
 xserver-xorg-input-synaptics 
-
-# -----------------------
-# installed by dpkg
-# -----------------------
-chrome
-nixnote-1.1_amd64.deb
 
 # -----------------------
 # install by source
@@ -131,19 +106,22 @@ sudo pure-pw mkdb
 sudo ln -s ../conf/PureDB 60pdb
 
 # ----------------------------
-# remove init startup
-update-rc.d -f mysql remove
-update-rc.d -f mysql-proxy remove
-update-rc.d -f memcached remove
-update-rc.d -f redis-server remove
-update-rc.d -f nginx remove
-update-rc.d -f apache2 remove
-update-rc.d -f lighttpd remove
-update-rc.d -f pure-ftpd remove
-update-rc.d -f rsync remove
-
-# ----------------------------
 # apt-get purge
 # ----------------------------
 vsftpd
 enca
+linux-image-2.6.38-8-generic 
+
+linux-headers-2.6.38-8 
+
+liblua5.1-0-dev
+lua5.1
+lua5.1-doc
+php5
+php-doc
+zend-framework
+
+
+kmail
+kubuntu-firefox-installer
+firefox-locale-en
