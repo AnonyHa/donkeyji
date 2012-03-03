@@ -23,11 +23,13 @@ squid
 mysql-server
 python-flup
 python-django
+python-django-south
 python-mysqldb
 python-redis
 python-dev
 python-memcache
 python-setuptools
+python-setupdocs
 subversion
 traceroute
 openssh-server
@@ -59,7 +61,6 @@ nixnote-1.2_i386.deb
 # -------------------------
 # installed by easy_install
 # -------------------------
-South
 
 # -----------------------
 # install by source
