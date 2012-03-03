@@ -82,7 +82,11 @@ cgihandler
 jon
 
 
-
+# -------------------------
+# manual remove 
+# -------------------------
+# easy_install South
+South
 
 
 
