@@ -80,6 +80,7 @@ pyzmq
 # -------------------------
 cgihandler
 jon
+cgiext.so
 
 
 # -------------------------
@@ -88,7 +89,11 @@ jon
 # easy_install South
 South
 
-
+# ----------------------
+# add config
+# ----------------------
+/etc/pm/config.d/default
+/etc/modprobe.d/blacklist
 
 
 
@@ -107,8 +112,6 @@ xserver-xorg-input-synaptics
 # ----------------------
 # add config
 # ----------------------
-/etc/pm/config.d/default
-/etc/modprobe.d/blacklist
 add-apt-repository ppa:mactel-support
 /etc/rsyncd.conf
 /etc/apache2/site-available/dwitter
