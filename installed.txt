@@ -79,7 +79,6 @@ pyzmq
 # installer by cp
 # -------------------------
 cgihandler
-jon
 cgiext.so
 
 
@@ -88,6 +87,7 @@ cgiext.so
 # -------------------------
 # easy_install South
 South
+jonpy
 
 # ----------------------
 # add config
