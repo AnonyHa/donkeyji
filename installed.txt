@@ -77,7 +77,8 @@ zeromq
 pyzmq
 
 # -------------------------
-# installer by cp
+# installer by cp to
+# /usr/local/lib/python2.7/dist-packages
 # -------------------------
 cgihandler
 cgiext.so
