@@ -35,7 +35,6 @@ python-setupdocs
 subversion
 traceroute
 openssh-server
-thunderbird
 kchmviewer
 iperf
 valgrind
@@ -128,3 +127,8 @@ sudo useradd -g ftpgroup -d /dev/null -s /bin/false ftpuser
 sudo pure-pw useradd huji -u ftpuser -d /home/donitz/ftp/
 sudo pure-pw mkdb
 sudo ln -s ../conf/PureDB 60pdb
+
+# ----------------------
+# apt-get purge
+# ----------------------
+thunderbird
