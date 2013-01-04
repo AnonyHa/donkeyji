@@ -10,6 +10,8 @@ ack-grep
 convmv
 unrar-free
 unzip
+varnish
+luarocks
 nginx
 apache2
 lighttpd
