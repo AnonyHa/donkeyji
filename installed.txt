@@ -13,6 +13,7 @@ unzip
 chkconfig
 service
 logwatch
+atsar
 varnish
 luarocks
 dovecot-imapd
@@ -121,26 +122,3 @@ nvidia-bl-dkms
 xcalib
 bcm5974-dkms 
 xserver-xorg-input-synaptics 
-
-# ----------------------
-# add config
-# ----------------------
-add-apt-repository ppa:mactel-support
-/etc/rsyncd.conf
-/etc/apache2/site-available/dwitter
-/etc/samba/smbusers
-
-# ------------------------
-# related to pure-ftpd
-# ------------------------
-sudo groupadd ftpgroup
-sudo useradd -g ftpgroup -d /dev/null -s /bin/false ftpuser
-sudo pure-pw useradd huji -u ftpuser -d /home/donitz/ftp/
-sudo pure-pw mkdb
-sudo ln -s ../conf/PureDB 60pdb
-
-# ----------------------
-# apt-get purge
-# ----------------------
-thunderbird
-
