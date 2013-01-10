@@ -10,8 +10,13 @@ ack-grep
 convmv
 unrar-free
 unzip
+chkconfig
+service
 varnish
 luarocks
+dovecot-imapd
+iptables
+snort
 nginx
 apache2
 lighttpd
