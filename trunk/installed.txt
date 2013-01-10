@@ -12,9 +12,13 @@ unrar-free
 unzip
 chkconfig
 service
+logwatch
 varnish
 luarocks
 dovecot-imapd
+dovecot-pop3d
+postfix
+sendmail
 iptables
 snort
 nginx
