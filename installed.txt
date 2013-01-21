@@ -2,6 +2,8 @@
 # installed by apt-get
 # -----------------------
 build-essential
+automake
+autoconf
 vim
 vim-gtk
 rcconf
@@ -19,6 +21,7 @@ ipvsadm
 luarocks
 tcpdump
 
+sphinx
 snmp
 mrtg
 php5
@@ -49,6 +52,7 @@ redis-server
 memcached
 squid
 mysql-server
+mysql-proxy
 python-flup
 python-django
 python-django-south
