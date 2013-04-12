@@ -8,9 +8,10 @@ then
 fi
 
 target_dir=$1
+echo "the target dir: $target_dir"
 tmp_list=/tmp/_tmp_list
 new_tmp_list=/tmp/_new_tmp_list
-if [ ! -e $target_dir -o ! -d $target_dir ]
+if [ ! -e "$target_dir" -o ! -d "$target_dir" ]
 then
 	echo 'wrong argument'
 	exit 2
@@ -18,7 +19,14 @@ fi
 
 shift
 
-cd $target_dir
+cd "$target_dir"
+echo 'enter target dir:'
+pwd
+if [ $? -ne 0 ]
+then
+	echo 'enter target dir failed'
+	exit 3
+fi
 
 ls|less > $tmp_list
 
@@ -28,7 +36,7 @@ do
 	mv $new_tmp_list  $tmp_list
 	shift
 done
-cat $tmp_list
+#cat $tmp_list
 
 while read line
 do
@@ -36,10 +44,10 @@ do
 	tar -cjvf "$line".tar.bz2 "$line"
 done < $tmp_list
 
-while read line
-do
+#while read line
+#do
 	#echo $line
-	rm -rf "$line"
-done < $tmp_list
+	#rm -rf "$line"
+#done < $tmp_list
 
 #rm -f $tmp_list
