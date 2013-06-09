@@ -1,0 +1,3 @@
+int signal_init()
+{
+}
