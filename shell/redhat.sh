@@ -1,6 +1,6 @@
 #!/bin/bash
 
-src_prefix=/mnt/hgfs/MacInstall/rhel-server-6.4-x86_64-dvd.iso
+src_prefix=/mnt/hgfs/Core/rhel-server-6.4-x86_64-dvd.iso
 dst_prefix=/mnt/iso/iso
 for ((i=1;i<2;i++))
 do
