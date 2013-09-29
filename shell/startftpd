@@ -1,0 +1,2 @@
+#!/bin/sh
+/usr/libexec/ftpd -4D
