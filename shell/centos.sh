@@ -1,6 +1,6 @@
 #!/bin/bash
 
-src_prefix=/mnt/hgfs/Setup/CentOS-5.9-x86_64-bin-DVD-
+src_prefix=/mnt/hgfs/Core/CentOS-5.9-x86_64-bin-DVD-
 dst_prefix=/mnt/iso/iso
 for ((i=1;i<3;i++))
 do
