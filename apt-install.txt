@@ -142,7 +142,3 @@ xcalib
 bcm5974-dkms 
 xserver-xorg-input-synaptics 
 
-
-
-
-
