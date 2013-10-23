@@ -11,9 +11,12 @@ if ! [ -e $dst_dir ]; then
 	mkdir -p $dst_dir
 fi
 
-all_dist="base epel extras rpmforge updates"
+all_dist=`ls $src_dir`
+#all_dist="base epel extras rpmforge updates"
+echo $all_dist
 
 for dist in $all_dist; do
+	echo "to backup: $dist"
 	src_rpm=$src_dir$dist/packages
 	if ! [ -e $src_rpm ]; then
 		echo "no this dist: $dist"
@@ -27,4 +30,4 @@ for dist in $all_dist; do
 	cp -ru $src_rpm $dst_rpm
 done
 
-echo "back completed"
+echo "backup completed"
