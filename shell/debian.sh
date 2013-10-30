@@ -10,6 +10,7 @@ dst_prefix=/mnt/iso/iso
 total=9
 for ((i=1;i<$total;i++))
 do
+	umount $dst_prefix$i
 	mount -t iso9660 -o loop $src_prefix$i.iso $dst_prefix$i
 done
 
@@ -19,5 +20,6 @@ dst_prefix_src=/mnt/iso/src
 total_src=7
 for ((i=1;i<$total_src;i++))
 do
+	umount $dst_prefix_src$i
 	mount -t iso9660 -o loop $src_prefix_src$i.iso $dst_prefix_src$i
 done
