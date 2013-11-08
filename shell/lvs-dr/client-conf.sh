@@ -7,4 +7,4 @@ then
 	exit 1
 fi
 
-ifconfig eth0 $C_IP netmask 255.255.255.0 broadcast 192.168.196.255 up
+ifconfig eth0 $C_IP netmask 255.255.255.0 broadcast 192.168.100.255 up
