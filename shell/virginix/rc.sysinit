@@ -1,0 +1,13 @@
+#!/bin/bash
+
+/bin/hello
+
+echo 'to insert eth'
+/sbin/insmod /lib/modules/2.6.18-348.el5/kernel/drivers/net/e1000/e1000.ko
+ifconfig eth0 192.168.1.14 netmask 255.255.255.0 broadcast 192.168.1.255
+route add default gw 192.168.1.1
+
+#echo "enter to bash"
+#/bin/bash
+echo "remount as read-write"
+/bin/mount -no remount /dev/sda2 /
